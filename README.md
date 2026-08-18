@@ -178,27 +178,53 @@ That works only because of what the receipt already carries. Every condition is
 stored with its *observed* value as well as its expected one, so the record
 holds the facts the decision turned on rather than only the verdict it reached.
 
+It runs in two directions. The arithmetic is identical; the claim being made
+about the past is not, and conflating them would put a deviation finding in
+front of someone who asked for a change estimate.
+
 ```sh
-python3 -m croissant_policy.recheck decisions.jsonl --policy current-policy.json
+# backwards — the policy in force now, against decisions already taken.
+# A result here is a statement about work that has happened. Exit 1 on any
+# newly-refused decision, so it drops into CI as a policy-change gate.
+python3 -m croissant_policy.recheck decisions.jsonl --policy current.json --mode review
+
+# forwards — a policy not yet adopted, against the same archive. Estimates the
+# blast radius before committing to the change. Adjudicates nothing historical,
+# and never fails a build.
+python3 -m croissant_policy.recheck decisions.jsonl --policy proposed.json \
+    --mode impact --report assessment.md
 ```
 
 ```
-rechecked 4 stored decision(s)
+rechecked 4 stored decision(s) against a proposed policy
+
+  coverage         100.0%
 
   unchanged           2
-  newly refused       2
+  would be refused    2
   newly permitted     0
   indeterminable      0
-
-newly refused under the current policy
-  qc-report.aggregate
-      minInputStages: 3 violates >= 4
 ```
 
-Exit status is 1 when anything is newly refused, so it drops into CI as a
-policy-change gate. `--policy` takes either a Croissant profile document or a
-native descriptor; which one it is is decided by the document rather than by a
-flag the caller can get wrong.
+`--report` writes the assessment as a Markdown document — what was compared,
+coverage, the result, and the method with its limits — because a quality
+function attaches a document to a change control, not a shell transcript.
+
+`--policy` takes either a Croissant profile document or a native descriptor;
+which one it is is decided by the document rather than by a flag the caller can
+get wrong.
+
+### Coverage is reported before the counts
+
+A stored decision can be re-decided only where its record carries the facts the
+new policy asks about. **"12 newly refused" means one thing at 98% coverage and
+nothing at all at 20%**, where the honest reading is that the archive cannot
+answer the question and the twelve are whatever fell inside the answerable part.
+
+So coverage leads the report, and below 90% the counts are labelled a lower
+bound rather than a result. The report also lists which conditions the archive
+lacks, because coverage is a property of what was captured at decision time: it
+improves going forward and cannot be recovered for decisions already taken.
 
 ### The fourth outcome is the honest one
 

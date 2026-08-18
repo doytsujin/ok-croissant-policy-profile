@@ -217,3 +217,111 @@ class RecheckTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ReportTest(unittest.TestCase):
+    """The document, and the two things that must not blur."""
+
+    def setUp(self):
+        from croissant_policy import report
+
+        self.report = report
+        self.results = [
+            recheck.Recheck("d", "a", None, recheck.UNCHANGED, "PERMIT", "PERMIT"),
+            recheck.Recheck(
+                "d", "a", None, recheck.NEWLY_REFUSED, "PERMIT", "REFUSE",
+                reasons=("x: 1 violates >= 2",),
+            ),
+        ]
+        self.totals = recheck.summary(self.results)
+
+    def test_review_and_impact_differ_in_claim_not_arithmetic(self):
+        review = self.report.render(self.results, self.totals, mode=recheck.REVIEW)
+        impact = self.report.render(self.results, self.totals, mode=recheck.IMPACT)
+        self.assertNotEqual(review, impact)
+        for doc in (review, impact):
+            self.assertIn("| Unchanged | 1 |", doc)
+        # impact must not present past work as a finding
+        self.assertIn("not a deviation list", impact)
+        self.assertIn("were correctly admitted", impact)
+        self.assertNotIn("not a deviation list", review)
+
+    def test_unknown_mode_is_refused(self):
+        with self.assertRaises(ValueError):
+            self.report.render(self.results, self.totals, mode="sideways")
+
+    def test_coverage_is_reported_before_the_counts(self):
+        doc = self.report.render(self.results, self.totals)
+        self.assertLess(doc.index("Coverage"), doc.index("## Result"))
+
+    def test_low_coverage_marks_the_counts_as_a_lower_bound(self):
+        results = self.results + [
+            recheck.Recheck(
+                "d", "a", None, recheck.INDETERMINABLE, "PERMIT", None,
+                missing=("reviewedBy",),
+            )
+        ] * 8
+        totals = recheck.summary(results)
+        self.assertFalse(totals["dependable"])
+        doc = self.report.render(results, totals)
+        self.assertIn("lower bound", doc)
+        self.assertIn("reviewedBy", doc)
+
+    def test_full_coverage_is_dependable(self):
+        self.assertTrue(self.totals["dependable"])
+        self.assertEqual(self.totals["coverage"], 1.0)
+
+    def test_coverage_of_empty_archive_is_not_a_division_by_zero(self):
+        self.assertEqual(recheck.coverage([]), 1.0)
+
+
+class CliModeTest(unittest.TestCase):
+    """Impact mode must never break a build."""
+
+    def setUp(self):
+        _, _, self.gate = load_gate()
+        self.corpus = corpus()
+
+    def _archive_and_policy(self, tmp: Path):
+        native = self.corpus["qc-report"]
+        d = _native_to_descriptor(native)
+        rec = self.gate.authorize(
+            d, "aggregate", {"reportFormat": "multiqc", "minInputStages": 3}
+        ).as_record()
+        self.assertEqual(rec["verdict"], self.gate.PERMIT)
+        archive = tmp / "a.jsonl"
+        archive.write_text(json.dumps(rec) + "\n", encoding="utf-8")
+
+        tightened = copy.deepcopy(native)
+        _action_node(tightened, "aggregate")["conditions"]["minInputStages"] = {"min": 9}
+        policy = tmp / "p.json"
+        policy.write_text(json.dumps(tightened), encoding="utf-8")
+        return archive, policy
+
+    def test_review_exits_nonzero_impact_exits_zero(self):
+        with tempfile.TemporaryDirectory() as t:
+            tmp = Path(t)
+            archive, policy = self._archive_and_policy(tmp)
+            import contextlib, io
+
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                review = recheck.main([str(archive), "--policy", str(policy), "--mode", "review"])
+                impact = recheck.main([str(archive), "--policy", str(policy), "--mode", "impact"])
+        self.assertEqual(review, 1, "review mode is a CI gate and must fail")
+        self.assertEqual(impact, 0, "impact mode estimates a change and must not fail a build")
+
+    def test_report_file_is_written(self):
+        with tempfile.TemporaryDirectory() as t:
+            tmp = Path(t)
+            archive, policy = self._archive_and_policy(tmp)
+            out = tmp / "assessment.md"
+            import contextlib, io
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                recheck.main(
+                    [str(archive), "--policy", str(policy), "--mode", "impact", "--report", str(out)]
+                )
+            doc = out.read_text(encoding="utf-8")
+        self.assertIn("Policy change impact assessment", doc)
+        self.assertIn("minInputStages", doc)

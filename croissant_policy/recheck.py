@@ -52,6 +52,25 @@ INDETERMINABLE = "INDETERMINABLE"
 
 OUTCOMES = (UNCHANGED, NEWLY_REFUSED, NEWLY_PERMITTED, INDETERMINABLE)
 
+# Which direction the same computation is being read in.
+#
+# REVIEW looks backwards: the policy in force now against decisions already
+# taken, so a NEWLY_REFUSED result says an operation was admitted that today's
+# rules would not admit. In a regulated setting that is a finding with
+# obligations attached, and the wording says so.
+#
+# IMPACT looks forwards: a policy not yet adopted against the same archive, so
+# the same result says only that the proposed change would have refused work
+# that was legitimately admitted under the rules in force at the time. Nothing
+# historical is adjudicated, and the wording must not imply that it is.
+#
+# The arithmetic is identical. Only the claim being made about the past differs,
+# and conflating the two would put a deviation finding in front of someone who
+# asked for a change-impact estimate.
+REVIEW = "review"
+IMPACT = "impact"
+MODES = (REVIEW, IMPACT)
+
 
 @dataclass
 class Recheck:
@@ -239,13 +258,31 @@ def recheck_all(records: list[dict], descriptor) -> list[Recheck]:
     return [recheck_one(r, descriptor) for r in records]
 
 
+def coverage(results: list[Recheck]) -> float:
+    """The fraction of the archive this policy could actually be decided against.
+
+    This must travel with the counts, always. "Twelve newly refused" means one
+    thing at 98% coverage and nothing at all at 20%, where the honest reading is
+    that the archive cannot answer the question and the twelve are whatever
+    happened to fall inside the answerable part. A count published without its
+    coverage is a misleading number, not an incomplete one.
+    """
+    if not results:
+        return 1.0
+    decided = sum(1 for r in results if r.outcome != INDETERMINABLE)
+    return decided / len(results)
+
+
 def summary(results: list[Recheck]) -> dict:
     counts = {o: 0 for o in OUTCOMES}
     for r in results:
         counts[r.outcome] += 1
+    cov = coverage(results)
     return {
         "total": len(results),
         "counts": counts,
+        "coverage": round(cov, 4),
+        "dependable": cov >= 0.9,
         "newlyRefused": [r.as_record() for r in results if r.outcome == NEWLY_REFUSED],
         "indeterminable": [
             r.as_record() for r in results if r.outcome == INDETERMINABLE
@@ -256,19 +293,29 @@ def summary(results: list[Recheck]) -> dict:
 # ---- CLI ----------------------------------------------------------------
 
 
-def _render(results: list[Recheck], totals: dict) -> str:
+def _render(results: list[Recheck], totals: dict, mode: str = REVIEW) -> str:
     counts = totals["counts"]
+    verb = "would be refused" if mode == IMPACT else "newly refused"
     lines = [
-        f"rechecked {totals['total']} stored decision(s)",
+        f"rechecked {totals['total']} stored decision(s)"
+        + (" against a proposed policy" if mode == IMPACT else ""),
+        "",
+        f"  coverage         {totals['coverage'] * 100:>5.1f}%"
+        + ("" if totals["dependable"] else "   <- counts below are a LOWER BOUND"),
         "",
         f"  unchanged        {counts[UNCHANGED]:>4}",
-        f"  newly refused    {counts[NEWLY_REFUSED]:>4}",
+        f"  {verb:<15}  {counts[NEWLY_REFUSED]:>3}",
         f"  newly permitted  {counts[NEWLY_PERMITTED]:>4}",
         f"  indeterminable   {counts[INDETERMINABLE]:>4}",
     ]
     refused = [r for r in results if r.outcome == NEWLY_REFUSED]
     if refused:
-        lines += ["", "newly refused under the current policy"]
+        lines += [
+            "",
+            "would be refused if the proposed policy were adopted"
+            if mode == IMPACT
+            else "newly refused under the current policy",
+        ]
         for r in refused:
             who = f" caller={r.caller_id}" if r.caller_id else ""
             lines.append(f"  {r.dataset_id}.{r.action}{who}")
@@ -301,6 +348,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--policy", required=True, help="the current policy: Croissant profile or native descriptor"
     )
+    ap.add_argument(
+        "--mode",
+        choices=MODES,
+        default=REVIEW,
+        help=(
+            "review: the policy in force now, against decisions already taken — "
+            "results are statements about past work. "
+            "impact: a policy not yet adopted, against the same archive — "
+            "results estimate future effect and adjudicate nothing historical. "
+            "Same arithmetic; different claim."
+        ),
+    )
+    ap.add_argument("--report", metavar="PATH", help="write the assessment as a Markdown document")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
     args = ap.parse_args(argv)
 
@@ -309,12 +369,34 @@ def main(argv: list[str] | None = None) -> int:
     results = recheck_all(records, descriptor)
     totals = summary(results)
 
-    if args.json:
-        print(json.dumps({**totals, "results": [r.as_record() for r in results]}, indent=2))
-    else:
-        print(_render(results, totals))
+    if args.report:
+        from . import report as report_mod  # noqa: PLC0415
 
-    # A newly-refused decision is the finding this tool exists to surface.
+        Path(args.report).write_text(
+            report_mod.render(
+                results,
+                totals,
+                mode=args.mode,
+                policy_id=descriptor.dataset_id,
+                policy_version=descriptor.version,
+                archive=args.archive,
+            ),
+            encoding="utf-8",
+        )
+
+    if args.json:
+        print(json.dumps({**totals, "mode": args.mode, "results": [r.as_record() for r in results]}, indent=2))
+    else:
+        print(_render(results, totals, args.mode))
+        if args.report:
+            print(f"\nassessment written to {args.report}")
+
+    # In review mode a newly-refused decision is a finding, and a non-zero exit
+    # is what makes this usable as a policy-change gate in CI. In impact mode it
+    # is an estimate of a change not yet made, so the same count is information
+    # rather than failure and must not break a build.
+    if args.mode == IMPACT:
+        return 0
     return 1 if totals["counts"][NEWLY_REFUSED] else 0
 
 
