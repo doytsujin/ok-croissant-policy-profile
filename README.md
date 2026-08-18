@@ -164,6 +164,65 @@ permitted, and what each of the five precedence rules would have decided.
 violations; 19% disagreement is a property of the matrix, not of production
 traffic.
 
+## Re-deciding an archive against a later policy
+
+`croissant_policy/recheck.py` answers the question a validation function asks
+after every policy change and cannot otherwise answer: **you tightened the
+policy; which of last year's admissions would fail under it today?**
+
+Re-running the pipelines is not an option -- they took hours, the inputs may be
+gone, and avoiding the second run is the point. So the decision is re-taken from
+the **record**, with no original data, no pipeline, and no evaluator state.
+
+That works only because of what the receipt already carries. Every condition is
+stored with its *observed* value as well as its expected one, so the record
+holds the facts the decision turned on rather than only the verdict it reached.
+
+```sh
+python3 -m croissant_policy.recheck decisions.jsonl --policy current-policy.json
+```
+
+```
+rechecked 4 stored decision(s)
+
+  unchanged           2
+  newly refused       2
+  newly permitted     0
+  indeterminable      0
+
+newly refused under the current policy
+  qc-report.aggregate
+      minInputStages: 3 violates >= 4
+```
+
+Exit status is 1 when anything is newly refused, so it drops into CI as a
+policy-change gate. `--policy` takes either a Croissant profile document or a
+native descriptor; which one it is is decided by the document rather than by a
+flag the caller can get wrong.
+
+### The fourth outcome is the honest one
+
+`INDETERMINABLE` is the method refusing to guess. If the new policy names a
+condition that was never checked when the decision was taken, no observed value
+for it exists anywhere, and any verdict produced would be invented.
+
+The distinction it rests on is narrow and worth stating: a condition recorded
+with `observed: null` **is** information -- it says the fact was absent at the
+time, and that is re-decidable. A condition the record never mentions says
+nothing at all.
+
+One consequence follows and is not hidden: **a record's re-decidability is
+proportional to how far its decision got.** A permit evaluated every condition
+and records them all. A refusal on state, or on an undeclared action,
+short-circuits before any condition is evaluated and carries no facts, so it can
+only be re-decided where the new policy turns on state alone. That asymmetry is
+a property of the gate rather than of this module, and it is reported rather
+than smoothed over.
+
+For a joint receipt only the data-side policy is re-decided; the caller's
+verdict is taken as recorded, because re-deciding it would mean substituting our
+own document for a separate authority's.
+
 ## Use
 
 ```bash

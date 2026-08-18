@@ -73,6 +73,28 @@ structurally the same mechanism aimed at a different subject: they bind policy
 to the *caller*. A rule about what a dataset admits cannot be bound to a
 caller, because it does not travel with one.
 
+**Combining two authorities is old, and we do not claim it.** XACML has named
+rule- and policy-combining algorithms since the early 2000s -- `deny-overrides`
+among them, by that name -- and its ABAC model evaluates subject-side and
+resource-side attributes within a single decision. Oracle's US10230732B2
+(priority 2013) combines policies from separately administered sources under a
+selected combining algorithm, deny-override by default. AWS Clean Rooms
+enforces the most restrictive control across per-collaborator rules whose
+authors cannot see each other's data, and IAM cross-account access requires a
+resource-owner policy and a caller-account policy to agree. The mechanism of
+section 4 is therefore not new, and any claim that consulting two authorities
+is unspecified would be wrong.
+
+Two things remain. First, these systems bind the resource-side half to a
+*storage or account boundary*: a condition on the lifecycle state of a dataset
+-- `QC_PASSED`, `PENDING` -- is not expressible in any of them, because the
+vocabulary is access to an object rather than the scientific state of its
+contents. Second, none of them travels: the policy lives in one provider's
+control plane, not in a descriptor that moves with the data across
+organisations. What section 4 contributes is not the conjunction but a
+measurement of what is lost when the data-side half is absent, which is the
+condition of every deployed agent control plane we are aware of.
+
 ## 2. Design
 
 ### 2.1 One constraint
@@ -283,13 +305,13 @@ and equally unreachable from a descriptor.
 **Cost.** With both descriptors resident, the conjunction is 5.7 µs against
 2.5 µs for either side alone -- the expected factor of two plus bookkeeping.
 Re-translating both documents per decision costs 17.6 µs. Running both
-authorities is not expensive; it has simply not been specified.
+authorities is not expensive.
 
 **One receipt.** The joint record carries both verdicts, both refusal classes,
 both reason lists, and both condition lists including the passing conditions of
-the authority that permitted, plus what each of the five rules would have
-decided. A record that keeps only the refusing half cannot show the other
-authority was consulted, which is the reason to have one record rather than two.
+the authority that permitted. A record that keeps only the refusing half cannot
+show the other authority was consulted, which is the reason to have one record
+rather than two.
 
 ### 4.4 What these numbers are not
 
