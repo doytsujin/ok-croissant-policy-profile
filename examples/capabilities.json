@@ -1,0 +1,164 @@
+{
+  "tools": [
+    {
+      "name": "qc-report.aggregate",
+      "description": "Perform 'aggregate' on dataset 'qc-report'. Permitted only while the dataset is in state 'PENDING'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "minInputStages": {
+            "type": "number",
+            "minimum": 2
+          },
+          "reportFormat": {
+            "enum": [
+              "multiqc"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "minInputStages",
+          "reportFormat"
+        ]
+      }
+    },
+    {
+      "name": "qc-report.release",
+      "description": "Perform 'release' on dataset 'qc-report'. Permitted only while the dataset is in state 'COMPLETE'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "approvedBy": {}
+        },
+        "additionalProperties": true,
+        "required": [
+          "approvedBy"
+        ]
+      }
+    },
+    {
+      "name": "raw-reads.qc",
+      "description": "Perform 'qc' on dataset 'raw-reads'. Permitted only while the dataset is in state 'RECEIVED', 'QC_PASSED'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "enum": [
+              "illumina"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "platform"
+        ]
+      }
+    },
+    {
+      "name": "raw-reads.trim",
+      "description": "Perform 'trim' on dataset 'raw-reads'. Permitted only while the dataset is in state 'QC_PASSED'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "minReadLength": {
+            "type": "number",
+            "minimum": 20
+          },
+          "platform": {
+            "enum": [
+              "illumina"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "minReadLength",
+          "platform"
+        ]
+      }
+    },
+    {
+      "name": "raw-reads.align",
+      "description": "Perform 'align' on dataset 'raw-reads'. Permitted only while the dataset is in state 'TRIMMED'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "minMapQ": {
+            "type": "number",
+            "minimum": 30
+          },
+          "referenceBuild": {
+            "enum": [
+              "GRCh38"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "minMapQ",
+          "referenceBuild"
+        ]
+      }
+    },
+    {
+      "name": "trimmed-reads.qc",
+      "description": "Perform 'qc' on dataset 'trimmed-reads'. Permitted only while the dataset is in state 'TRIMMED'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "platform": {
+            "enum": [
+              "illumina"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "platform"
+        ]
+      }
+    },
+    {
+      "name": "trimmed-reads.aggregate",
+      "description": "Perform 'aggregate' on dataset 'trimmed-reads'. Permitted only while the dataset is in state 'TRIMMED'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "reportFormat": {
+            "enum": [
+              "multiqc"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "reportFormat"
+        ]
+      }
+    },
+    {
+      "name": "trimmed-reads.align",
+      "description": "Perform 'align' on dataset 'trimmed-reads'. Permitted only while the dataset is in state 'TRIMMED'.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "minMapQ": {
+            "type": "number",
+            "minimum": 30
+          },
+          "referenceBuild": {
+            "enum": [
+              "GRCh38"
+            ]
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "minMapQ",
+          "referenceBuild"
+        ]
+      }
+    }
+  ]
+}
