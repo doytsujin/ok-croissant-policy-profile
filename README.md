@@ -1,4 +1,4 @@
-# dk-croissant-policy-profile
+# ok-croissant-policy-profile
 
 A **policy profile for Croissant** dataset descriptors, with a reference
 implementation, a conformance validator, an MCP capability projection, and
