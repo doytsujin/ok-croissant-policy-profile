@@ -362,11 +362,10 @@ not proof. The overhead figures are in-process and exclude interpreter startup,
 exactly as the gate's own published figure does, which makes them comparable
 and makes both an underestimate of what a per-task subprocess costs.
 
-The profile IRI is `https://w3id.org/croissant-policy/0.1.0`. It does not
-resolve yet: the w3id.org pull request is written but deliberately unsubmitted,
-and the namespace document it redirects to is held with the repository until the
-provisional is filed. Both are prepared, and the identifier is verified end to
-end before this paper is posted.
+The profile IRI is `https://w3id.org/croissant-policy/0.1.0`. The w3id.org
+pull request and the namespace document it redirects to are both written; the
+identifier is verified end to end before this paper is posted, and does not
+resolve until then.
 
 ## 7. Next
 

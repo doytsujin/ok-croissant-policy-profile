@@ -1,12 +1,18 @@
-# Release sequence — run only after the provisional is filed
+# Release sequence
 
-Everything here was ready on 2026-08-18 and deliberately held. Nothing in this
-list is new work; it is the order, so that the sequence is not reconstructed
-from memory on the day.
+> **Decision, 2026-08-18: no patent will be filed.** This file was written as
+> *ON-FILING.md*, gated on a provisional that will not now exist. The gate is
+> removed; the sequence below is unblocked and can run immediately.
+>
+> The strategy is **defensive publication**. Publishing establishes the work as
+> prior art against anyone else's filing, which is the protection actually
+> wanted here, and it costs nothing beyond doing what was going to be done
+> anyway. The assessment that led here is in
+> [`dk-croissant-policy-patent`](../../dk-croissant-policy-patent) — nine of
+> twelve candidate claims closed on prior art before the decision was taken, so
+> little was given up.
 
-**Precondition, and it is the only one: the provisional has an application
-number.** Not "submitted", not "with counsel" — filed and numbered. Record the
-number and filing date at the bottom of this file before running step 1.
+**There is no precondition. Step 1 can run now.**
 
 ## Order matters
 
@@ -63,25 +69,16 @@ These need no disclosure and can proceed at any time:
   `$NXF_TASK_WORKDIR`, which is empty in all 285 records.
 - Anything in `dk-agentic-datasets-book`.
 
-## Standing constraint
+## Order still matters
 
-Until step 1 runs, the repository stays private and
-`https://w3id.org/croissant-policy/0.1.0` keeps returning 404. Documents emitted
-in the meantime carry a `conformsTo` IRI that does not resolve. **That is
-accepted, not a defect to fix by republishing early.** The namespace is not
-changed to a placeholder either: changing it twice is worse than a 404 inside a
-private system.
+Nothing gates step 1 any more, but steps 2-4 remain ordered for a practical
+reason rather than a legal one: the w3id maintainers test the redirect target,
+and a pull request whose destination 404s is a pull request that gets closed.
+Republish, confirm Pages actually serves, then submit.
 
-## Filing record
+## On the exposure record
 
-Fill in before step 1.
-
-| | |
-|---|---|
-| Application number | |
-| Filing date | |
-| Filed by | |
-| Covers | |
-
-See `EXPOSURE-2026-08-18.md` for the pre-filing public-exposure window — that
-belongs in front of whoever drafts the application, not in a drawer.
+`EXPOSURE-2026-08-18.md` documented a ~35 minute public window for counsel.
+With no application to draft, it is no longer evidence for anything and is
+retained only as an accurate record of what happened on the day. It should not
+be read as an open question.
