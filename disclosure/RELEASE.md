@@ -76,6 +76,34 @@ reason rather than a legal one: the w3id maintainers test the redirect target,
 and a pull request whose destination 404s is a pull request that gets closed.
 Republish, confirm Pages actually serves, then submit.
 
+## Establishing the public record
+
+Defensive publication protects only what is actually published, and only from
+the date it is published. Three of the assessed mechanisms survived their prior-
+art searches, which means nobody else's art covers them; publishing is what
+keeps them that way. The step that matters is therefore not "the repository is
+public" but "there is a dated, third-party, permanent record."
+
+**Order, cheapest and most durable first:**
+
+1. **Zenodo.** No endorsement, no affiliation, no gatekeeper, permanent DOI,
+   run by CERN. Connect the GitHub repository in Zenodo's settings, then cut a
+   tagged release — the deposit and DOI are automatic. `.zenodo.json` and
+   `CITATION.cff` are in place, so this needs no further preparation. **This is
+   the one to do first**, because it is immediate and depends on nobody.
+2. **arXiv**, for the paper itself. Worth checking first whether an endorsement
+   is needed for `cs.CR` or `cs.DB` — a first submission in a cs category
+   usually requires one, which is a queue rather than a decision, so it should
+   not sit in front of step 1.
+3. **Technical Disclosure Commons** (tdcommons.org), only if a standalone
+   defensive disclosure is wanted separately from the paper. Free, indexed,
+   purpose-built for publishing to create prior art, and read by examiners.
+   Redundant if the paper covers the mechanism, which it now does.
+
+A LinkedIn article is distribution, not a record. It is not archival, not
+indexed by examiners, and the platform controls whether it persists. Publish
+there for readers, never as the prior-art step.
+
 ## On the exposure record
 
 `EXPOSURE-2026-08-18.md` documented a ~35 minute public window for counsel.

@@ -1,0 +1,17 @@
+{
+  "title": "A Policy Profile for Croissant: Refusal as a Property of the Dataset",
+  "upload_type": "software",
+  "license": "Apache-2.0",
+  "access_right": "open",
+  "creators": [
+    { "name": "Chernov, Alexander" }
+  ],
+  "keywords": [
+    "croissant",
+    "dataset descriptors",
+    "admission control",
+    "data governance",
+    "defensive publication"
+  ],
+  "description": "<p>An additive policy profile for Croissant dataset descriptors, with a reference implementation, conformance validator, MCP capability projection, measured overhead, a caller-side/data-side precedence experiment, and a tool for re-deciding a stored decision archive against a later policy without re-running it.</p><p>Deposited in part as a defensive publication: the mechanisms described here are placed in the public record so that they are available to anyone and patentable by no one.</p>"
+}

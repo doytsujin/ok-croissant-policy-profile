@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "A Policy Profile for Croissant: Refusal as a Property of the Dataset"
+message: "If you use this profile or its reference implementation, please cite it."
+type: software
+authors:
+  - family-names: Chernov
+    given-names: Alexander
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+repository-code: "https://github.com/doytsujin/ok-croissant-policy-profile"
+url: "https://w3id.org/croissant-policy/0.1.0"
+abstract: >-
+  An additive policy profile for Croissant dataset descriptors. A dataset
+  declares the operations it admits and the conditions under which it admits
+  them, so a gate in front of the data can permit or refuse a request from the
+  descriptor alone and leave a record of what was checked. Includes a reference
+  implementation, a conformance validator, an MCP capability projection, a
+  measured overhead study, a caller-side/data-side precedence experiment, and a
+  tool for re-deciding a stored decision archive against a later policy.
+keywords:
+  - croissant
+  - dataset descriptors
+  - admission control
+  - data governance
+  - provenance
+  - agent governance
+license: Apache-2.0
+version: 0.1.0

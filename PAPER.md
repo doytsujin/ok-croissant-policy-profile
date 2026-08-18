@@ -313,6 +313,25 @@ the authority that permitted. A record that keeps only the refusing half cannot
 show the other authority was consulted, which is the reason to have one record
 rather than two.
 
+It also carries, for each of the five precedence rules, the verdict that rule
+*would have* yielded on the same request -- not only the one applied. The
+verdicts not reached are written into the record at decision time, so a later
+reader determines from the record alone, without re-evaluating either policy and
+without access to either document, whether the outcome depended on the
+precedence rule in force. Where every rule agrees, the outcome is attributable
+to the policies; where they differ, it is attributable to the configuration, and
+the record says which. This matters because the policy that produced a decision
+is frequently not retained in the form it had at the time, and a record that can
+only be interpreted by re-running the system against a hypothetical
+configuration is not evidence.
+
+The same property makes the archive answerable after the fact. Because every
+condition is stored with its observed value as well as its expected one, a
+stored decision can be re-decided against a *later* policy without the original
+data, the original pipeline, or the evaluator that produced it --
+`croissant_policy/recheck.py` does this, and reports the fraction of an archive
+that cannot be decided rather than guessing at it.
+
 ### 4.4 What these numbers are not
 
 The rates are properties of the generated request matrix, which is deliberately
