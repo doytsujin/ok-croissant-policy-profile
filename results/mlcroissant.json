@@ -1,0 +1,55 @@
+{
+  "allLoaded": true,
+  "context": {
+    "differingValues": [],
+    "extraTerms": [],
+    "matches": true,
+    "missingTerms": []
+  },
+  "croissantVersion": "1.0",
+  "documents": [
+    {
+      "absl": [
+        "Found the following 2 warning(s) during the validation:\n  -  [Metadata(qc-report)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.\n  -  [Metadata(qc-report)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+      ],
+      "contextReportedNonStandard": false,
+      "errors": [],
+      "loaded": true,
+      "name": "qc-report",
+      "path": "examples/qc-report.croissant.json",
+      "warnings": [
+        "[Metadata(qc-report)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(qc-report)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
+      ]
+    },
+    {
+      "absl": [
+        "Found the following 2 warning(s) during the validation:\n  -  [Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.\n  -  [Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+      ],
+      "contextReportedNonStandard": false,
+      "errors": [],
+      "loaded": true,
+      "name": "raw-reads",
+      "path": "examples/raw-reads.croissant.json",
+      "warnings": [
+        "[Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
+        "[Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+      ]
+    },
+    {
+      "absl": [
+        "Found the following 2 warning(s) during the validation:\n  -  [Metadata(trimmed-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.\n  -  [Metadata(trimmed-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+      ],
+      "contextReportedNonStandard": false,
+      "errors": [],
+      "loaded": true,
+      "name": "trimmed-reads",
+      "path": "examples/trimmed-reads.croissant.json",
+      "warnings": [
+        "[Metadata(trimmed-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(trimmed-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
+      ]
+    }
+  ],
+  "mlcroissantVersion": "unknown"
+}

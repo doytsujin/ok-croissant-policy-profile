@@ -2,7 +2,6 @@
   "@context": {
     "@language": "en",
     "@vocab": "https://schema.org/",
-    "arrayShape": "cr:arrayShape",
     "citeAs": "cr:citeAs",
     "column": "cr:column",
     "conformsTo": "dct:conformsTo",
@@ -11,13 +10,12 @@
       "@id": "cr:data",
       "@type": "@json"
     },
-    "dataBiases": "cr:dataBiases",
-    "dataCollection": "cr:dataCollection",
     "dataType": {
       "@id": "cr:dataType",
       "@type": "@vocab"
     },
     "dct": "http://purl.org/dc/terms/",
+    "equivalentProperty": "cr:equivalentProperty",
     "examples": {
       "@id": "cr:examples",
       "@type": "@json"
@@ -29,7 +27,6 @@
     "fileSet": "cr:fileSet",
     "format": "cr:format",
     "includes": "cr:includes",
-    "isArray": "cr:isArray",
     "isLiveDataset": "cr:isLiveDataset",
     "jsonPath": "cr:jsonPath",
     "key": "cr:key",
@@ -42,6 +39,7 @@
     "regex": "cr:regex",
     "repeated": "cr:repeated",
     "replace": "cr:replace",
+    "samplingRate": "cr:samplingRate",
     "sc": "https://schema.org/",
     "separator": "cr:separator",
     "source": "cr:source",
@@ -68,7 +66,7 @@
     "name": "nf-core"
   },
   "additionalType": "sequencing_reads",
-  "dataCollection": "nf-core/test-datasets (viralrecon illumina amplicon samplesheet)",
+  "rai:dataCollection": "nf-core/test-datasets (viralrecon illumina amplicon samplesheet)",
   "variableMeasured": [
     {
       "@type": "sc:PropertyValue",
@@ -97,11 +95,12 @@
     },
     {
       "@type": "cr:FileObject",
-      "@id": "decisions.jsonl",
-      "name": "decisions.jsonl",
+      "@id": "decisions_gated.jsonl",
+      "name": "decisions_gated.jsonl",
       "description": "Decision records emitted by the gate for this dataset.",
       "encodingFormat": "application/jsonl",
-      "contentUrl": "decisions.jsonl"
+      "contentUrl": "/run/media/chelex/TOSHIBA2TB/g/dk-nfcore-admission-gate/results/decisions_gated.jsonl",
+      "sha256": "e3d9d60e43b2742a43018e1ca45a8578d334fc2c7822fd53513dd55f6825e0dd"
     }
   ],
   "cpol:policy": {
@@ -179,7 +178,7 @@
       }
     ],
     "cpol:decisionRecord": {
-      "@id": "decisions.jsonl"
+      "@id": "decisions_gated.jsonl"
     }
   }
 }

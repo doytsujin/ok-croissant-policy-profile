@@ -4,11 +4,14 @@ Two things live here because they are the same question asked twice. `strip()`
 removes the policy layer and asks what is left; `validate()` asks whether the
 document was allowed to add that layer in the first place.
 
-What this does not do is claim the document is valid Croissant. Nothing in this
-repository can claim that -- only MLCommons' `mlcroissant` can, and SPEC
-section 9 records that it has not been run. The validator reports that as a
-warning on every document rather than checking a weaker structural condition
-and letting the reader assume it was the real thing.
+What this does not do is claim the document is valid Croissant. Only MLCommons'
+`mlcroissant` can say that, and it is a separate step --
+`tools/validate_mlcroissant.py` -- because it pulls in pandas, numpy, scipy and
+rdflib while this package stays standard library only. The warning on every
+report says so, rather than letting a structural check be mistaken for the real
+thing. SPEC section 9 records the outcome of running it: as of mlcroissant
+1.1.0, all three documents in `examples/` load with zero errors and the
+`@context` matches MLCommons' generated one exactly.
 """
 
 from __future__ import annotations
@@ -23,8 +26,9 @@ from .parse import _as_list
 from .vocab import CPOL_NS, CROISSANT_CONTEXT, CROISSANT_IRI, OPERATORS, PROFILE_IRI
 
 _MLCROISSANT_WARNING = (
-    "the @context has not been checked against MLCommons' mlcroissant validator; "
-    "conformance clause 1 is unverified (SPEC section 9)"
+    "this validator checks the profile's conformance clauses structurally and does not "
+    "parse JSON-LD; run tools/validate_mlcroissant.py for Croissant validity "
+    "(SPEC section 9)"
 )
 
 

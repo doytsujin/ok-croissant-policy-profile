@@ -38,49 +38,68 @@ REFUSAL_STATE = "STATE_PRECONDITION"
 REFUSAL_CONDITION = "CONDITION_VIOLATED"
 
 # Croissant 1.0's own context, reproduced so that an emitted document is
-# self-contained and does not depend on a network fetch to be read. See SPEC
-# section 9: this has not been checked against MLCommons' reference validator,
-# and the profile says so rather than implying it has.
+# self-contained and does not depend on a network fetch to be read.
+#
+# Copied from MLCommons' own generator (`mlcroissant._src.core.rdf.make_context`
+# at CroissantVersion.V_1_0) rather than transcribed from the spec prose. The
+# first hand-written version of this table carried four terms it should not have
+# -- `arrayShape` and `isArray`, which are Croissant 1.1, and `dataBiases` and
+# `dataCollection`, which are not Croissant terms at any version -- and was
+# missing `equivalentProperty` and `samplingRate`. mlcroissant reported it as a
+# non-standard context. Regenerate with tools/validate_mlcroissant.py rather
+# than editing by hand.
 CROISSANT_CONTEXT = {
-    "@language": "en",
-    "@vocab": "https://schema.org/",
-    "arrayShape": "cr:arrayShape",
-    "citeAs": "cr:citeAs",
-    "column": "cr:column",
-    "conformsTo": "dct:conformsTo",
-    "cr": "http://mlcommons.org/croissant/",
-    "data": {"@id": "cr:data", "@type": "@json"},
-    "dataBiases": "cr:dataBiases",
-    "dataCollection": "cr:dataCollection",
-    "dataType": {"@id": "cr:dataType", "@type": "@vocab"},
-    "dct": "http://purl.org/dc/terms/",
-    "examples": {"@id": "cr:examples", "@type": "@json"},
-    "extract": "cr:extract",
-    "field": "cr:field",
-    "fileObject": "cr:fileObject",
-    "fileProperty": "cr:fileProperty",
-    "fileSet": "cr:fileSet",
-    "format": "cr:format",
-    "includes": "cr:includes",
-    "isArray": "cr:isArray",
-    "isLiveDataset": "cr:isLiveDataset",
-    "jsonPath": "cr:jsonPath",
-    "key": "cr:key",
-    "md5": "cr:md5",
-    "parentField": "cr:parentField",
-    "path": "cr:path",
-    "rai": "http://mlcommons.org/croissant/RAI/",
-    "recordSet": "cr:recordSet",
-    "references": "cr:references",
-    "regex": "cr:regex",
-    "repeated": "cr:repeated",
-    "replace": "cr:replace",
-    "sc": "https://schema.org/",
-    "separator": "cr:separator",
-    "source": "cr:source",
-    "subField": "cr:subField",
-    "transform": "cr:transform",
-}
+        "@language": "en",
+        "@vocab": "https://schema.org/",
+        "citeAs": "cr:citeAs",
+        "column": "cr:column",
+        "conformsTo": "dct:conformsTo",
+        "cr": "http://mlcommons.org/croissant/",
+        "data": {
+            "@id": "cr:data",
+            "@type": "@json"
+        },
+        "dataType": {
+            "@id": "cr:dataType",
+            "@type": "@vocab"
+        },
+        "dct": "http://purl.org/dc/terms/",
+        "equivalentProperty": "cr:equivalentProperty",
+        "examples": {
+            "@id": "cr:examples",
+            "@type": "@json"
+        },
+        "extract": "cr:extract",
+        "field": "cr:field",
+        "fileObject": "cr:fileObject",
+        "fileProperty": "cr:fileProperty",
+        "fileSet": "cr:fileSet",
+        "format": "cr:format",
+        "includes": "cr:includes",
+        "isLiveDataset": "cr:isLiveDataset",
+        "jsonPath": "cr:jsonPath",
+        "key": "cr:key",
+        "md5": "cr:md5",
+        "parentField": "cr:parentField",
+        "path": "cr:path",
+        "rai": "http://mlcommons.org/croissant/RAI/",
+        "recordSet": "cr:recordSet",
+        "references": "cr:references",
+        "regex": "cr:regex",
+        "repeated": "cr:repeated",
+        "replace": "cr:replace",
+        "samplingRate": "cr:samplingRate",
+        "sc": "https://schema.org/",
+        "separator": "cr:separator",
+        "source": "cr:source",
+        "subField": "cr:subField",
+        "transform": "cr:transform"
+    }
+
+# RAI terms are reached through the `rai` prefix, which the official context
+# binds. There is no bare `dataCollection` alias in Croissant; writing one would
+# resolve against @vocab to a schema.org term that does not exist.
+RAI_DATA_COLLECTION = "rai:dataCollection"
 
 
 def context() -> dict:

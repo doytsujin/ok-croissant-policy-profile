@@ -233,6 +233,16 @@ checking it. A caller that satisfies the projected schema MUST still be gated.
   who supplied that context, and whether they were entitled to, is out of scope.
   Binding this to a caller identity is the obvious next version, and the point at
   which this stops being expressible as a static document.
+
+  This omission is deliberate rather than pending. A rule about the caller does
+  not belong in a document that travels with the data, so the caller-side
+  authority stays outside the profile and is composed with it instead; see
+  `croissant_policy/caller.py` and PAPER.md section 4. Measured over the same
+  request space, the two authorities refuse different things in both directions,
+  and each has a class of rule the other cannot express -- the dataset's
+  lifecycle state on one side, the caller's entitlement and assurance on the
+  other. Merging them into one document would not remove that; it would hide
+  which authority decided.
 - **No obligations or duties.** ODRL-style consequences ("on use, notify X") are
   absent. Only permission is modelled.
 - **No temporal or stateful conditions.** No windows, quotas, or counters.
@@ -246,9 +256,40 @@ here, rather than a place where the profile quietly permits.
 
 ## 9. Validation status
 
-The `@context` in this draft was written against Croissant 1.0 as published and
-has **not** been checked with MLCommons' reference `mlcroissant` validator. Doing
-so is a precondition for any external submission, and conformance clause 3.1 is
-unverified until then -- the validator in this repository reports it as a warning
-rather than pretending to check it. Everything in sections 5 through 7 is
-exercised by the test suite against the reference evaluator.
+**Checked with `mlcroissant` 1.1.0 against Croissant 1.0.** All three documents
+in `examples/` load, with zero errors. The `@context` is byte-identical to the
+one MLCommons' own generator produces for version 1.0.
+
+Getting there corrected three real defects, which is the argument for doing it
+rather than asserting clause 1 was satisfied:
+
+1. The hand-written `@context` carried four terms it should not have --
+   `arrayShape` and `isArray`, which are Croissant 1.1, and `dataBiases` and
+   `dataCollection`, which are not Croissant terms at any version -- and was
+   missing `equivalentProperty` and `samplingRate`. `mlcroissant` reported the
+   context as non-standard. It is now generated from MLCommons' own function
+   rather than transcribed.
+2. The profile was writing provenance of collection to a bare `dataCollection`
+   key, which under `@vocab` resolved to a schema.org term that does not exist.
+   RAI terms are reached through the `rai:` prefix; it is now
+   `rai:dataCollection`.
+3. A `cr:FileObject` must carry `md5` or `sha256`. The decision-record node had
+   neither. The emitter now computes a SHA-256 from the file, and a directory of
+   decision logs becomes a `cr:FileSet`, which is a pattern and needs no
+   checksum. A path that does not exist is refused rather than described with an
+   invented digest.
+
+Two warnings remain on the examples, both for *recommended* properties:
+`citeAs` and `datePublished`. Both are supported as emitter overrides and
+neither is invented for datasets whose citation and publication date are not
+known.
+
+Clause 1 is therefore verified for the documents in `examples/`. Note the
+distinction that remains: this repository's own validator checks the profile's
+conformance clauses structurally and does not parse JSON-LD.
+`tools/validate_mlcroissant.py` is what checks Croissant validity, it is a
+separate step because `mlcroissant` pulls in pandas, numpy, scipy and rdflib,
+and the profile itself remains standard library only.
+
+Everything in sections 5 through 7 is exercised by the test suite against the
+reference evaluator.

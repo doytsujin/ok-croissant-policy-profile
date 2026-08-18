@@ -1,0 +1,124 @@
+{
+  "dataOnlyRefused": {
+    "action": "aggregate",
+    "callerId": "analyst-agent",
+    "datasetId": "qc-report",
+    "agreement": "DATA_ONLY_REFUSED",
+    "precedence": "deny-overrides",
+    "verdict": "REFUSE",
+    "verdictsByPrecedence": {
+      "deny-overrides": "REFUSE",
+      "caller-overrides": "PERMIT",
+      "data-overrides": "REFUSE",
+      "caller-only": "PERMIT",
+      "data-only": "REFUSE"
+    },
+    "caller": {
+      "verdict": "PERMIT",
+      "datasetId": "analyst-agent",
+      "descriptorVersion": "2.1.0",
+      "action": "aggregate",
+      "observedState": "ATTESTED",
+      "reasonClass": null,
+      "reasons": [],
+      "conditionsChecked": [
+        {
+          "name": "dataset",
+          "operator": "in",
+          "expected": [
+            "qc-report"
+          ],
+          "observed": "qc-report",
+          "passed": true
+        }
+      ]
+    },
+    "data": {
+      "verdict": "REFUSE",
+      "datasetId": "qc-report",
+      "descriptorVersion": "1.0.0",
+      "action": "aggregate",
+      "observedState": "PENDING",
+      "reasonClass": "CONDITION_VIOLATED",
+      "reasons": [
+        "minInputStages: None violates >= 2",
+        "reportFormat: None violates in ['multiqc']"
+      ],
+      "conditionsChecked": [
+        {
+          "name": "minInputStages",
+          "operator": ">=",
+          "expected": 2,
+          "observed": null,
+          "passed": false
+        },
+        {
+          "name": "reportFormat",
+          "operator": "in",
+          "expected": [
+            "multiqc"
+          ],
+          "observed": null,
+          "passed": false
+        }
+      ]
+    }
+  },
+  "callerOnlyRefused": {
+    "action": "aggregate",
+    "callerId": "analyst-agent",
+    "datasetId": "trimmed-reads",
+    "agreement": "CALLER_ONLY_REFUSED",
+    "precedence": "deny-overrides",
+    "verdict": "REFUSE",
+    "verdictsByPrecedence": {
+      "deny-overrides": "REFUSE",
+      "caller-overrides": "REFUSE",
+      "data-overrides": "PERMIT",
+      "caller-only": "REFUSE",
+      "data-only": "PERMIT"
+    },
+    "caller": {
+      "verdict": "REFUSE",
+      "datasetId": "analyst-agent",
+      "descriptorVersion": "2.1.0",
+      "action": "aggregate",
+      "observedState": "ATTESTED",
+      "reasonClass": "CONDITION_VIOLATED",
+      "reasons": [
+        "dataset: 'trimmed-reads' violates in ['qc-report']"
+      ],
+      "conditionsChecked": [
+        {
+          "name": "dataset",
+          "operator": "in",
+          "expected": [
+            "qc-report"
+          ],
+          "observed": "trimmed-reads",
+          "passed": false
+        }
+      ]
+    },
+    "data": {
+      "verdict": "PERMIT",
+      "datasetId": "trimmed-reads",
+      "descriptorVersion": "1.1.0",
+      "action": "aggregate",
+      "observedState": "TRIMMED",
+      "reasonClass": null,
+      "reasons": [],
+      "conditionsChecked": [
+        {
+          "name": "reportFormat",
+          "operator": "in",
+          "expected": [
+            "multiqc"
+          ],
+          "observed": "multiqc",
+          "passed": true
+        }
+      ]
+    }
+  }
+}

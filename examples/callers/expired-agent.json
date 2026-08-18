@@ -1,0 +1,12 @@
+{
+  "callerId": "expired-agent",
+  "version": "3.0.1",
+  "assurance": "EXPIRED",
+  "note": "Broadly entitled, but its attestation has lapsed. Every entitlement requires ATTESTED, so the caller refuses on its own lifecycle -- the mirror image of a dataset state precondition, and the thing a data-side descriptor cannot see.",
+  "entitlements": [
+    {"action": "qc", "requiresAssurance": ["ATTESTED"], "conditions": {}},
+    {"action": "trim", "requiresAssurance": ["ATTESTED"], "conditions": {}},
+    {"action": "align", "requiresAssurance": ["ATTESTED"], "conditions": {}},
+    {"action": "aggregate", "requiresAssurance": ["ATTESTED"], "conditions": {}}
+  ]
+}

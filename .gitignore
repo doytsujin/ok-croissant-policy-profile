@@ -1,2 +1,6 @@
 __pycache__/
 *.pyc
+
+# mlcroissant and its pandas/numpy/scipy/rdflib tail live here, out of the way
+# of a package that is otherwise standard library only.
+.venv/

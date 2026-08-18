@@ -26,70 +26,10 @@ def corpus() -> dict[str, dict]:
     return out
 
 
-def _satisfying_value(spec):
-    """A context value that passes this native condition spec."""
-    if not isinstance(spec, dict):
-        return spec
-    if "min" in spec:
-        return spec["min"]
-    if "max" in spec:
-        return spec["max"]
-    if "in" in spec:
-        return spec["in"][0] if spec["in"] else None
-    if "equals" in spec:
-        return spec["equals"]
-    if "present" in spec:
-        return "anything" if spec["present"] else None
-    return "unknown-operator-cannot-be-satisfied"
-
-
-def _violating_value(spec):
-    """A context value that fails this native condition spec."""
-    if not isinstance(spec, dict):
-        return "not-the-expected-scalar"
-    if "min" in spec:
-        return spec["min"] - 1
-    if "max" in spec:
-        return spec["max"] + 1
-    if "in" in spec:
-        return "not-in-the-list"
-    if "equals" in spec:
-        return "not-equal"
-    if "present" in spec:
-        return None if spec["present"] else "unexpectedly-present"
-    return None
-
-
-def request_matrix(native: dict) -> list[tuple[str, dict]]:
-    """(action, context) pairs covering permit, every refusal class, and noise.
-
-    Generated from the descriptor rather than listed, so a new condition in the
-    corpus is covered the day it lands instead of the day somebody remembers to
-    extend the test.
-    """
-    cases: list[tuple[str, dict]] = []
-    for action in native.get("permissibleActions", []):
-        name = action["name"]
-        conditions = action.get("conditions", {}) or {}
-        satisfying = {k: _satisfying_value(v) for k, v in conditions.items()}
-
-        cases.append((name, dict(satisfying)))          # everything passes
-        cases.append((name, {}))                        # nothing supplied
-        cases.append((name, {"irrelevant": "value"}))   # keys no condition names
-        for key in conditions:                          # one violation at a time
-            ctx = dict(satisfying)
-            ctx[key] = _violating_value(conditions[key])
-            cases.append((name, ctx))
-        # A value of the wrong type, which numeric comparisons must not coerce.
-        for key, spec in conditions.items():
-            if isinstance(spec, dict) and ("min" in spec or "max" in spec):
-                ctx = dict(satisfying)
-                ctx[key] = "not-a-number"
-                cases.append((name, ctx))
-
-    cases.append(("no-such-action", {}))
-    cases.append(("", {}))
-    return cases
+# The request-matrix generator moved into the package (croissant_policy.requests)
+# when bench/precedence.py needed it too. Re-exported here so the test modules
+# that import it from support keep working.
+from croissant_policy.requests import request_matrix  # noqa: E402,F401
 
 
 def record(decision) -> dict:

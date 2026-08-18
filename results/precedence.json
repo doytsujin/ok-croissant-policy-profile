@@ -1,0 +1,88 @@
+{
+  "agreement": {
+    "AGREE_PERMIT": 12,
+    "AGREE_REFUSE": 137,
+    "CALLER_ONLY_REFUSED": 12,
+    "DATA_ONLY_REFUSED": 23
+  },
+  "bothDirections": true,
+  "byPrecedence": {
+    "caller-only": {
+      "PERMIT": 35,
+      "REFUSE": 149,
+      "UNSAFE_ADMISSION": 23
+    },
+    "caller-overrides": {
+      "PERMIT": 35,
+      "REFUSE": 149,
+      "UNSAFE_ADMISSION": 23
+    },
+    "data-only": {
+      "PERMIT": 24,
+      "REFUSE": 160,
+      "UNSAFE_ADMISSION": 12
+    },
+    "data-overrides": {
+      "PERMIT": 24,
+      "REFUSE": 160,
+      "UNSAFE_ADMISSION": 12
+    },
+    "deny-overrides": {
+      "PERMIT": 12,
+      "REFUSE": 172
+    }
+  },
+  "callerOnlyRefusedByClass": {
+    "CONDITION_VIOLATED": 2,
+    "STATE_PRECONDITION": 6,
+    "UNDECLARED_ACTION": 4
+  },
+  "callerSideIs": "designed, not measured -- see croissant_policy/caller.py",
+  "callers": [
+    "analyst-agent",
+    "expired-agent",
+    "pipeline-agent",
+    "readonly-agent"
+  ],
+  "cost": {
+    "callerOnlyMicros": 2.496,
+    "conjunctionColdMicros": 17.515,
+    "conjunctionWarmMicros": 5.719,
+    "dataOnlyMicros": 2.506
+  },
+  "dataOnlyRefusedByClass": {
+    "CONDITION_VIOLATED": 20,
+    "STATE_PRECONDITION": 3
+  },
+  "datasets": [
+    "qc-report",
+    "raw-reads",
+    "trimmed-reads"
+  ],
+  "disagreementRatePct": 19.02,
+  "perCaller": {
+    "analyst-agent": {
+      "AGREE_PERMIT": 5,
+      "AGREE_REFUSE": 24,
+      "CALLER_ONLY_REFUSED": 1,
+      "DATA_ONLY_REFUSED": 16
+    },
+    "expired-agent": {
+      "AGREE_REFUSE": 40,
+      "CALLER_ONLY_REFUSED": 6
+    },
+    "pipeline-agent": {
+      "AGREE_PERMIT": 5,
+      "AGREE_REFUSE": 39,
+      "CALLER_ONLY_REFUSED": 1,
+      "DATA_ONLY_REFUSED": 1
+    },
+    "readonly-agent": {
+      "AGREE_PERMIT": 2,
+      "AGREE_REFUSE": 34,
+      "CALLER_ONLY_REFUSED": 4,
+      "DATA_ONLY_REFUSED": 6
+    }
+  },
+  "requests": 184
+}

@@ -23,11 +23,12 @@ bad documents too, or it is not equivalence.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import sys
 from pathlib import Path
 
-from .vocab import CROISSANT_IRI, PROFILE_IRI, context
+from .vocab import CROISSANT_IRI, PROFILE_IRI, RAI_DATA_COLLECTION, context
 
 # Native condition keys in the precedence order gate/policy.py checks them.
 _NATIVE_OPERATOR_ORDER = ("min", "max", "in", "equals", "present")
@@ -54,7 +55,7 @@ _MIME = {
 # provenance fact because the profile has no term for it would be the same
 # silent loss the profile exists to prevent.
 _PROVENANCE_TERMS = {
-    "source": "dataCollection",        # rai:dataCollection -- how it was collected
+    "source": RAI_DATA_COLLECTION,     # rai:dataCollection -- how it was collected
     "derivedFrom": "isBasedOn",        # schema.org -- what it was derived from
     "producedBy": "measurementTechnique",  # schema.org -- what produced it
 }
@@ -266,21 +267,52 @@ def emit(
         doc["variableMeasured"] = variables
 
     distribution = _distribution(native)
+    record_id = None
     if decision_record:
-        distribution.append(
-            {
-                "@type": "cr:FileObject",
-                "@id": decision_record,
-                "name": decision_record,
-                "description": "Decision records emitted by the gate for this dataset.",
-                "encodingFormat": "application/jsonl",
-                "contentUrl": decision_record,
-            }
-        )
+        node = _decision_record_node(decision_record)
+        record_id = node["@id"]
+        distribution.append(node)
     doc["distribution"] = distribution
 
-    doc["cpol:policy"] = _policy(native, decision_record)
+    doc["cpol:policy"] = _policy(native, record_id)
     return doc
+
+
+def _decision_record_node(decision_record: str | Path) -> dict:
+    """The distribution node `cpol:decisionRecord` points at.
+
+    Croissant requires a `cr:FileObject` to carry `md5` or `sha256`, which is
+    the right requirement and one the profile cannot satisfy by inventing a
+    value. So the path must exist locally and the checksum is computed from it.
+    A directory of decision logs becomes a `cr:FileSet`, which needs no
+    checksum because it is a pattern rather than a byte sequence.
+    """
+    path = Path(decision_record)
+    if path.is_dir():
+        return {
+            "@type": "cr:FileSet",
+            "@id": path.name,
+            "name": path.name,
+            "description": "Decision records emitted by the gate for this dataset.",
+            "encodingFormat": "application/jsonl",
+            "includes": f"{path.as_posix()}/*.jsonl",
+        }
+    if path.is_file():
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        return {
+            "@type": "cr:FileObject",
+            "@id": path.name,
+            "name": path.name,
+            "description": "Decision records emitted by the gate for this dataset.",
+            "encodingFormat": "application/jsonl",
+            "contentUrl": path.as_posix(),
+            "sha256": digest,
+        }
+    raise EmitError(
+        f"--decision-record {decision_record!r} does not exist. Croissant requires a "
+        "FileObject to carry a checksum, and the profile will not emit one it cannot "
+        "compute. Point it at the decision log or the directory of logs."
+    )
 
 
 def emit_file(path: Path, **kw) -> dict:

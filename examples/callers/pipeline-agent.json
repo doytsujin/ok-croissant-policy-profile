@@ -1,0 +1,28 @@
+{
+  "callerId": "pipeline-agent",
+  "version": "1.4.2",
+  "assurance": "ATTESTED",
+  "note": "Scoped to agree with the data-side policy wherever both have an opinion. The control case.",
+  "entitlements": [
+    {
+      "action": "qc",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"platform": {"in": ["illumina"]}}
+    },
+    {
+      "action": "trim",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"platform": {"in": ["illumina"]}, "minReadLength": {"min": 20}}
+    },
+    {
+      "action": "align",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"minMapQ": {"min": 30}, "referenceBuild": {"in": ["GRCh38"]}}
+    },
+    {
+      "action": "aggregate",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"reportFormat": {"in": ["multiqc"]}, "minInputStages": {"min": 2}}
+    }
+  ]
+}

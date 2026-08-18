@@ -50,6 +50,9 @@ refusal rather than a gap.
 | C2 | Strip the `cpol:` terms and a plain Croissant consumer still has a loadable dataset | [tests/test_degradation.py](tests/test_degradation.py) | no residue, no redefined term, the descriptive half survives in standard vocabulary |
 | C3 | The profile path's cost is disclosed, not assumed | [bench/profile_overhead.py](bench/profile_overhead.py) | **+0.0 us** warm, **+11.9 us** cold per decision |
 | C4 | Capability schemas are derived from the policy, so they cannot drift from it | [tests/test_capabilities.py](tests/test_capabilities.py) | moving a threshold in the document moves the advertised `minimum` and the gate's verdict in the same edit |
+| — | The emitted documents are valid Croissant | [tools/validate_mlcroissant.py](tools/validate_mlcroissant.py) | all three load under `mlcroissant` 1.1.0 with zero errors; `@context` identical to MLCommons' generated one |
+| P1 | Caller-side and data-side policy disagree in **both** directions | [tests/test_precedence.py](tests/test_precedence.py) | each refuses requests the other admits; neither permit set contains the other |
+| P2 | Only the conjunction admits nothing either authority refused | [bench/precedence.py](bench/precedence.py) | `caller-only` admits **23**, `data-only` admits **12**, `deny-overrides` admits **0** |
 
 ## Measured overhead
 
@@ -77,6 +80,77 @@ The honest caveat is the same one the gate carries: this excludes interpreter
 startup, because it is measured inside the process. A per-task subprocess pays
 tens of milliseconds for `python3` itself, and that dominates both paths.
 
+## Croissant validity
+
+`tools/validate_mlcroissant.py` runs MLCommons' reference validator. It is a
+separate step behind a venv because `mlcroissant` pulls in pandas, numpy, scipy
+and rdflib, and this package is standard library only.
+
+Running it was worth doing rather than asserting. It found three defects:
+
+- The hand-written `@context` carried four terms it should not have —
+  `arrayShape` and `isArray` are Croissant **1.1**, and `dataBiases` and
+  `dataCollection` are not Croissant terms at any version — and was missing
+  `equivalentProperty` and `samplingRate`. It is now generated from MLCommons'
+  own function.
+- Provenance of collection was written to a bare `dataCollection` key, which
+  under `@vocab` resolved to a schema.org term that does not exist. RAI terms go
+  through the `rai:` prefix.
+- A `cr:FileObject` must carry `md5` or `sha256`; the decision-record node had
+  neither. The emitter now computes a SHA-256 from the file, a directory of logs
+  becomes a `cr:FileSet` (a pattern, no checksum needed), and a path that does
+  not exist is refused rather than described with an invented digest.
+
+Two warnings remain, both for *recommended* properties — `citeAs` and
+`datePublished`. Both are emitter overrides; neither is invented for a dataset
+whose citation and publication date are not known.
+
+## Experiment 2: caller-side vs data-side precedence
+
+An agent control plane binds policy to the **caller**. This profile binds it to
+the **data**. `bench/precedence.py` runs both over the same request space and
+counts what each deployment misses.
+
+The caller side is a **model** — four scopes in `examples/callers/` written in
+the structure those products describe — so the counts are designed, not
+measured. The data side is the real descriptor corpus. Both are evaluated by the
+same `gate.authorize`, deliberately: different evaluators would let a
+disagreement come from the evaluators rather than from the policies.
+
+184 requests, 4 caller scopes × 3 datasets × the generated matrix:
+
+| agreement | count |
+|---|---:|
+| Both permit | 12 |
+| Both refuse | 137 |
+| Only the caller refuses | 12 |
+| Only the dataset refuses | 23 |
+
+| deployment | admits a request an authority refused |
+|---|---:|
+| `caller-only` — an agent control plane alone | **23** |
+| `data-only` — an admission gate alone | **12** |
+| `deny-overrides` — both consulted | **0** |
+
+Neither permit set contains the other, so precedence is a real question. The
+part that does not depend on our choice of scopes: **each authority has a class
+of rule the other cannot express at all.** Three of the dataset's refusals turn
+on its lifecycle state, which no caller-side policy can name; six of the
+caller's turn on its own lapsed assurance and four on an entitlement it does not
+hold, which no descriptor can name.
+
+Cost with both descriptors resident: **5.7 µs** against 2.5 µs for one side —
+the expected factor of two. Running both is not expensive; it has simply not
+been specified.
+
+The joint receipt (`examples/joint-receipt.json`) carries both verdicts, both
+condition lists including the passing conditions of the authority that
+permitted, and what each of the five precedence rules would have decided.
+
+**These rates are not base rates.** The matrix is deliberately weighted toward
+violations; 19% disagreement is a property of the matrix, not of production
+traffic.
+
 ## Use
 
 ```bash
@@ -91,9 +165,14 @@ python3 -m croissant_policy.validate examples/*.json
 # Project onto an MCP tool list
 python3 -m croissant_policy.capabilities examples/*.json --out examples/capabilities.json
 
-# Tests and benchmark
+# Tests and benchmarks
 make test
-make bench
+make bench            # C3, the profile path's overhead
+make precedence       # experiment 2
+
+# Croissant validity (needs the venv)
+make venv
+make mlcroissant
 ```
 
 `NFGATE_ROOT` points at the gate's checkout. It defaults to
@@ -103,19 +182,22 @@ behaviour that would make the test suite lie.
 
 ## Honest limits
 
-- **The `@context` has not been checked against `mlcroissant`.** Conformance
-  clause 1 is therefore unverified, and the validator says so as a warning on
-  every document rather than checking a weaker structural condition and letting
-  the reader assume it was the real thing. Running MLCommons' validator is a
-  precondition for any external submission. See SPEC section 9.
+- **The caller side of experiment 2 is designed, not measured.** The four scopes
+  are ours. A different set produces different counts. What survives a different
+  set is the structural result: the disagreement exists in both directions and
+  each authority has a class of rule the other cannot express. Replacing the
+  model with a real control plane is the largest remaining gap.
+- **Croissant validity is verified for `examples/` only**, by
+  `tools/validate_mlcroissant.py`. This package's own validator checks the
+  profile's conformance clauses structurally and does not parse JSON-LD; it says
+  so on every report.
 - **The corpus is three descriptors.** Real ones, gating a real pipeline, but
   three. Equivalence over a generated request matrix on three descriptors is
   evidence, not proof.
-- **No identity, no entitlement.** Conditions are evaluated against a context;
-  who supplied it and whether they were entitled to is out of scope in 0.1.0.
-  That boundary is the interesting one -- an agent control plane binds policy to
-  the caller and cannot answer a question whose answer belongs to the data, and
-  this profile is the other half of that pair -- but the two halves have not
-  been run together and their precedence is undefined.
+- **No identity, no entitlement in the profile itself.** Conditions are
+  evaluated against a context; who supplied it is out of scope in 0.1.0. The
+  caller-side half lives in `croissant_policy/caller.py` as a separate
+  authority, not as a profile term, because a rule about the caller does not
+  belong in a document that travels with the data.
 - **The profile IRI is a placeholder.** It does not resolve and is not a claim
   on any registered namespace.

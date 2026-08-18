@@ -1,0 +1,13 @@
+{
+  "callerId": "readonly-agent",
+  "version": "1.0.0",
+  "assurance": "ATTESTED",
+  "note": "Entitled to inspect and nothing else. The case where the caller refuses what the dataset would admit.",
+  "entitlements": [
+    {
+      "action": "qc",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {}
+    }
+  ]
+}

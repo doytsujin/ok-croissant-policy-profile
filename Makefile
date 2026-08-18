@@ -4,7 +4,7 @@ PY ?= python3
 NFGATE ?= ../dk-nfcore-admission-gate
 DESCRIPTORS := $(wildcard $(NFGATE)/descriptors/*.json)
 
-.PHONY: all test bench examples validate capabilities clean
+.PHONY: all test bench precedence examples validate capabilities venv mlcroissant clean
 
 all: test examples validate
 
@@ -13,6 +13,17 @@ test:
 
 bench:
 	$(PY) bench/profile_overhead.py --iterations 5000
+
+precedence:
+	$(PY) bench/precedence.py
+
+# mlcroissant pulls in pandas/numpy/scipy/rdflib, so it lives in a venv and is
+# never a dependency of the package itself.
+venv:
+	$(PY) -m venv .venv && .venv/bin/pip install -q --upgrade pip && .venv/bin/pip install -q mlcroissant
+
+mlcroissant:
+	.venv/bin/python tools/validate_mlcroissant.py examples/*.croissant.json
 
 examples:
 	$(PY) -m croissant_policy.emit $(DESCRIPTORS) --outdir examples \

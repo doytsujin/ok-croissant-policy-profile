@@ -1,0 +1,28 @@
+{
+  "callerId": "analyst-agent",
+  "version": "2.1.0",
+  "assurance": "ATTESTED",
+  "note": "Entitled broadly, and its trim threshold is laxer than the data's. The case where a caller-side plane admits what the dataset refuses.",
+  "entitlements": [
+    {
+      "action": "qc",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"dataset": {"in": ["raw-reads", "trimmed-reads"]}}
+    },
+    {
+      "action": "trim",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"dataset": {"in": ["raw-reads"]}, "minReadLength": {"min": 10}}
+    },
+    {
+      "action": "align",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"dataset": {"in": ["raw-reads", "trimmed-reads"]}, "minMapQ": {"min": 30}}
+    },
+    {
+      "action": "aggregate",
+      "requiresAssurance": ["ATTESTED"],
+      "conditions": {"dataset": {"in": ["qc-report"]}}
+    }
+  ]
+}

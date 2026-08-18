@@ -21,17 +21,29 @@ the descriptor alone and leave a record of what was checked. The profile is
 deliberately narrow: a closed set of five operators, chosen so that every
 policy is decidable in constant time and explainable in one line.
 
-We show four things. Decisions taken from a profile document are identical --
-verdict, refusal class, reasons, and the full list of conditions checked -- to
-decisions taken from the native descriptor of a gate that has been run in front
-of a real nf-core pipeline. Removing the policy layer leaves a valid Croissant
-document, so a profile-unaware consumer is unaffected. The added cost is 0
-microseconds when the descriptor is reused and 11.9 microseconds when the
-document is re-read for every decision, against a gate process previously
-measured at 122 microseconds. And the policy projects deterministically onto
-Model Context Protocol tool schemas, so an agent registry ingests data-side
-policy without a human transcribing it -- which is the mechanism by which
-advertised constraints and enforced constraints stop drifting apart.
+We show four things about the profile. Decisions taken from a profile document
+are identical -- verdict, refusal class, reasons, and the full list of
+conditions checked -- to decisions taken from the native descriptor of a gate
+that has been run in front of a real nf-core pipeline. Removing the policy layer
+leaves a valid Croissant document, verified with MLCommons' `mlcroissant`, so a
+profile-unaware consumer is unaffected. The added cost is 0 microseconds when
+the descriptor is reused and 11.9 microseconds when the document is re-read for
+every decision, against a gate process previously measured at 122 microseconds.
+And the policy projects deterministically onto Model Context Protocol tool
+schemas, so an agent registry ingests data-side policy without a human
+transcribing it -- which is the mechanism by which advertised constraints and
+enforced constraints stop drifting apart.
+
+We then show one thing about the setting. Agent control planes bind policy to
+the caller; this profile binds it to the data. Running both authorities over the
+same request space, neither one's permit set contains the other's: each refuses
+requests the other admits, in both directions. A deployment that consults only
+the caller admits requests the dataset refuses, and a deployment that consults
+only the dataset admits requests the caller's own governance refuses. The
+conjunction closes both gaps for roughly twice the cost of one decision --
+5.7 microseconds against 2.5 -- and produces a single receipt naming both
+authorities and carrying both condition lists, including the authority that
+permitted.
 
 ## 1. The gap
 
@@ -193,7 +205,106 @@ from the same node. An operator outside the closed set projects as an
 unsatisfiable parameter, because a capability that can never be called should
 not advertise a callable schema.
 
-## 4. What this does not do
+## 4. Experiment 2: precedence between caller-side and data-side policy
+
+### 4.1 The question
+
+An agent control plane holds a registry of agents with an owner and a scope,
+evaluates each action against approved policy inline before execution, and
+blocks violations. That is structurally the same mechanism as the gate in
+section 3, aimed at a different subject: it binds policy to the *caller*, this
+profile binds it to the *data*.
+
+Neither is complete. A caller-side rule cannot answer a question whose answer
+belongs to the data, because the rule does not travel with the dataset. A
+data-side descriptor cannot answer whether the caller is still in scope, because
+the profile has no identity model and section 5 says so. Nothing in the vendor
+material or in the descriptor literature we found states which authority wins
+when they disagree, or whether the disagreement is recorded at all.
+
+### 4.2 Method, and what is designed rather than measured
+
+The data side is the corpus from section 3: three descriptors that gated a real
+run. **The caller side is a model, and every number below inherits that.** Four
+caller scopes are written in the structure the products describe -- an
+identifier, an assurance state, and entitlements conditioned on the request --
+representing a broadly entitled agent whose own threshold is laxer than the
+dataset's, an agent scoped to agree with the dataset, an inspection-only agent,
+and an agent whose attestation has lapsed.
+
+One deliberate control: both authorities are evaluated by the same function. A
+caller scope is translated into the same descriptor model and handed to the same
+`gate.authorize`. If the two halves used different evaluators, a disagreement
+could come from the evaluators rather than from the policies, and precedence
+would not be the only variable.
+
+The caller is given the request context plus the dataset's *name*. It is not
+given the dataset's state, because that is exactly what does not travel with the
+caller; supplying it would model a product that does not exist.
+
+Five rules are enumerated rather than assumed: `deny-overrides` (permit only if
+both permit), `caller-overrides`, `data-overrides`, and the two single-sided
+deployments that actually exist today, `caller-only` and `data-only`.
+
+### 4.3 Results
+
+184 requests: 4 caller scopes × 3 datasets × the generated request matrix.
+
+| agreement | count | share |
+|---|---:|---:|
+| Both permit | 12 | 6.5% |
+| Both refuse | 137 | 74.5% |
+| Only the caller refuses | 12 | 6.5% |
+| Only the dataset refuses | 23 | 12.5% |
+
+**Neither permit set contains the other.** Both disagreement classes are
+non-empty, so precedence is a real question rather than an artifact of one
+policy being stricter throughout.
+
+| precedence rule | permits | admits a request an authority refused |
+|---|---:|---:|
+| `deny-overrides` | 12 | **0** |
+| `caller-overrides` / `caller-only` | 35 | **23** (12.5% of requests) |
+| `data-overrides` / `data-only` | 24 | **12** (6.5% of requests) |
+
+The two rows that are not `deny-overrides` are the two products that exist. An
+agent control plane operating alone admits every request in the fourth row of
+the first table; an admission gate operating alone admits every request in the
+third.
+
+What each side structurally cannot reach is more interesting than the totals.
+Of the 23 requests only the dataset refused, 20 violate a condition the caller
+never carried and **3 turn on the dataset's lifecycle state** -- a class of rule
+no caller-side policy can express, because the state is not a property of the
+caller. Of the 12 only the caller refused, 6 turn on the caller's own lapsed
+assurance and 4 on an entitlement the caller does not hold: the mirror image,
+and equally unreachable from a descriptor.
+
+**Cost.** With both descriptors resident, the conjunction is 5.7 µs against
+2.5 µs for either side alone -- the expected factor of two plus bookkeeping.
+Re-translating both documents per decision costs 17.6 µs. Running both
+authorities is not expensive; it has simply not been specified.
+
+**One receipt.** The joint record carries both verdicts, both refusal classes,
+both reason lists, and both condition lists including the passing conditions of
+the authority that permitted, plus what each of the five rules would have
+decided. A record that keeps only the refusing half cannot show the other
+authority was consulted, which is the reason to have one record rather than two.
+
+### 4.4 What these numbers are not
+
+The rates are properties of the generated request matrix, which is deliberately
+weighted toward violations -- one per condition, plus wrong types and undeclared
+actions. They are not base rates of production traffic, and the 19% disagreement
+figure should not be read as one. What the matrix does establish is
+directional and structural: the disagreement exists in both directions, it is
+not removable by choosing a stricter policy on either side, and each authority
+has a class of rule the other cannot express at all.
+
+The caller scopes are ours. A different set produces different counts. The
+result that does not depend on them is the one in the previous paragraph.
+
+## 5. What this does not do
 
 No identity and no entitlement: conditions are evaluated against a context, and
 who supplied it is out of scope. No obligations or duties. No temporal or
@@ -204,13 +315,24 @@ rather than the prose merely stating.
 Each omission is a place where the honest answer is that the mechanism is not
 here, rather than a place where the profile quietly permits.
 
-## 5. Threats to validity
+## 6. Threats to validity
 
-The `@context` has not been checked against MLCommons' `mlcroissant`
-validator. Conformance clause 1 is therefore unverified, and the profile's own
-validator reports that as a warning on every document instead of checking a
-weaker structural condition and letting a reader assume it was the real thing.
-This is the first thing to close before submission anywhere.
+The `@context` has now been checked against MLCommons' `mlcroissant` 1.1.0: all
+three example documents load with zero errors and the context is identical to
+the one MLCommons' own generator produces for Croissant 1.0. Doing so found
+three defects that assertion would not have. The hand-written context carried
+four terms it should not have -- two of them Croissant 1.1, two of them not
+Croissant terms at any version -- and was missing two; provenance of collection
+was being written to a bare `dataCollection` key that resolved to a schema.org
+term that does not exist, rather than through the `rai:` prefix; and the
+decision-record node was a `cr:FileObject` without the checksum Croissant
+requires, which the emitter now computes rather than invents. Two warnings
+remain on the examples, both for recommended properties (`citeAs`,
+`datePublished`) that are supported as overrides and not fabricated.
+
+That closes conformance clause 1 for the documents in `examples/`. It does not
+close it in general: the profile's own validator checks the conformance clauses
+structurally and does not parse JSON-LD.
 
 The corpus is three descriptors. They are real and they gated real execution,
 but equivalence over a generated matrix on three descriptors is evidence and
@@ -220,16 +342,18 @@ and makes both an underestimate of what a per-task subprocess costs.
 
 The profile IRI is a placeholder that does not resolve.
 
-## 6. Next
+## 7. Next
 
-- Validate the `@context` with `mlcroissant` and report the result either way.
-- **The precedence experiment.** An agent control plane binds policy to the
-  caller; this profile binds policy to the data. Neither is complete, and no
-  vendor material or literature we found addresses what happens when the two
-  disagree -- which wins, and whether the disagreement produces one joint
-  receipt or two unrelated ones. The harness for this exists on both sides. It
-  is the natural second experiment and it is not done; nothing in this draft
-  should be read as having measured it.
+- **Replace the modelled caller side with a real one.** Section 4's structural
+  result stands on a model of an agent control plane. Running the conjunction
+  against an actual product -- watsonx Orchestrate's control plane, or Drata's
+  Mission Control -- would convert the direction into a measurement. This is now
+  the largest gap in the paper.
+- **A workload, not a matrix.** The disagreement rate needs a request
+  distribution that reflects something real before it means anything.
+- Extend the corpus beyond three descriptors.
 - Take the profile to the MLCommons Data working group as a proposal rather
   than publishing it only as a preprint. The value of a profile is proportional
-  to how many consumers implement it.
+  to how many consumers implement it, and section 4 gives the working group a
+  concrete reason to care: the profile is the half of the pair their members'
+  control planes cannot supply.
