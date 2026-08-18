@@ -116,3 +116,46 @@ class DocumentShape(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Namespace(unittest.TestCase):
+    """The namespace is load-bearing and easy to leave in a draft state."""
+
+    def test_the_profile_iri_is_not_a_placeholder(self):
+        # This test exists because the IRI *was* `example.invalid` for a while,
+        # and a placeholder that ships is a document nobody can resolve.
+        from croissant_policy.vocab import PROFILE_IRI
+
+        self.assertTrue(PROFILE_IRI.startswith("https://"))
+        for bad in ("example.invalid", "example.com", "example.org", "localhost", "TODO"):
+            self.assertNotIn(bad, PROFILE_IRI)
+
+    def test_the_namespace_is_the_iri_plus_a_slash(self):
+        from croissant_policy.vocab import CPOL_NS, PROFILE_IRI
+
+        self.assertEqual(CPOL_NS, PROFILE_IRI + "/")
+
+    def test_the_version_appears_in_the_iri(self):
+        # A version bump must move the namespace, or two versions of the profile
+        # become indistinguishable to a consumer.
+        from croissant_policy.vocab import PROFILE_IRI, PROFILE_VERSION
+
+        self.assertTrue(PROFILE_IRI.endswith(PROFILE_VERSION))
+
+    def test_the_served_context_matches_the_emitted_one(self):
+        # docs/ns/<version>/context.jsonld is what a client gets when it
+        # dereferences the namespace. If it disagrees with what the emitter
+        # writes, the profile means two different things depending on where you
+        # read it.
+        import json
+        from pathlib import Path
+
+        from croissant_policy.vocab import PROFILE_VERSION, context
+
+        served = json.loads(
+            (Path(__file__).resolve().parent.parent
+             / "docs" / "ns" / PROFILE_VERSION / "context.jsonld").read_text()
+        )["@context"]
+        emitted = context()
+        for term, definition in served.items():
+            self.assertEqual(emitted[term], definition, f"{term} differs from the emitted context")

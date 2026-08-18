@@ -1,0 +1,27 @@
+# https://w3id.org/croissant-policy
+#
+# A policy profile for Croissant dataset descriptors: an additive layer in which
+# a dataset declares the operations it admits and the conditions under which it
+# admits them, so that a gate can permit or refuse a request from the descriptor
+# alone and record what it checked.
+#
+# Maintainer: Alexander Chernov
+# Source and specification:
+#   https://github.com/doytsujin/ok-croissant-policy-profile
+
+Options +FollowSymLinks
+RewriteEngine on
+
+# Content negotiation: a client asking for JSON-LD gets the context document,
+# a browser gets the human-readable profile.
+RewriteCond %{HTTP_ACCEPT} application/ld\+json [OR]
+RewriteCond %{HTTP_ACCEPT} application/json
+RewriteRule ^([0-9]+\.[0-9]+\.[0-9]+)/?$ https://doytsujin.github.io/ok-croissant-policy-profile/ns/$1/context.jsonld [R=302,L]
+
+# Bare namespace -> the version index.
+RewriteRule ^$ https://doytsujin.github.io/ok-croissant-policy-profile/ns/ [R=302,L]
+
+# Everything else, including individual term IRIs such as
+# https://w3id.org/croissant-policy/0.1.0/policy, resolves under the profile
+# document for that version.
+RewriteRule ^(.+)$ https://doytsujin.github.io/ok-croissant-policy-profile/ns/$1 [R=302,L]

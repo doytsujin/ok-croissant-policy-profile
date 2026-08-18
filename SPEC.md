@@ -64,7 +64,8 @@ A document conforms to this profile when all of the following hold.
    losing the terms would fail clause 3, advertising a policy it does not
    carry. Separability means the claim is separable too.
 2. **`conformsTo` names both.** The dataset node MUST carry
-   `"conformsTo": ["http://mlcommons.org/croissant/1.0", "<profile IRI>/0.1.0"]`.
+   `"conformsTo": ["http://mlcommons.org/croissant/1.0",
+   "https://w3id.org/croissant-policy/0.1.0"]`.
 3. **Exactly one policy.** The dataset node MUST carry exactly one
    `cpol:policy`, whose value is a `cpol:Policy` node.
 4. **Fail-closed is declared and true.** `cpol:failClosed` MUST be present on
@@ -77,12 +78,23 @@ A document conforms to this profile when all of the following hold.
 ## 4. Namespace
 
 ```
-cpol: <profile IRI>/0.1.0/
+cpol: https://w3id.org/croissant-policy/0.1.0/
 ```
 
-The profile IRI is unresolved in this draft. It is a placeholder and is
-deliberately not a claim on any registered namespace. Nothing in the profile
-depends on the IRI dereferencing.
+The namespace is a [w3id.org](https://w3id.org) permanent identifier. It
+dereferences to a human-readable profile document, and to the JSON-LD context
+under content negotiation for `application/ld+json`.
+
+A w3id rather than a direct URL, because the identifier has to outlive decisions
+about hosting: every conforming document embeds this string, so moving the
+document must not invalidate documents already in circulation. For the same
+reason the namespace is **never reassigned and never changed in place**. A new
+version gets a new path; it does not get a new host.
+
+Nothing in the profile *depends* on the IRI dereferencing. A conforming document
+is self-contained: it carries the full `@context` inline and can be read with no
+network access. Resolution is for the reader who wants to know what the terms
+mean, not for the evaluator.
 
 ## 5. Vocabulary
 

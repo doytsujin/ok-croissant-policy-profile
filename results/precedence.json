@@ -45,10 +45,10 @@
     "readonly-agent"
   ],
   "cost": {
-    "callerOnlyMicros": 2.496,
-    "conjunctionColdMicros": 17.515,
-    "conjunctionWarmMicros": 5.719,
-    "dataOnlyMicros": 2.506
+    "callerOnlyMicros": 2.471,
+    "conjunctionColdMicros": 17.392,
+    "conjunctionWarmMicros": 5.764,
+    "dataOnlyMicros": 2.542
   },
   "dataOnlyRefusedByClass": {
     "CONDITION_VIOLATED": 20,

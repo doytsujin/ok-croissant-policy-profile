@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Croissant Policy Profile 0.1.0</title>
+<link rel="alternate" type="application/ld+json" href="context.jsonld">
+<style>
+  :root { --fg:#1a1a1a; --bg:#fff; --mut:#5a5a5a; --line:#e2e2e2; --code:#f6f6f6; }
+  @media (prefers-color-scheme: dark) {
+    :root { --fg:#e8e8e8; --bg:#161616; --mut:#a0a0a0; --line:#333; --code:#1f1f1f; }
+  }
+  body { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 5rem;
+         font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: var(--fg); background: var(--bg); }
+  h1 { font-size: 1.6rem; margin-bottom: .25rem; }
+  .sub { color: var(--mut); margin-top: 0; }
+  h2 { font-size: 1.1rem; margin-top: 2.25rem; border-bottom: 1px solid var(--line); padding-bottom: .3rem; }
+  code, pre { background: var(--code); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .875em; }
+  code { padding: .1em .35em; border-radius: 3px; }
+  pre { padding: .85rem 1rem; border-radius: 5px; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; display: block; overflow-x: auto; }
+  th, td { text-align: left; padding: .45rem .7rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 600; white-space: nowrap; }
+  a { color: inherit; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--mut); font-size: .9rem; }
+</style>
+</head>
+<body>
+
+<h1>Croissant Policy Profile</h1>
+<p class="sub">Version 0.1.0 &middot; namespace <code>https://w3id.org/croissant-policy/0.1.0/</code> &middot; prefix <code>cpol</code></p>
+
+<p>Croissant describes what a dataset <em>is</em>. It does not say what may be
+<em>done</em> with it, by whom, in which state, or what happens when a consumer asks for
+something the dataset does not permit. This profile adds one additive layer to
+Croissant 1.0: a machine-checkable statement of the operations a dataset admits and the
+conditions under which it admits them, so that a gate in front of the data can permit or
+refuse a request from the descriptor alone, and leave a record of why.</p>
+
+<p>The design constraint that shapes it: <strong>a descriptor that can be refused from is
+only useful if the refusal is cheap, total, and auditable.</strong></p>
+
+<h2>Status</h2>
+<p>Draft proposal. This namespace is stable and will not be reassigned. Extending the
+operator set is a version bump, not an in-place change, because an evaluator must refuse
+an operator it does not implement.</p>
+
+<h2>Terms</h2>
+<table>
+<tr><th>Term</th><th>On</th><th>Meaning</th></tr>
+<tr><td><code>cpol:policy</code></td><td><code>sc:Dataset</code></td><td>The dataset's policy. Exactly one.</td></tr>
+<tr><td><code>cpol:Policy</code></td><td>type</td><td>State, fail-closed flag, handling metadata, permissible actions.</td></tr>
+<tr><td><code>cpol:state</code></td><td><code>cpol:Policy</code></td><td>Lifecycle state. Opaque; compared only for equality.</td></tr>
+<tr><td><code>cpol:failClosed</code></td><td><code>cpol:Policy</code></td><td>MUST be <code>true</code>. There is no conforming permissive mode.</td></tr>
+<tr><td><code>cpol:classification</code></td><td><code>cpol:Policy</code></td><td>Handling class. Informative.</td></tr>
+<tr><td><code>cpol:custodian</code></td><td><code>cpol:Policy</code></td><td>Who is accountable. Informative.</td></tr>
+<tr><td><code>cpol:retentionDays</code></td><td><code>cpol:Policy</code></td><td>Declared retention horizon. Carried, not enforced, in 0.1.0.</td></tr>
+<tr><td><code>cpol:rationale</code></td><td><code>cpol:Policy</code></td><td>Why the policy is what it is. Carried into decision records.</td></tr>
+<tr><td><code>cpol:decisionRecord</code></td><td><code>cpol:Policy</code></td><td>Where decision artifacts are written.</td></tr>
+<tr><td><code>cpol:permissibleAction</code></td><td><code>cpol:Policy</code></td><td>The operations this dataset admits. One or more.</td></tr>
+<tr><td><code>cpol:Action</code></td><td>type</td><td>One permissible operation and its preconditions.</td></tr>
+<tr><td><code>cpol:actionName</code></td><td><code>cpol:Action</code></td><td>Action identifier, unique within the policy.</td></tr>
+<tr><td><code>cpol:requiresState</code></td><td><code>cpol:Action</code></td><td>States admitting this action. Empty means state is not checked.</td></tr>
+<tr><td><code>cpol:capabilityName</code></td><td><code>cpol:Action</code></td><td>Overrides the default projected capability name.</td></tr>
+<tr><td><code>cpol:description</code></td><td><code>cpol:Action</code></td><td>Human-readable purpose; becomes the capability description.</td></tr>
+<tr><td><code>cpol:condition</code></td><td><code>cpol:Action</code></td><td>Conditions on the request context.</td></tr>
+<tr><td><code>cpol:Condition</code></td><td>type</td><td>One comparison between an expected operand and an observed value.</td></tr>
+<tr><td><code>cpol:conditionName</code></td><td><code>cpol:Condition</code></td><td>Key looked up in the request context.</td></tr>
+<tr><td><code>cpol:operator</code></td><td><code>cpol:Condition</code></td><td>One of the five below.</td></tr>
+<tr><td><code>cpol:expected</code></td><td><code>cpol:Condition</code></td><td>The operand. Typed <code>@json</code>.</td></tr>
+</table>
+
+<h2>The closed operator set</h2>
+<p>Five members, and closed is the point: every policy is decidable in constant time and
+explainable in one line. An evaluator MUST refuse an operator it does not implement, so a
+sixth operator added to a document turns <code>PERMIT</code> into <code>REFUSE</code>,
+never into an unchecked pass.</p>
+<table>
+<tr><th>Operator</th><th>Passes when</th><th>Operand</th></tr>
+<tr><td><code>cpol:min</code></td><td><code>observed &gt;= expected</code>, both numeric</td><td>number</td></tr>
+<tr><td><code>cpol:max</code></td><td><code>observed &lt;= expected</code>, both numeric</td><td>number</td></tr>
+<tr><td><code>cpol:in</code></td><td><code>observed</code> is a member of <code>expected</code></td><td>array</td></tr>
+<tr><td><code>cpol:equals</code></td><td><code>observed == expected</code></td><td>any JSON scalar</td></tr>
+<tr><td><code>cpol:present</code></td><td><code>(observed is not null) == expected</code></td><td>boolean</td></tr>
+</table>
+
+<h2>Conformance, in brief</h2>
+<p>Removing every <code>cpol:</code> term, and this profile IRI from
+<code>conformsTo</code>, MUST leave a valid Croissant 1.0 document. The dataset node
+carries exactly one <code>cpol:policy</code>. <code>cpol:failClosed</code> is present and
+true. Every condition uses an operator from the set above; an unrecognised one is a
+refusal at evaluation time, not a skipped check. The full text is in
+<a href="https://github.com/doytsujin/ok-croissant-policy-profile/blob/main/SPEC.md">SPEC.md</a>.</p>
+
+<h2>Minimal example</h2>
+<pre><code>{
+  "@context": { "...": "Croissant 1.0", "cpol": "https://w3id.org/croissant-policy/0.1.0/" },
+  "@type": "sc:Dataset",
+  "name": "raw-reads",
+  "conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "https://w3id.org/croissant-policy/0.1.0"
+  ],
+  "cpol:policy": {
+    "@type": "cpol:Policy",
+    "cpol:state": "QC_PASSED",
+    "cpol:failClosed": true,
+    "cpol:permissibleAction": [{
+      "@type": "cpol:Action",
+      "cpol:actionName": "trim",
+      "cpol:requiresState": ["QC_PASSED"],
+      "cpol:condition": [{
+        "@type": "cpol:Condition",
+        "cpol:conditionName": "minReadLength",
+        "cpol:operator": "cpol:min",
+        "cpol:expected": 20
+      }]
+    }]
+  }
+}</code></pre>
+
+<h2>Machine-readable</h2>
+<p><a href="context.jsonld">context.jsonld</a> — the term definitions this profile adds
+to Croissant's own context.</p>
+
+<footer>
+Specification, reference implementation, conformance validator and measured overhead:
+<a href="https://github.com/doytsujin/ok-croissant-policy-profile">github.com/doytsujin/ok-croissant-policy-profile</a>.
+Emitted documents are checked against MLCommons' <code>mlcroissant</code>.
+</footer>
+
+</body>
+</html>

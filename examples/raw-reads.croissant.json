@@ -45,7 +45,7 @@
     "source": "cr:source",
     "subField": "cr:subField",
     "transform": "cr:transform",
-    "cpol": "https://example.invalid/croissant-policy/0.1.0/",
+    "cpol": "https://w3id.org/croissant-policy/0.1.0/",
     "cpol:expected": {
       "@id": "cpol:expected",
       "@type": "@json"
@@ -56,7 +56,7 @@
   "description": "sequencing_reads described as a policy-bearing Croissant dataset. State: QC_PASSED. Source: nf-core/test-datasets (viralrecon illumina amplicon samplesheet).",
   "conformsTo": [
     "http://mlcommons.org/croissant/1.0",
-    "https://example.invalid/croissant-policy/0.1.0"
+    "https://w3id.org/croissant-policy/0.1.0"
   ],
   "version": "1.2.0",
   "url": "https://github.com/nf-core/test-datasets",

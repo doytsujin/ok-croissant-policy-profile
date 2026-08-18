@@ -80,6 +80,19 @@ The honest caveat is the same one the gate carries: this excludes interpreter
 startup, because it is measured inside the process. A per-task subprocess pays
 tens of milliseconds for `python3` itself, and that dominates both paths.
 
+## Namespace
+
+The profile IRI is `https://w3id.org/croissant-policy/0.1.0`, a
+[w3id.org](https://w3id.org) permanent identifier resolving to
+[the profile document](https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/),
+and to `context.jsonld` under content negotiation for `application/ld+json`. The
+document is served from `docs/ns/` in this repository; the w3id redirect rules
+are in `w3id/croissant-policy/.htaccess`.
+
+A w3id rather than a direct URL because every conforming document embeds this
+string. The identifier has to survive a change of hosting, so it is never
+reassigned and never changed in place — a new version gets a new path.
+
 ## Croissant validity
 
 `tools/validate_mlcroissant.py` runs MLCommons' reference validator. It is a
@@ -199,5 +212,10 @@ behaviour that would make the test suite lie.
   caller-side half lives in `croissant_policy/caller.py` as a separate
   authority, not as a profile term, because a rule about the caller does not
   belong in a document that travels with the data.
-- **The profile IRI is a placeholder.** It does not resolve and is not a claim
-  on any registered namespace.
+- **The reference gate lives in a private repository.** The profile imports its
+  evaluator from `dk-nfcore-admission-gate` rather than vendoring it, which is
+  the design decision that makes the equivalence claim mean anything — and it
+  means a third party cannot currently run the test suite. `reference.py` fails
+  with an explanation rather than silently falling back. Publishing that
+  repository is the fix; vendoring a copy is not, because the copy is exactly
+  what would drift.

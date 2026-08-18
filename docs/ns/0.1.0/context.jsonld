@@ -1,0 +1,6 @@
+{
+  "@context": {
+    "cpol": "https://w3id.org/croissant-policy/0.1.0/",
+    "cpol:expected": { "@id": "cpol:expected", "@type": "@json" }
+  }
+}

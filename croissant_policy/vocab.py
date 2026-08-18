@@ -9,9 +9,14 @@ from __future__ import annotations
 
 PROFILE_VERSION = "0.1.0"
 
-# Placeholder IRI. Deliberately not a claim on a registered namespace; nothing
-# in the profile depends on it dereferencing (SPEC section 4).
-PROFILE_IRI = f"https://example.invalid/croissant-policy/{PROFILE_VERSION}"
+# The namespace IRI. A w3id.org identifier redirecting to the hosted profile
+# document, which is the usual pattern for a vocabulary namespace: the
+# identifier outlives any decision about where the document is served from.
+#
+# This is permanent. Every emitted document embeds it, so changing it is not a
+# refactor -- it invalidates every document already in circulation. A version
+# bump gets a new path; it never gets a new host.
+PROFILE_IRI = f"https://w3id.org/croissant-policy/{PROFILE_VERSION}"
 CPOL_NS = PROFILE_IRI + "/"
 
 CROISSANT_IRI = "http://mlcommons.org/croissant/1.0"
