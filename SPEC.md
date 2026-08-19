@@ -251,8 +251,8 @@ checking it. A caller that satisfies the projected schema MUST still be gated.
   authority stays outside the profile and is composed with it instead; see
   `croissant_policy/caller.py` and `croissant_policy/conjunction.py`. Measured
   over the same request space, the two authorities refuse different things in
-  both directions,
-  and each has a class of rule the other cannot express -- the dataset's
+  both directions, and each has a class of rule the other cannot express -- the
+  dataset's
   lifecycle state on one side, the caller's entitlement and assurance on the
   other. Merging them into one document would not remove that; it would hide
   which authority decided.
