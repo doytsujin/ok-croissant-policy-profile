@@ -38,11 +38,12 @@ own** instead of joining the one the manual upload had just created. Nothing
 appeared where it was being looked for, and the conclusion drawn -- "no edit
 here can fix it" -- was reasoning from an absence that was not there.
 
-**The cost is a split citation**: two concept DOIs for one piece of software,
-one of them resolving to older code. A published Zenodo record cannot be deleted,
-only tombstoned with the DOI retained, so both integration records now carry a
-superseded note and an `isObsoletedBy` relation pointing at
-`10.5281/zenodo.22005283`.
+**The cost was a split citation**: two concept DOIs for one piece of software,
+one of them resolving to older code. That, together with the retired 122 us
+figure the archives published, is why all of them were deleted rather than
+superseded -- see [DEPOSIT.md](DEPOSIT.md). Zenodo deletes records on request
+within roughly 30 days of publication; after that the only correction left is a
+new version standing alongside the flawed one, permanently.
 
 **The webhook is disabled now** and there is no `.zenodo.json`. Leave it that
 way -- not because the integration is broken, but because this repository
@@ -81,10 +82,11 @@ and `deposit:actions`; only the second can publish.
 1. Cut and push the tag.
 2. Build the archive:
    `git archive --format=tar.gz --prefix=ok-croissant-policy-profile-vX.Y.Z/ vX.Y.Z -o ../ok-croissant-policy-profile-vX.Y.Z.tar.gz`
-3. **A new version of the existing record, not a new record:**
-   `POST /api/deposit/depositions/<newest-version-id>/actions/newversion`. This
-   is what keeps `10.5281/zenodo.22005283` resolving forward, and what stops a
-   third concept DOI appearing.
+3. `POST /api/deposit/depositions` with the complete metadata object and
+   `prereserve_doi`. Once this record exists, every subsequent release is a new
+   version of it -- `POST /api/deposit/depositions/<newest-id>/actions/newversion`
+   -- so that the concept DOI keeps resolving forward and no second concept
+   ever appears.
 4. Upload the archive to the draft's bucket, then `PUT` the complete metadata.
 5. Publish. Read the record back through the API and diff it against
    [DEPOSIT.md](DEPOSIT.md) -- do not trust the form view.
@@ -101,13 +103,19 @@ the three records above.
 
 Deposited by hand on 2026-08-18, which worked first time.
 
-| DOI | What it points at |
-|---|---|
-| `10.5281/zenodo.22005283` | **concept, canonical** — the newest version, whatever that is |
-| `10.5281/zenodo.22005284` | v0.1.5 specifically |
-| `10.5281/zenodo.22005346` | concept of the accidental duplicate — superseded, do not cite |
-| `10.5281/zenodo.22005347` | v0.1.4, made by the integration |
-| `10.5281/zenodo.22005386` | v0.1.2, made by the integration |
+**There is no record.** All of these were deleted on 2026-08-19 and none of
+them may be cited:
+
+| DOI | Was | Status |
+|---|---|---|
+| `10.5281/zenodo.22005283` | concept of the manual deposit | deleted |
+| `10.5281/zenodo.22005284` | v0.1.5 | deleted |
+| `10.5281/zenodo.22005346` | concept minted by the integration | deleted |
+| `10.5281/zenodo.22005347` | v0.1.4, integration | deletion requested |
+| `10.5281/zenodo.22005386` | v0.1.2, integration | deleted |
+
+The next deposit is a **new record** from v0.1.6, and it should be the only one
+this software ever has.
 
 ## Which DOI to cite
 

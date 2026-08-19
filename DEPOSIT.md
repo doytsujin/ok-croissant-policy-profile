@@ -1,10 +1,10 @@
 # Zenodo deposit sheet — v0.1.6
 
-**Not yet deposited.** This release goes in as a **new version of the existing
-record**, under concept DOI `10.5281/zenodo.22005283`. It is not a new record,
-and it must not become one: this software already has two concept DOIs and a
-third would make it worse. See [RELEASING.md](RELEASING.md) for how that
-happened.
+**Not yet deposited, and this is the first record.** Every earlier deposit was
+deleted on 2026-08-19 — see [RELEASING.md](RELEASING.md) for what they were and
+why they went. So v0.1.6 goes in as a **new record**, and it should be the only
+one this software ever has. Whatever concept DOI Zenodo mints for it is the one
+that gets cited everywhere, permanently, so deposit once and deposit deliberately.
 
 Deposit through the REST API, not the upload form. The token is at
 `~/.zenodo_token`. The form's defaults overwrite every field left untouched and
@@ -50,24 +50,27 @@ The first relation is the one Zenodo's own GitHub integration sets, so a
 deliberate deposit reads the same way as an automated one. Leave communities and
 grants empty — neither is in use.
 
-## Why v0.1.6 exists
+## Why the earlier records were deleted
 
-The v0.1.5 record's **metadata** was repaired in place on 2026-08-19 — version,
-keywords, related identifiers and the publication date, which the form had
-stamped UTC a day ahead of the tag. That part needed no new version, because
-metadata stays editable after publication.
+The v0.1.5 record's **metadata** was repairable and was repaired in place —
+version, keywords, related identifiers, and a publication date the form had
+stamped UTC a day ahead of the tag.
 
-Its **files** could not be repaired, and they are the reason for this release.
-The published v0.1.5 tarball contains two defects that a metadata edit cannot
-reach:
+Its **files** were not repairable, and that is what disqualified it:
 
 | Defect | Where | Why it disqualifies the archive |
 |---|---|---|
-| The retired **122 µs** figure | `README.md` ×2, `bench/profile_overhead.py` ×4, `croissant_policy/__init__.py`, `reference.py`, and as data in `results/profile_overhead.json` | 122 µs was the median over the **7** decisions of the single-run study. The 30-replicate run superseded it with **119 µs over 210 decisions**. The archive publishes a measurement its own authors have withdrawn, and the C3 projection is computed from it |
+| The retired **122 µs** figure | `README.md` ×2, `bench/profile_overhead.py` ×4, `croissant_policy/__init__.py`, `reference.py`, and as data in `results/profile_overhead.json` | 122 µs was the median over the **7** decisions of the single-run study. The 30-replicate run superseded it with **119 µs over 210 decisions**. The archive published a measurement its own authors had withdrawn, and the C3 projection was computed from it |
 | Absolute host path | 3 × `examples/*.croissant.json`, `results/profile_overhead.json` | `/run/media/<user>/...` identifies the machine that emitted the file. A file's name and SHA-256 identify it; its path does not |
 
-Files on a published record are frozen, so the only correction available is a
-new version. This is it.
+Files on a published record are frozen. Zenodo does, however, delete records on
+request within roughly 30 days of publication, and all three were a day old, so
+deletion was available where editing was not. Records 22005284 and 22005386 are
+gone (410); 22005347 was requested and is still live at the time of writing.
+
+**That window is the thing to remember.** After ~30 days the only remaining
+correction is a new version alongside the flawed one, forever. Deposit late
+enough to be right, early enough to still have the option.
 
 ## What changed for v0.1.6
 
@@ -98,10 +101,12 @@ curl -sL https://zenodo.org/api/records/<new-version-id> \
       print({k: m.get(k) for k in ('version','publication_date','keywords','related_identifiers')})"
 ```
 
-Then put the **concept** DOI — `10.5281/zenodo.22005283`, unchanged — in
-`CITATION.cff`, the README and the paper. It resolves forward to this version
-once published, which is the whole reason to cite the concept rather than a
-version.
+Then put the newly minted **concept** DOI — not the version DOI — in
+`CITATION.cff` `identifiers`, the README's opening line, and the paper's
+Availability section. The concept resolves forward to whatever the newest
+version is, which is why it is the one to cite. All three files currently carry
+no DOI at all, deliberately: a tag shipping a dead DOI is worse than one
+shipping none.
 
 ## Keep this in step
 
