@@ -249,8 +249,9 @@ checking it. A caller that satisfies the projected schema MUST still be gated.
   This omission is deliberate rather than pending. A rule about the caller does
   not belong in a document that travels with the data, so the caller-side
   authority stays outside the profile and is composed with it instead; see
-  `croissant_policy/caller.py` and PAPER.md section 4. Measured over the same
-  request space, the two authorities refuse different things in both directions,
+  `croissant_policy/caller.py` and `croissant_policy/conjunction.py`. Measured
+  over the same request space, the two authorities refuse different things in
+  both directions,
   and each has a class of rule the other cannot express -- the dataset's
   lifecycle state on one side, the caller's entitlement and assurance on the
   other. Merging them into one document would not remove that; it would hide
