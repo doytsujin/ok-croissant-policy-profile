@@ -22,40 +22,37 @@ neither can be removed from the v0.1.0 record.
 - [ ] `python3 -c "import json;json.load(open('.zenodo.json'))"` — valid
 - [ ] `.zenodo.json` `version` matches the tag
 
-### `.zenodo.json` — what actually works
+### There is no `.zenodo.json`, deliberately
 
-Three deposits failed before this was settled, so the findings are recorded
-rather than the reasoning repeated.
+Four deposits failed with it. Three different shapes were tried, each taken from
+documentation or from a real project whose deposits succeed, and every one
+failed:
 
-**`license` is an object with an SPDX id**, `{"id": "Apache-2.0"}`. Zenodo's own
-documentation example shows a bare lowercase string (`"license": "mit"`), and
-the legacy deposit API documents a lowercase controlled vocabulary that a live
-query confirms (`apache-2.0` resolves, `Apache-2.0` does not). **Both describe
-the legacy REST endpoint, not the GitHub integration path**, and following them
-produced a deposit that failed immediately. The shape that works is the one used
-by files that actually deposit — the Citation File Format project's own
-`.zenodo.json` is a good reference.
+| Attempt | `license` | `upload_type` | `publication_date` | Result |
+|---|---|---|---|---|
+| v0.1.0, v0.1.1 | `"Apache-2.0"` | `software` | absent | failed |
+| v0.1.2 | `"apache-2.0"` | `software` | present | failed |
+| v0.1.3 | `{"id": "Apache-2.0"}` | absent | absent | failed |
 
-**Do not add `publication_date`.** It is documented as required for
-`upload_type: software` on the legacy API. It is not used here, and working
-files omit it.
+The evidence contradicts itself, which is why chasing it further was not worth
+the releases it was costing. `developers.zenodo.org` documents a lowercase
+controlled vocabulary and a live query confirms it, but that endpoint is the
+legacy REST API and not the GitHub integration. Zenodo's own help page shows a
+bare lowercase string. The Citation File Format project deposits successfully
+with an object and no `upload_type`. **nipype deposits successfully with
+`"Apache-2.0"` and `upload_type: software` — which is exactly the shape that
+failed here.** So the licence form is not the discriminator and the real fault
+was never identified.
 
-**If a deposit fails again, delete `.zenodo.json`.** Zenodo falls back to
-`CITATION.cff`, then to `LICENSE`. `CITATION.cff` is a validated standard format
-and is well-formed here, so the fallback is not a downgrade — it loses only the
-Zenodo-specific fields (`communities`, `grants`, `related_identifiers`), none of
-which is in use. A deposit that happens beats richer metadata that does not.
-- [ ] Working tree clean, and everything pushed
+**The file is removed.** Zenodo's precedence is `.zenodo.json`, then
+`CITATION.cff`, then `LICENSE`; with the first gone, `CITATION.cff` drives the
+deposit. That is a validated standard format, it parses, and it carries title,
+authors, version, date, licence, abstract, keywords and repository — everything
+in the deleted file except `communities`, `grants` and `related_identifiers`,
+none of which were in use.
 
-## Tag and release
-
-```sh
-git tag -a vX.Y.Z -m "Croissant policy profile X.Y.Z"
-git push origin vX.Y.Z
-gh release create vX.Y.Z --title "X.Y.Z" --notes "..."
-```
-
-The GitHub release is what triggers Zenodo, not the tag.
+If a Zenodo-specific field is ever genuinely needed, add it on the record
+through Zenodo's own edit form rather than reintroducing this file.
 
 ## Which DOI to cite
 
