@@ -11,11 +11,16 @@ that answers those questions from the descriptor alone.
 
 The specification is [SPEC.md](SPEC.md). Everything below is about the code.
 
-Not yet archived. The v0.1.5 deposit and the two records Zenodo's GitHub
-integration made alongside it were deleted on 2026-08-19: they published a
-measurement this project has since withdrawn, and files on a Zenodo record
-cannot be edited. A single corrected record is deposited from v0.1.6; its
-concept DOI goes here and in `CITATION.cff` as part of that release.
+Archived at [doi:10.5281/zenodo.22018156](https://doi.org/10.5281/zenodo.22018156),
+which always resolves to the newest deposited version.
+
+The records deposited before it were deleted on 2026-08-19 rather than
+superseded: they published a 122 us gate-process figure taken from a 7-decision
+run, which a 30-replicate run had already replaced with 119 us over 210
+decisions. Files on a published record cannot be edited, so withdrawal was the
+only correction available. v0.1.6 is the first release deposited under the DOI
+above, and the DOIs 10.5281/zenodo.22005283, ...284, ...346, ...347 and ...386
+must not be cited.
 
 ## Three independent publications
 
@@ -25,7 +30,7 @@ to be read, reviewed or believed.
 
 | Perspective | Artifact | Destination |
 |---|---|---|
-| **Does it run, and what does it cost?** | this repository | GitHub public + Zenodo (DOI pending, see above) |
+| **Does it run, and what does it cost?** | this repository | GitHub public + [doi:10.5281/zenodo.22018156](https://doi.org/10.5281/zenodo.22018156) |
 | Is the argument sound, and what was measured? | the preprint | arXiv |
 | Should the vocabulary become a standard? | the specification proposal | github.com/mlcommons/croissant |
 

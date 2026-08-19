@@ -7,10 +7,15 @@ authors:
     given-names: Alexander
     orcid: "https://orcid.org/0009-0007-3198-2712"
 repository-code: "https://github.com/doytsujin/ok-croissant-policy-profile"
-# identifiers: intentionally absent until v0.1.6 is deposited. The previous
-# DOIs (10.5281/zenodo.22005283, ...284, ...346, ...347, ...386) were deleted
-# on 2026-08-19 and must not be cited; a tag that ships a dead DOI is worse
-# than one that ships none.
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22018156
+    description: "Concept DOI — resolves to the newest version. Cite this one."
+  - type: doi
+    value: 10.5281/zenodo.22018157
+    description: "Version DOI for v0.1.6."
+# The DOIs minted before these (10.5281/zenodo.22005283, ...284, ...346, ...347,
+# ...386) were deleted on 2026-08-19 and must not be cited or restored.
 url: "https://w3id.org/croissant-policy/0.1.0"
 abstract: >-
   An additive policy profile for Croissant dataset descriptors. A dataset
