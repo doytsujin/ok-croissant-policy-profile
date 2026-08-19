@@ -524,3 +524,40 @@ class GroupingTest(unittest.TestCase):
         doc = report.render(results, totals, mode=recheck.IMPACT)
         self.assertIn("`qc-report` (30)", doc)
         self.assertIn("Records set aside", doc)
+
+
+class DocumentLeakTest(unittest.TestCase):
+    """The assessment is handed out, so it must not carry the host's paths.
+
+    Same class of defect as the absolute paths that reached the public examples
+    and the material staged for MLCommons, and the same fix: the file's name
+    identifies it, its location identifies only the machine that emitted it.
+    """
+
+    def setUp(self):
+        from croissant_policy import report
+
+        self.report = report
+        self.results = [
+            recheck.Recheck("d", "a", None, recheck.UNCHANGED, "PERMIT", "PERMIT"),
+        ]
+        self.totals = recheck.summary(self.results)
+
+    def _doc(self, archive):
+        return self.report.render(self.results, self.totals, archive=archive)
+
+    def test_the_archive_is_named_not_located(self):
+        doc = self._doc("/run/media/chelex/DRIVE/receipts/decisions.jsonl")
+        self.assertIn("decisions.jsonl", doc)
+        self.assertNotIn("/run/media", doc)
+
+    def test_no_absolute_path_survives_into_the_document(self):
+        doc = self._doc("/tmp/somewhere/deep/archive.jsonl")
+        offenders = [
+            line for line in doc.splitlines()
+            if "/" in line and any(part.startswith("/") for part in line.split("`"))
+        ]
+        self.assertEqual(offenders, [], "an absolute path reached the document")
+
+    def test_an_unnamed_archive_still_renders(self):
+        self.assertIn("(stdin)", self._doc(""))

@@ -20,6 +20,12 @@ hundreds of identical entries. Listing them one per line does not make the
 document more complete; it makes the one distinct reason harder to find. Each
 distinct finding appears once with the number of decisions it covers.
 
+**The archive is named, not located.** This document is written to be handed to
+a quality function and attached to a change control. An absolute path in it
+identifies the machine that produced it and nothing a reader needs, so only the
+file's name is rendered. Normalising here rather than at the call site means no
+caller can reintroduce it.
+
 **The mode changes the language, and only the language.** In REVIEW the tool is
 asserting something about decisions already taken, which in a regulated setting
 is a finding. In IMPACT it is estimating the effect of a change not yet adopted,
@@ -28,6 +34,8 @@ a deviation notice in front of someone who asked for an estimate.
 """
 
 from __future__ import annotations
+
+from pathlib import Path
 
 from . import recheck as rk
 
@@ -98,7 +106,7 @@ def render(
         f"| | |",
         f"|---|---|",
         f"| Policy evaluated | `{policy}` |",
-        f"| Decision archive | `{archive or '(stdin)'}` |",
+        f"| Decision archive | `{Path(archive).name if archive else '(stdin)'}` |",
         f"| Records governed by this policy | {totals['total']} |",
     ]
     if totals.get("outOfScope"):
