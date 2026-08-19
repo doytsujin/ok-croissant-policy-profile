@@ -28,6 +28,14 @@ decision was taken, no observed value for it exists anywhere, and any verdict
 this module produced would be invented. It is reported, never assumed, in
 keeping with the fail-closed discipline the rest of the profile follows.
 
+**A policy only governs the records that name its dataset.** A real receipt
+store holds every dataset's decisions, so a mixed archive is the ordinary input
+rather than an error. What must not happen is re-deciding a foreign record
+anyway: a `qc-report` receipt put to the `raw-reads` policy is refused for
+naming an action that policy never declares, which reads as a newly-refused
+finding and is a fabrication. Foreign records are partitioned out and counted,
+never decided.
+
 **A record's re-decidability is proportional to how far its decision got.** A
 permit evaluated every condition and records them all. A refusal on state, or
 on an undeclared action, short-circuits before any condition is evaluated and
@@ -135,6 +143,39 @@ def facts(record: dict) -> dict:
     }
 
 
+def record_dataset_id(record: dict) -> str | None:
+    """Which dataset a stored record is about, or None if it does not say."""
+    for source in (data_side(record), record):
+        value = source.get("datasetId")
+        if isinstance(value, str) and value:
+            return value
+    return None
+
+
+def partition(records: list[dict], descriptor) -> tuple[list[dict], list[dict]]:
+    """Split an archive into what this policy governs and what it does not.
+
+    A record that names no dataset is set aside with the foreign ones. It may
+    well be in scope, but nothing in it says so, and deciding it anyway would
+    be the same guess `INDETERMINABLE` exists to refuse.
+    """
+    governed: list[dict] = []
+    foreign: list[dict] = []
+    for record in records:
+        target = governed if record_dataset_id(record) == descriptor.dataset_id else foreign
+        target.append(record)
+    return governed, foreign
+
+
+def out_of_scope_datasets(records: list[dict]) -> dict[str, int]:
+    """The datasets the set-aside records name, with counts. `?` names none."""
+    counts: dict[str, int] = {}
+    for record in records:
+        name = record_dataset_id(record) or "?"
+        counts[name] = counts.get(name, 0) + 1
+    return dict(sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])))
+
+
 def load_archive(path: str | Path) -> list[dict]:
     """Read a JSONL decision archive. Blank lines are skipped, not tolerated
     silently elsewhere -- a malformed line raises."""
@@ -188,12 +229,15 @@ def recheck_one(record: dict, descriptor) -> Recheck:
 
     known = facts(record)
     declared = descriptor.action(action) if action else None
+    # The record's own id, so that anything which reached this function
+    # mislabelled is visible in the output instead of wearing the policy's name.
+    dataset_id = record_dataset_id(record) or descriptor.dataset_id
 
     # A condition the record never evaluated has no observed value anywhere.
     missing = tuple(n for n in _required_names(declared) if n not in known)
     if missing:
         return Recheck(
-            dataset_id=descriptor.dataset_id,
+            dataset_id=dataset_id,
             action=action or "",
             caller_id=caller_id,
             outcome=INDETERMINABLE,
@@ -224,7 +268,7 @@ def recheck_one(record: dict, descriptor) -> Recheck:
         outcome = UNCHANGED
 
     return Recheck(
-        dataset_id=descriptor.dataset_id,
+        dataset_id=dataset_id,
         action=action or "",
         caller_id=caller_id,
         outcome=outcome,
@@ -273,13 +317,23 @@ def coverage(results: list[Recheck]) -> float:
     return decided / len(results)
 
 
-def summary(results: list[Recheck]) -> dict:
+def summary(results: list[Recheck], out_of_scope: list[dict] | None = None) -> dict:
+    """Totals over the decided records, plus what was set aside.
+
+    Coverage is deliberately a fraction of the *governed* records, not of the
+    archive. The two questions are different -- "could this policy be decided
+    against the decisions it governs" and "how much of this archive does this
+    policy govern" -- and averaging them into one number would hide both.
+    """
+    out_of_scope = out_of_scope or []
     counts = {o: 0 for o in OUTCOMES}
     for r in results:
         counts[r.outcome] += 1
     cov = coverage(results)
     return {
         "total": len(results),
+        "outOfScope": len(out_of_scope),
+        "outOfScopeDatasets": out_of_scope_datasets(out_of_scope),
         "counts": counts,
         "coverage": round(cov, 4),
         "dependable": cov >= 0.9,
@@ -293,12 +347,50 @@ def summary(results: list[Recheck]) -> dict:
 # ---- CLI ----------------------------------------------------------------
 
 
+def grouped(results: list[Recheck], *, by: str = "reasons") -> list[tuple[Recheck, int]]:
+    """Collapse identical outcomes to one entry with a count.
+
+    An archive is repetitive by construction: the same decision, taken on every
+    task of every replicate. Ninety identical lines are not ninety findings, and
+    printing them as though they were buries the one distinct reason instead of
+    showing it. Grouping is by what a reader would act on -- dataset, action,
+    caller, and the reason itself -- and the count is what tells them the size.
+
+    Nothing is truncated. The groups are few because the reasons are few, so a
+    cap would only introduce a silent limit where none is needed.
+    """
+    order: list[tuple] = []
+    counts: dict[tuple, int] = {}
+    first: dict[tuple, Recheck] = {}
+    for r in results:
+        key = (r.dataset_id, r.action, r.caller_id, r.missing if by == "missing" else r.reasons)
+        if key not in counts:
+            counts[key] = 0
+            first[key] = r
+            order.append(key)
+        counts[key] += 1
+    # Stable: ties keep the order the archive presented them in.
+    return sorted(((first[k], counts[k]) for k in order), key=lambda kv: -kv[1])
+
+
+def _times(n: int) -> str:
+    return f"   x{n}" if n > 1 else ""
+
+
 def _render(results: list[Recheck], totals: dict, mode: str = REVIEW) -> str:
     counts = totals["counts"]
     verb = "would be refused" if mode == IMPACT else "newly refused"
     lines = [
         f"rechecked {totals['total']} stored decision(s)"
         + (" against a proposed policy" if mode == IMPACT else ""),
+    ]
+    if totals.get("outOfScope"):
+        named = ", ".join(f"{k} {v}" for k, v in totals["outOfScopeDatasets"].items())
+        lines.append(
+            f"  {totals['outOfScope']} record(s) set aside — governed by another "
+            f"policy ({named})"
+        )
+    lines += [
         "",
         f"  coverage         {totals['coverage'] * 100:>5.1f}%"
         + ("" if totals["dependable"] else "   <- counts below are a LOWER BOUND"),
@@ -316,9 +408,9 @@ def _render(results: list[Recheck], totals: dict, mode: str = REVIEW) -> str:
             if mode == IMPACT
             else "newly refused under the current policy",
         ]
-        for r in refused:
+        for r, n in grouped(refused):
             who = f" caller={r.caller_id}" if r.caller_id else ""
-            lines.append(f"  {r.dataset_id}.{r.action}{who}")
+            lines.append(f"  {r.dataset_id}.{r.action}{who}{_times(n)}")
             for reason in r.reasons:
                 lines.append(f"      {reason}")
     undecided = [r for r in results if r.outcome == INDETERMINABLE]
@@ -327,9 +419,9 @@ def _render(results: list[Recheck], totals: dict, mode: str = REVIEW) -> str:
             "",
             "indeterminable — the record does not carry the facts the new policy needs",
         ]
-        for r in undecided:
+        for r, n in grouped(undecided, by="missing"):
             lines.append(
-                f"  {r.dataset_id}.{r.action}  missing: {', '.join(r.missing)}"
+                f"  {r.dataset_id}.{r.action}  missing: {', '.join(r.missing)}{_times(n)}"
             )
     return "\n".join(lines)
 
@@ -366,8 +458,22 @@ def main(argv: list[str] | None = None) -> int:
 
     records = load_archive(args.archive)
     descriptor = load_policy(args.policy)
-    results = recheck_all(records, descriptor)
-    totals = summary(results)
+    governed, foreign = partition(records, descriptor)
+
+    # An archive with records in it, none of which this policy governs, is a
+    # mismatched invocation rather than a result. Reporting "0 newly refused"
+    # would be a pass in review mode and an estimate of nothing in impact mode,
+    # and both would be read as an answer.
+    if records and not governed:
+        named = ", ".join(f"{k} ({v})" for k, v in out_of_scope_datasets(foreign).items())
+        print(
+            f"none of the {len(records)} record(s) in {args.archive} are governed "
+            f"by policy '{descriptor.dataset_id}'; the archive holds: {named}"
+        )
+        return 2
+
+    results = recheck_all(governed, descriptor)
+    totals = summary(results, foreign)
 
     if args.report:
         from . import report as report_mod  # noqa: PLC0415

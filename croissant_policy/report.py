@@ -14,6 +14,12 @@ be decided at all is not an incomplete report; it is a misleading one, because
 the reader will take 12 as the answer rather than as a lower bound over an
 unstated fraction.
 
+**Repetition is counted, not printed.** An archive records the same decision on
+every task of every replicate, so a single tightened condition can produce
+hundreds of identical entries. Listing them one per line does not make the
+document more complete; it makes the one distinct reason harder to find. Each
+distinct finding appears once with the number of decisions it covers.
+
 **The mode changes the language, and only the language.** In REVIEW the tool is
 asserting something about decisions already taken, which in a regulated setting
 is a finding. In IMPACT it is estimating the effect of a change not yet adopted,
@@ -93,14 +99,31 @@ def render(
         f"|---|---|",
         f"| Policy evaluated | `{policy}` |",
         f"| Decision archive | `{archive or '(stdin)'}` |",
-        f"| Records in archive | {totals['total']} |",
+        f"| Records governed by this policy | {totals['total']} |",
+    ]
+    if totals.get("outOfScope"):
+        named = ", ".join(
+            f"`{k}` ({v})" for k, v in totals["outOfScopeDatasets"].items()
+        )
+        out += [
+            f"| Records set aside | {totals['outOfScope']} |",
+            f"| Archive total | {totals['total'] + totals['outOfScope']} |",
+            "",
+            f"The archive also holds {totals['outOfScope']} decision(s) governed "
+            f"by another policy — {named}. They are not re-decided here and are "
+            "not counted in anything below: this policy has no authority over "
+            "them, and a verdict it produced for them would be an artefact of "
+            "asking the wrong document.",
+        ]
+    out += [
         "",
         "## Coverage — read this before the counts",
         "",
     ]
 
     out += [
-        f"**{_fmt_pct(cov)} of the archive could be decided against this policy.**",
+        f"**{_fmt_pct(cov)} of the records this policy governs could be "
+        f"decided against it.**",
         "",
     ]
     if totals["dependable"]:
@@ -136,18 +159,22 @@ def render(
     refused = [r for r in results if r.outcome == rk.NEWLY_REFUSED]
     if refused:
         out += [f"## {w['refused']}", "", w["caution"], ""]
-        for r in refused:
-            who = f", caller `{r.caller_id}`" if r.caller_id else ""
-            out.append(f"- **`{r.dataset_id}` / `{r.action}`**{who}")
-            for reason in r.reasons:
-                out.append(f"  - {reason}")
+        out += [
+            "| Dataset | Action | Decisions | Reason |",
+            "|---|---|---:|---|",
+        ]
+        for r, n in rk.grouped(refused):
+            who = f"<br>caller `{r.caller_id}`" if r.caller_id else ""
+            reasons = "; ".join(r.reasons) or "—"
+            out.append(f"| `{r.dataset_id}`{who} | `{r.action}` | {n} | {reasons} |")
         out.append("")
 
     permitted = [r for r in results if r.outcome == rk.NEWLY_PERMITTED]
     if permitted:
         out += [f"## {w['permitted']}", ""]
-        for r in permitted:
-            out.append(f"- `{r.dataset_id}` / `{r.action}`")
+        for r, n in rk.grouped(permitted):
+            count = f" — {n} decision(s)" if n > 1 else ""
+            out.append(f"- `{r.dataset_id}` / `{r.action}`{count}")
         out.append("")
 
     undecided = [r for r in results if r.outcome == rk.INDETERMINABLE]

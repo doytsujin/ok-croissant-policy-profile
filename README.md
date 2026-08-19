@@ -217,15 +217,24 @@ python3 -m croissant_policy.recheck decisions.jsonl --policy proposed.json \
     --mode impact --report assessment.md
 ```
 
+Run against the 285-record archive from the reference repository -- thirty
+replicates of a real `nf-core/demo` run -- with the `trim` read-length floor
+raised from 20 to 35:
+
 ```
-rechecked 4 stored decision(s) against a proposed policy
+rechecked 255 stored decision(s) against a proposed policy
+  30 record(s) set aside — governed by another policy (qc-report 30)
 
   coverage         100.0%
 
-  unchanged           2
-  would be refused    2
+  unchanged         165
+  would be refused   90
   newly permitted     0
   indeterminable      0
+
+would be refused if the proposed policy were adopted
+  raw-reads.trim   x90
+      minReadLength: 30 violates >= 35
 ```
 
 `--report` writes the assessment as a Markdown document — what was compared,
@@ -270,6 +279,27 @@ than smoothed over.
 For a joint receipt only the data-side policy is re-decided; the caller's
 verdict is taken as recorded, because re-deciding it would mean substituting our
 own document for a separate authority's.
+
+### A policy decides the records it governs, and no others
+
+A receipt store holds every dataset's decisions, so a mixed archive is the
+ordinary input rather than an error. Records governed by another policy are
+partitioned out, counted, and named -- never decided. Deciding one anyway
+produces a fabricated finding: an action this policy does not declare is
+refused, correctly, for a request that was never made, and the result reads as
+a permitted decision turned refusal.
+
+An archive that holds records but none this policy governs exits **2**. That is
+a mismatched invocation, not a result, and reporting it as zero findings would
+be a pass in review mode and an estimate of nothing in impact mode.
+
+### Repetition is counted, not printed
+
+The same decision is taken on every task of every replicate, so one tightened
+threshold produces ninety identical findings. Each distinct finding is stated
+once with the number of decisions it covers. Nothing is truncated -- the
+distinct reasons are few, so a cap would add a silent limit where none is
+needed.
 
 ## Use
 
