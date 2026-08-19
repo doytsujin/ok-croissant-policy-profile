@@ -66,6 +66,44 @@ On the date: `CITATION.cff` carries the tag's local date and Zenodo thinks in
 UTC, so the two can legitimately differ by a day. Set the record to match the
 tag rather than letting the default stand, and they stay comparable.
 
+## Post-publication audit — 2026-08-19
+
+The record was re-read against this sheet, as step 5 of
+[RELEASING.md](RELEASING.md) requires. **The files are correct**: the attached
+`ok-croissant-policy-profile-v0.1.5.tar.gz` is the full v0.1.5 tree, 62 entries,
+identical to the tag apart from the four files the post-deposit "cite the DOI"
+commit touched — which cannot be otherwise, since a DOI cannot be cited before
+it is minted. Both DOIs resolve, and the concept DOI redirects to the version as
+it should.
+
+**Four metadata fields did not take.** Licence was caught this time; the other
+three from the table above recurred, and keywords joined them:
+
+| Field | On the record | Should be |
+|---|---|---|
+| Version | *empty* | `0.1.5` |
+| Keywords | *empty* | croissant, dataset descriptors, admission control, data governance, provenance, agent governance |
+| Related identifiers | *empty* | the two rows above — repo tree `is supplement to`, profile IRI `is documented by` |
+| Publication date | `2026-08-19` | `2026-08-18` — the UTC default won again |
+
+**This is a form edit, not a new version.** Metadata stays editable after
+publication and only the files are frozen; the files are right, so nothing needs
+re-uploading and no v0.1.6 is required. Edit the published record at
+<https://zenodo.org/records/22005284>.
+
+Of the four, **related identifiers is the one that matters** beyond tidiness:
+without it the record stands unlinked to the repository and to the profile IRI,
+so a reader arriving at the DOI cannot reach the living artifact. That is what
+makes a deposit look like a placeholder rather than a publication.
+
+Verify afterwards with:
+
+```
+curl -sL https://zenodo.org/api/records/22005284 \
+  | python3 -c "import json,sys; m=json.load(sys.stdin)['metadata']; \
+      print({k: m.get(k) for k in ('version','publication_date','keywords','related_identifiers')})"
+```
+
 ## Keep this in step
 
 The version, date and description here are duplicated from `CITATION.cff` on
