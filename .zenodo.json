@@ -1,10 +1,14 @@
 {
   "title": "A Policy Profile for Croissant: Refusal as a Property of the Dataset",
   "upload_type": "software",
-  "license": "Apache-2.0",
+  "publication_date": "2026-08-19",
+  "version": "0.1.2",
+  "license": "apache-2.0",
   "access_right": "open",
   "creators": [
-    { "name": "Chernov, Alexander" }
+    {
+      "name": "Chernov, Alexander"
+    }
   ],
   "keywords": [
     "croissant",
