@@ -1,13 +1,17 @@
-# Zenodo deposit sheet — v0.1.5
+# Zenodo deposit sheet — v0.1.6
 
-**Deposited 2026-08-18.** Concept DOI `10.5281/zenodo.22005283` (cite this one),
-version DOI for v0.1.5 `10.5281/zenodo.22005284`.
+**Not yet deposited.** This release goes in as a **new version of the existing
+record**, under concept DOI `10.5281/zenodo.22005283`. It is not a new record,
+and it must not become one: this software already has two concept DOIs and a
+third would make it worse. See [RELEASING.md](RELEASING.md) for how that
+happened.
 
-Field values for Zenodo's upload form. The GitHub integration does not work for
-this repository, so the deposit is made by hand; see [RELEASING.md](RELEASING.md)
-for why and for the surrounding order.
+Deposit through the REST API, not the upload form. The token is at
+`~/.zenodo_token`. The form's defaults overwrite every field left untouched and
+did so four times on the v0.1.5 deposit; a complete metadata object sent in one
+request has nothing left to default.
 
-**File to attach:** `ok-croissant-policy-profile-v0.1.5.tar.gz`, built by
+**File to attach:** `ok-croissant-policy-profile-v0.1.6.tar.gz`, built by
 `git archive` from the tag — not a working-tree zip, which would carry whatever
 happened to be uncommitted.
 
@@ -17,8 +21,8 @@ happened to be uncommitted.
 | Title | A Policy Profile for Croissant: Refusal as a Property of the Dataset |
 | Creator | Chernov, Alexander |
 | ORCID | 0009-0007-3198-2712 |
-| Publication date | 2026-08-18 |
-| Version | 0.1.5 |
+| Publication date | 2026-08-19 |
+| Version | 0.1.6 |
 | Licence | Apache License 2.0 |
 | Language | English |
 
@@ -39,73 +43,69 @@ governance, provenance, agent governance
 
 | Identifier | Relation |
 |---|---|
-| `https://github.com/doytsujin/ok-croissant-policy-profile/tree/v0.1.5` | is supplement to |
+| `https://github.com/doytsujin/ok-croissant-policy-profile/tree/v0.1.6` | is supplement to |
 | `https://w3id.org/croissant-policy/0.1.0` | is documented by |
 
-The first relation is the one Zenodo's own GitHub integration sets, so a manual
-deposit reads the same way as an automated one. Leave communities and grants
-empty — neither is in use.
+The first relation is the one Zenodo's own GitHub integration sets, so a
+deliberate deposit reads the same way as an automated one. Leave communities and
+grants empty — neither is in use.
 
-## What the form does when you do not look
+## Why v0.1.6 exists
 
-Every field below was on this sheet and four of them still came out wrong on
-the first deposit, because Zenodo's defaults apply to anything left untouched:
+The v0.1.5 record's **metadata** was repaired in place on 2026-08-19 — version,
+keywords, related identifiers and the publication date, which the form had
+stamped UTC a day ahead of the tag. That part needed no new version, because
+metadata stays editable after publication.
 
-| Field | What the form did | Why it matters |
+Its **files** could not be repaired, and they are the reason for this release.
+The published v0.1.5 tarball contains two defects that a metadata edit cannot
+reach:
+
+| Defect | Where | Why it disqualifies the archive |
 |---|---|---|
-| Licence | defaulted to **CC-BY-4.0** | the record then contradicts the Apache-2.0 `LICENSE` inside its own tarball |
-| Version | left empty | nothing on the record says which release it is |
-| Publication date | stamped **UTC today** | a late-evening deposit in Toronto dates a day ahead of the tag |
-| Related identifiers | not carried over | the record stands unlinked to the repository and the profile IRI |
+| The retired **122 µs** figure | `README.md` ×2, `bench/profile_overhead.py` ×4, `croissant_policy/__init__.py`, `reference.py`, and as data in `results/profile_overhead.json` | 122 µs was the median over the **7** decisions of the single-run study. The 30-replicate run superseded it with **119 µs over 210 decisions**. The archive publishes a measurement its own authors have withdrawn, and the C3 projection is computed from it |
+| Absolute host path | 3 × `examples/*.croissant.json`, `results/profile_overhead.json` | `/run/media/<user>/...` identifies the machine that emitted the file. A file's name and SHA-256 identify it; its path does not |
 
-So the last step of a deposit is to re-read the published record against this
-table. Metadata stays editable after publication — only the files are frozen —
-so a field caught late is a form edit, not a new version.
+Files on a published record are frozen, so the only correction available is a
+new version. This is it.
 
-On the date: `CITATION.cff` carries the tag's local date and Zenodo thinks in
-UTC, so the two can legitimately differ by a day. Set the record to match the
-tag rather than letting the default stand, and they stay comparable.
+## What changed for v0.1.6
 
-## Post-publication audit — 2026-08-19
+- 122 µs retired in all nine locations, replaced by 119 µs with its provenance
+  recorded in `bench/profile_overhead.py` next to the constant
+- `results/profile_overhead.json` regenerated in-tree, not edited — the
+  projection moves to **130.7 µs**
+- README's overhead table re-read from the fresh run (+11.7 µs cold, was +11.9)
+- The claim that the gate stays "below the resolution of Nextflow's own trace"
+  removed. The replication measured a per-task delta of **+25.7 ms, 95% CI
+  [3.3, 48.2] ms**, an interval excluding zero. The cost is the per-task
+  subprocess, not the decision, and the README now says so
+- The namespace section no longer claims the w3id IRI resolves. It does not —
+  the registration PR is unsubmitted and the IRI returns 404
+- The P2 summary no longer reads `deny-overrides` **admits 0**, which is false;
+  it admits 12. It makes 0 admissions that some authority refused
+- `RELEASING.md`'s account of the GitHub integration corrected — it works, and
+  the split concept DOI is the consequence
 
-The record was re-read against this sheet, as step 5 of
-[RELEASING.md](RELEASING.md) requires. **The files are correct**: the attached
-`ok-croissant-policy-profile-v0.1.5.tar.gz` is the full v0.1.5 tree, 62 entries,
-identical to the tag apart from the four files the post-deposit "cite the DOI"
-commit touched — which cannot be otherwise, since a DOI cannot be cited before
-it is minted. Both DOIs resolve, and the concept DOI redirects to the version as
-it should.
+## After publishing
 
-**Four metadata fields did not take.** Licence was caught this time; the other
-three from the table above recurred, and keywords joined them:
-
-| Field | On the record | Should be |
-|---|---|---|
-| Version | *empty* | `0.1.5` |
-| Keywords | *empty* | croissant, dataset descriptors, admission control, data governance, provenance, agent governance |
-| Related identifiers | *empty* | the two rows above — repo tree `is supplement to`, profile IRI `is documented by` |
-| Publication date | `2026-08-19` | `2026-08-18` — the UTC default won again |
-
-**This is a form edit, not a new version.** Metadata stays editable after
-publication and only the files are frozen; the files are right, so nothing needs
-re-uploading and no v0.1.6 is required. Edit the published record at
-<https://zenodo.org/records/22005284>.
-
-Of the four, **related identifiers is the one that matters** beyond tidiness:
-without it the record stands unlinked to the repository and to the profile IRI,
-so a reader arriving at the DOI cannot reach the living artifact. That is what
-makes a deposit look like a placeholder rather than a publication.
-
-Verify afterwards with:
+Read the record back **through the API**, not the record page, and diff it
+against this sheet:
 
 ```
-curl -sL https://zenodo.org/api/records/22005284 \
+curl -sL https://zenodo.org/api/records/<new-version-id> \
   | python3 -c "import json,sys; m=json.load(sys.stdin)['metadata']; \
       print({k: m.get(k) for k in ('version','publication_date','keywords','related_identifiers')})"
 ```
 
+Then put the **concept** DOI — `10.5281/zenodo.22005283`, unchanged — in
+`CITATION.cff`, the README and the paper. It resolves forward to this version
+once published, which is the whole reason to cite the concept rather than a
+version.
+
 ## Keep this in step
 
 The version, date and description here are duplicated from `CITATION.cff` on
-purpose: the form is filled from this file, and a sheet that drifts from the
-tag deposits the wrong metadata permanently. Both are on the pre-tag checklist.
+purpose: the deposit is filled from this file, and a sheet that drifts from the
+tag deposits the wrong metadata permanently. Both are on the pre-tag checklist
+in [RELEASING.md](RELEASING.md).

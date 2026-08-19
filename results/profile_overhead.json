@@ -1,8 +1,9 @@
 {
-  "iterationsPerCase": 2000,
+  "iterationsPerCase": 5000,
   "referenceGate": "ok-nfcore-admission-gate",
-  "publishedGateProcessMedianMicros": 122,
+  "publishedGateProcessMedianMicros": 119,
   "publishedPolicyEvalMedianMicros": 11,
+  "publishedFigureSource": "ok-nfcore-admission-gate results/replication.json, gated arm, n=210 decisions over 30 replicates",
   "cases": [
     {
       "dataset": "qc-report",
@@ -14,57 +15,57 @@
       },
       "warm": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 2.501,
-          "meanMicros": 2.885,
-          "p95Micros": 2.648,
-          "minMicros": 2.336
+          "iterations": 5000,
+          "medianMicros": 2.519,
+          "meanMicros": 2.549,
+          "p95Micros": 2.706,
+          "minMicros": 2.34
         },
         "profile": {
-          "iterations": 2000,
-          "medianMicros": 2.451,
-          "meanMicros": 2.492,
-          "p95Micros": 2.599,
+          "iterations": 5000,
+          "medianMicros": 2.474,
+          "meanMicros": 2.686,
+          "p95Micros": 4.759,
           "minMicros": 2.316
         }
       },
       "cold": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 8.307,
-          "meanMicros": 8.631,
-          "p95Micros": 8.774,
-          "minMicros": 7.94
+          "iterations": 5000,
+          "medianMicros": 8.168,
+          "meanMicros": 8.249,
+          "p95Micros": 8.594,
+          "minMicros": 7.83
         },
         "profile": {
-          "iterations": 2000,
-          "medianMicros": 18.688,
-          "meanMicros": 19.675,
-          "p95Micros": 20.615,
-          "minMicros": 17.769
+          "iterations": 5000,
+          "medianMicros": 18.413,
+          "meanMicros": 18.667,
+          "p95Micros": 19.897,
+          "minMicros": 17.681
         }
       },
       "translationOnly": {
         "parseJson": {
-          "iterations": 2000,
-          "medianMicros": 9.713,
-          "meanMicros": 10.013,
-          "p95Micros": 10.076,
-          "minMicros": 9.342
+          "iterations": 5000,
+          "medianMicros": 9.66,
+          "meanMicros": 9.733,
+          "p95Micros": 9.995,
+          "minMicros": 9.33
         },
         "toNative": {
-          "iterations": 2000,
-          "medianMicros": 13.832,
-          "meanMicros": 14.545,
-          "p95Micros": 15.035,
-          "minMicros": 13.09
+          "iterations": 5000,
+          "medianMicros": 13.502,
+          "meanMicros": 13.628,
+          "p95Micros": 14.317,
+          "minMicros": 12.848
         },
         "toDescriptor": {
-          "iterations": 2000,
-          "medianMicros": 15.856,
-          "meanMicros": 16.454,
-          "p95Micros": 16.854,
-          "minMicros": 15.175
+          "iterations": 5000,
+          "medianMicros": 15.666,
+          "meanMicros": 15.77,
+          "p95Micros": 16.492,
+          "minMicros": 14.966
         }
       }
     },
@@ -78,57 +79,57 @@
       },
       "warm": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 1.419,
-          "meanMicros": 1.429,
-          "p95Micros": 1.472,
-          "minMicros": 1.365
+          "iterations": 5000,
+          "medianMicros": 1.415,
+          "meanMicros": 1.425,
+          "p95Micros": 1.471,
+          "minMicros": 1.359
         },
         "profile": {
-          "iterations": 2000,
-          "medianMicros": 1.437,
-          "meanMicros": 1.671,
-          "p95Micros": 1.531,
-          "minMicros": 1.378
+          "iterations": 5000,
+          "medianMicros": 1.42,
+          "meanMicros": 1.432,
+          "p95Micros": 1.482,
+          "minMicros": 1.364
         }
       },
       "cold": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 7.201,
-          "meanMicros": 7.512,
-          "p95Micros": 7.668,
-          "minMicros": 6.889
+          "iterations": 5000,
+          "medianMicros": 7.157,
+          "meanMicros": 7.213,
+          "p95Micros": 7.475,
+          "minMicros": 6.775
         },
         "profile": {
-          "iterations": 2000,
-          "medianMicros": 17.681,
-          "meanMicros": 18.348,
-          "p95Micros": 19.403,
-          "minMicros": 16.816
+          "iterations": 5000,
+          "medianMicros": 17.376,
+          "meanMicros": 17.483,
+          "p95Micros": 18.363,
+          "minMicros": 16.558
         }
       },
       "translationOnly": {
         "parseJson": {
-          "iterations": 2000,
-          "medianMicros": 9.722,
-          "meanMicros": 10.312,
-          "p95Micros": 10.106,
-          "minMicros": 9.424
+          "iterations": 5000,
+          "medianMicros": 9.684,
+          "meanMicros": 9.739,
+          "p95Micros": 10.01,
+          "minMicros": 9.306
         },
         "toNative": {
-          "iterations": 2000,
-          "medianMicros": 13.649,
-          "meanMicros": 14.081,
-          "p95Micros": 14.815,
-          "minMicros": 13.026
+          "iterations": 5000,
+          "medianMicros": 13.578,
+          "meanMicros": 13.664,
+          "p95Micros": 14.243,
+          "minMicros": 12.913
         },
         "toDescriptor": {
-          "iterations": 2000,
-          "medianMicros": 15.72,
-          "meanMicros": 16.33,
-          "p95Micros": 16.896,
-          "minMicros": 15.076
+          "iterations": 5000,
+          "medianMicros": 15.683,
+          "meanMicros": 15.799,
+          "p95Micros": 16.657,
+          "minMicros": 15.041
         }
       }
     },
@@ -142,185 +143,185 @@
       },
       "warm": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 1.814,
-          "meanMicros": 1.838,
-          "p95Micros": 1.925,
-          "minMicros": 1.733
+          "iterations": 5000,
+          "medianMicros": 1.818,
+          "meanMicros": 1.831,
+          "p95Micros": 1.903,
+          "minMicros": 1.714
         },
         "profile": {
-          "iterations": 2000,
-          "medianMicros": 1.8,
-          "meanMicros": 1.819,
+          "iterations": 5000,
+          "medianMicros": 1.81,
+          "meanMicros": 1.822,
+          "p95Micros": 1.887,
+          "minMicros": 1.711
+        }
+      },
+      "cold": {
+        "native": {
+          "iterations": 5000,
+          "medianMicros": 8.929,
+          "meanMicros": 8.996,
+          "p95Micros": 9.33,
+          "minMicros": 8.534
+        },
+        "profile": {
+          "iterations": 5000,
+          "medianMicros": 21.113,
+          "meanMicros": 21.27,
+          "p95Micros": 22.348,
+          "minMicros": 20.026
+        }
+      },
+      "translationOnly": {
+        "parseJson": {
+          "iterations": 5000,
+          "medianMicros": 11.385,
+          "meanMicros": 11.496,
+          "p95Micros": 11.874,
+          "minMicros": 11.004
+        },
+        "toNative": {
+          "iterations": 5000,
+          "medianMicros": 16.283,
+          "meanMicros": 16.413,
+          "p95Micros": 17.018,
+          "minMicros": 15.528
+        },
+        "toDescriptor": {
+          "iterations": 5000,
+          "medianMicros": 18.95,
+          "meanMicros": 19.051,
+          "p95Micros": 19.686,
+          "minMicros": 18.292
+        }
+      }
+    },
+    {
+      "dataset": "raw-reads",
+      "action": "no-such-action",
+      "verdict": "REFUSE",
+      "bytes": {
+        "native": 978,
+        "profile": 3748
+      },
+      "warm": {
+        "native": {
+          "iterations": 5000,
+          "medianMicros": 1.461,
+          "meanMicros": 1.47,
+          "p95Micros": 1.515,
+          "minMicros": 1.393
+        },
+        "profile": {
+          "iterations": 5000,
+          "medianMicros": 1.46,
+          "meanMicros": 1.468,
+          "p95Micros": 1.51,
+          "minMicros": 1.412
+        }
+      },
+      "cold": {
+        "native": {
+          "iterations": 5000,
+          "medianMicros": 8.546,
+          "meanMicros": 8.597,
+          "p95Micros": 8.869,
+          "minMicros": 8.194
+        },
+        "profile": {
+          "iterations": 5000,
+          "medianMicros": 20.817,
+          "meanMicros": 20.945,
+          "p95Micros": 21.861,
+          "minMicros": 20.067
+        }
+      },
+      "translationOnly": {
+        "parseJson": {
+          "iterations": 5000,
+          "medianMicros": 11.448,
+          "meanMicros": 11.511,
+          "p95Micros": 11.804,
+          "minMicros": 10.996
+        },
+        "toNative": {
+          "iterations": 5000,
+          "medianMicros": 16.246,
+          "meanMicros": 16.351,
+          "p95Micros": 17.034,
+          "minMicros": 15.636
+        },
+        "toDescriptor": {
+          "iterations": 5000,
+          "medianMicros": 19.052,
+          "meanMicros": 19.17,
+          "p95Micros": 20.008,
+          "minMicros": 18.266
+        }
+      }
+    },
+    {
+      "dataset": "trimmed-reads",
+      "action": "qc",
+      "verdict": "PERMIT",
+      "bytes": {
+        "native": 882,
+        "profile": 3492
+      },
+      "warm": {
+        "native": {
+          "iterations": 5000,
+          "medianMicros": 1.809,
+          "meanMicros": 1.823,
           "p95Micros": 1.895,
-          "minMicros": 1.704
+          "minMicros": 1.701
+        },
+        "profile": {
+          "iterations": 5000,
+          "medianMicros": 1.818,
+          "meanMicros": 1.836,
+          "p95Micros": 1.917,
+          "minMicros": 1.701
         }
       },
       "cold": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 9.03,
-          "meanMicros": 9.344,
-          "p95Micros": 9.453,
-          "minMicros": 8.579
+          "iterations": 5000,
+          "medianMicros": 8.744,
+          "meanMicros": 8.799,
+          "p95Micros": 9.089,
+          "minMicros": 8.337
         },
         "profile": {
-          "iterations": 2000,
-          "medianMicros": 21.367,
-          "meanMicros": 22.218,
-          "p95Micros": 23.766,
-          "minMicros": 20.543
+          "iterations": 5000,
+          "medianMicros": 20.398,
+          "meanMicros": 20.584,
+          "p95Micros": 21.915,
+          "minMicros": 19.545
         }
       },
       "translationOnly": {
         "parseJson": {
-          "iterations": 2000,
-          "medianMicros": 11.61,
-          "meanMicros": 11.851,
-          "p95Micros": 12.896,
-          "minMicros": 11.175
+          "iterations": 5000,
+          "medianMicros": 10.936,
+          "meanMicros": 11.014,
+          "p95Micros": 11.33,
+          "minMicros": 10.563
         },
         "toNative": {
-          "iterations": 2000,
-          "medianMicros": 16.422,
-          "meanMicros": 16.798,
-          "p95Micros": 18.046,
-          "minMicros": 15.651
+          "iterations": 5000,
+          "medianMicros": 15.516,
+          "meanMicros": 15.634,
+          "p95Micros": 16.46,
+          "minMicros": 14.875
         },
         "toDescriptor": {
-          "iterations": 2000,
-          "medianMicros": 19.254,
-          "meanMicros": 20.005,
-          "p95Micros": 24.899,
-          "minMicros": 18.415
-        }
-      }
-    },
-    {
-      "dataset": "raw-reads",
-      "action": "no-such-action",
-      "verdict": "REFUSE",
-      "bytes": {
-        "native": 978,
-        "profile": 3748
-      },
-      "warm": {
-        "native": {
-          "iterations": 2000,
-          "medianMicros": 1.485,
-          "meanMicros": 1.499,
-          "p95Micros": 1.545,
-          "minMicros": 1.424
-        },
-        "profile": {
-          "iterations": 2000,
-          "medianMicros": 1.505,
-          "meanMicros": 1.515,
-          "p95Micros": 1.569,
-          "minMicros": 1.43
-        }
-      },
-      "cold": {
-        "native": {
-          "iterations": 2000,
-          "medianMicros": 8.646,
-          "meanMicros": 8.957,
-          "p95Micros": 10.073,
-          "minMicros": 8.278
-        },
-        "profile": {
-          "iterations": 2000,
-          "medianMicros": 21.044,
-          "meanMicros": 21.47,
-          "p95Micros": 22.748,
-          "minMicros": 20.221
-        }
-      },
-      "translationOnly": {
-        "parseJson": {
-          "iterations": 2000,
-          "medianMicros": 11.488,
-          "meanMicros": 11.608,
-          "p95Micros": 12.051,
-          "minMicros": 11.088
-        },
-        "toNative": {
-          "iterations": 2000,
-          "medianMicros": 16.302,
-          "meanMicros": 16.453,
-          "p95Micros": 17.44,
-          "minMicros": 15.784
-        },
-        "toDescriptor": {
-          "iterations": 2000,
-          "medianMicros": 19.152,
-          "meanMicros": 19.421,
-          "p95Micros": 21.08,
-          "minMicros": 18.438
-        }
-      }
-    },
-    {
-      "dataset": "trimmed-reads",
-      "action": "qc",
-      "verdict": "PERMIT",
-      "bytes": {
-        "native": 882,
-        "profile": 3492
-      },
-      "warm": {
-        "native": {
-          "iterations": 2000,
-          "medianMicros": 1.864,
-          "meanMicros": 1.885,
-          "p95Micros": 1.97,
-          "minMicros": 1.759
-        },
-        "profile": {
-          "iterations": 2000,
-          "medianMicros": 1.829,
-          "meanMicros": 1.848,
-          "p95Micros": 1.938,
-          "minMicros": 1.717
-        }
-      },
-      "cold": {
-        "native": {
-          "iterations": 2000,
-          "medianMicros": 8.902,
-          "meanMicros": 8.973,
-          "p95Micros": 9.318,
-          "minMicros": 8.431
-        },
-        "profile": {
-          "iterations": 2000,
-          "medianMicros": 20.688,
-          "meanMicros": 20.846,
-          "p95Micros": 21.827,
-          "minMicros": 19.905
-        }
-      },
-      "translationOnly": {
-        "parseJson": {
-          "iterations": 2000,
-          "medianMicros": 11.04,
-          "meanMicros": 11.146,
-          "p95Micros": 11.411,
-          "minMicros": 10.653
-        },
-        "toNative": {
-          "iterations": 2000,
-          "medianMicros": 15.759,
-          "meanMicros": 15.961,
-          "p95Micros": 16.806,
-          "minMicros": 15.119
-        },
-        "toDescriptor": {
-          "iterations": 2000,
-          "medianMicros": 18.389,
-          "meanMicros": 18.565,
-          "p95Micros": 19.387,
-          "minMicros": 17.775
+          "iterations": 5000,
+          "medianMicros": 18.248,
+          "meanMicros": 18.501,
+          "p95Micros": 19.325,
+          "minMicros": 17.614
         }
       }
     },
@@ -334,65 +335,65 @@
       },
       "warm": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 1.472,
+          "iterations": 5000,
+          "medianMicros": 1.471,
+          "meanMicros": 1.485,
+          "p95Micros": 1.533,
+          "minMicros": 1.415
+        },
+        "profile": {
+          "iterations": 5000,
+          "medianMicros": 1.469,
           "meanMicros": 1.488,
-          "p95Micros": 1.526,
-          "minMicros": 1.42
-        },
-        "profile": {
-          "iterations": 2000,
-          "medianMicros": 1.495,
-          "meanMicros": 1.524,
-          "p95Micros": 1.607,
-          "minMicros": 1.414
+          "p95Micros": 1.556,
+          "minMicros": 1.408
         }
       },
       "cold": {
         "native": {
-          "iterations": 2000,
-          "medianMicros": 8.435,
-          "meanMicros": 8.522,
-          "p95Micros": 8.775,
-          "minMicros": 8.061
+          "iterations": 5000,
+          "medianMicros": 8.426,
+          "meanMicros": 8.678,
+          "p95Micros": 9.603,
+          "minMicros": 8.068
         },
         "profile": {
-          "iterations": 2000,
-          "medianMicros": 20.304,
-          "meanMicros": 20.508,
-          "p95Micros": 21.743,
-          "minMicros": 19.485
+          "iterations": 5000,
+          "medianMicros": 20.094,
+          "meanMicros": 20.214,
+          "p95Micros": 21.041,
+          "minMicros": 19.35
         }
       },
       "translationOnly": {
         "parseJson": {
-          "iterations": 2000,
-          "medianMicros": 11.054,
-          "meanMicros": 11.163,
-          "p95Micros": 11.616,
-          "minMicros": 10.731
+          "iterations": 5000,
+          "medianMicros": 11.024,
+          "meanMicros": 11.09,
+          "p95Micros": 11.395,
+          "minMicros": 10.611
         },
         "toNative": {
-          "iterations": 2000,
-          "medianMicros": 15.775,
-          "meanMicros": 15.918,
-          "p95Micros": 16.669,
-          "minMicros": 15.001
+          "iterations": 5000,
+          "medianMicros": 15.582,
+          "meanMicros": 15.68,
+          "p95Micros": 16.282,
+          "minMicros": 14.956
         },
         "toDescriptor": {
-          "iterations": 2000,
-          "medianMicros": 18.498,
-          "meanMicros": 18.743,
-          "p95Micros": 20.133,
-          "minMicros": 17.784
+          "iterations": 5000,
+          "medianMicros": 18.432,
+          "meanMicros": 18.525,
+          "p95Micros": 19.213,
+          "minMicros": 17.509
         }
       }
     }
   ],
   "summary": {
-    "warmAddedMicrosMedian": 0.002,
-    "coldAddedMicrosMedian": 11.828,
-    "coldProfileMicrosMedian": 20.496,
-    "projectedGateProcessMicros": 133.8
+    "warmAddedMicrosMedian": -0.002,
+    "coldAddedMicrosMedian": 11.661,
+    "coldProfileMicrosMedian": 20.246,
+    "projectedGateProcessMicros": 130.7
   }
 }

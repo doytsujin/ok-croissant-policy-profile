@@ -547,7 +547,10 @@ class DocumentLeakTest(unittest.TestCase):
         return self.report.render(self.results, self.totals, archive=archive)
 
     def test_the_archive_is_named_not_located(self):
-        doc = self._doc("/run/media/chelex/DRIVE/receipts/decisions.jsonl")
+        # A real mount path in shape, but no real account name: this file ships
+        # in a public archive, and the fixture for a leak test should not be
+        # the leak.
+        doc = self._doc("/run/media/operator/DRIVE/receipts/decisions.jsonl")
         self.assertIn("decisions.jsonl", doc)
         self.assertNotIn("/run/media", doc)
 

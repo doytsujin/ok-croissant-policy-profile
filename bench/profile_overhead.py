@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """C3: what the profile path costs, per admission decision.
 
-The gate's published figure is a 122 microsecond median for the whole gate
-process and 11 microseconds for policy evaluation itself, measured on a real
-nf-core run. Expressing the same policy as Croissant cannot change the
+The gate's published figure is a 119 microsecond median for the whole gate
+process and 11 microseconds for policy evaluation itself, measured over 210
+decisions in a 30-replicate nf-core run. Expressing the same policy as Croissant cannot change the
 evaluation -- it is the same function on the same data -- so the only thing
 this measures is the translation, and the only honest question is how big it
 is relative to the number it is being added to.
@@ -13,7 +13,7 @@ Two regimes are reported because they are genuinely different deployments:
   warm   the document is translated once and the descriptor is reused across
          decisions. This is what a long-lived gate does.
   cold   the document is read and translated for every decision. This is what
-         a per-task hook does, and it is the regime the 122 us figure came
+         a per-task hook does, and it is the regime the 119 us figure came
          from -- that process re-read its descriptor each time.
 
 Everything is measured in-process with `perf_counter_ns`, which excludes
@@ -148,8 +148,15 @@ def main(argv: list[str] | None = None) -> int:
         # The gate's identity is its directory name; its full path is this
         # machine's business and this file is committed.
         "referenceGate": gate_root().name,
-        "publishedGateProcessMedianMicros": 122,
+        "publishedGateProcessMedianMicros": 119,
         "publishedPolicyEvalMedianMicros": 11,
+        # Provenance, because this constant was wrong once. 122 us was the
+        # median over the 7 decisions of the single-run study; it was retired
+        # when the replication measured 210.
+        "publishedFigureSource": (
+            "ok-nfcore-admission-gate results/replication.json, gated arm, "
+            "n=210 decisions over 30 replicates"
+        ),
         "cases": cases,
         "summary": {
             "warmAddedMicrosMedian": round(
@@ -161,7 +168,7 @@ def main(argv: list[str] | None = None) -> int:
             "coldProfileMicrosMedian": round(
                 statistics.median([c["cold"]["profile"]["medianMicros"] for c in cases]), 3
             ),
-            # The published 122 us is a whole gate *process*: argument parsing,
+            # The published 119 us is a whole gate *process*: argument parsing,
             # descriptor load, authorize, and writing the decision record. The
             # cold figures here cover load + authorize only, so the two are not
             # comparable head to head. What is comparable is the delta: swapping
@@ -193,7 +200,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"cold profile path total: {s['coldProfileMicrosMedian']:.3f} us/decision "
           "(load + authorize only)")
     print(f"projected gate process:  {s['projectedGateProcessMicros']:.1f} us "
-          "= published 122 us + the cold delta")
+          "= published 119 us + the cold delta")
     print(f"\nwrote {args.out}")
     return 0
 

@@ -4,7 +4,7 @@ The profile's central claim is that a policy expressed as Croissant produces
 exactly the decisions the native descriptor produces. That claim is only worth
 anything if both sides are decided by the *same* evaluator, so the gate is
 imported from its own repository rather than vendored here. A vendored copy
-would drift, and the first thing it would stop agreeing with is the 122 us
+would drift, and the first thing it would stop agreeing with is the 119 us
 measurement it was copied from.
 
 Resolution order for the gate's location:

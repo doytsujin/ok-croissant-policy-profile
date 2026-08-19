@@ -32,8 +32,8 @@
       "name": "raw-reads",
       "path": "examples/raw-reads.croissant.json",
       "warnings": [
-        "[Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
-        "[Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
+        "[Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
+        "[Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
       ]
     },
     {

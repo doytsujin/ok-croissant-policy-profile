@@ -81,9 +81,16 @@ A document conforms to this profile when all of the following hold.
 cpol: https://w3id.org/croissant-policy/0.1.0/
 ```
 
-The namespace is a [w3id.org](https://w3id.org) permanent identifier. It
-dereferences to a human-readable profile document, and to the JSON-LD context
-under content negotiation for `application/ld+json`.
+The namespace is a [w3id.org](https://w3id.org) permanent identifier. Once
+registered it dereferences to a human-readable profile document, and to the
+JSON-LD context under content negotiation for `application/ld+json`.
+
+**Registration is pending and the identifier currently returns 404.** The
+document and context it will resolve to are already served at
+`https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/`. Conforming
+documents are unaffected — `conformsTo` carries the identifier, and an
+identifier need not dereference in order to identify — but a consumer
+retrieving the context should use the served URL until registration lands.
 
 A w3id rather than a direct URL, because the identifier has to outlive decisions
 about hosting: every conforming document embeds this string, so moving the

@@ -13,7 +13,7 @@ identifiers:
     description: "Concept DOI — resolves to the newest version. Cite this one."
   - type: doi
     value: 10.5281/zenodo.22005284
-    description: "Version DOI for v0.1.5."
+    description: "Version DOI for v0.1.5. Superseded by v0.1.6; the concept DOI above resolves forward."
 url: "https://w3id.org/croissant-policy/0.1.0"
 abstract: >-
   An additive policy profile for Croissant dataset descriptors. A dataset
@@ -31,5 +31,5 @@ keywords:
   - provenance
   - agent governance
 license: Apache-2.0
-version: 0.1.5
-date-released: 2026-08-18
+version: 0.1.6
+date-released: 2026-08-19

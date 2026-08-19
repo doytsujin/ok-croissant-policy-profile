@@ -51,7 +51,8 @@ That is deliberate, and it is the load-bearing decision.
 A profile document is admitted or refused by translating it into the native
 descriptor model of [`ok-nfcore-admission-gate`](../ok-nfcore-admission-gate)
 and calling that repository's `gate.gate.authorize` -- the same function that
-produced its measured 122 microsecond figure on a real nf-core pipeline run.
+produced its measured 119 microsecond median over 210 decisions in a
+30-replicate nf-core pipeline run.
 The gate is imported, never vendored, so a decision taken through Croissant is
 taken by the implementation the measurement came from rather than by a copy of
 it that can drift.
@@ -70,11 +71,11 @@ refusal rather than a gap.
 |---|---|---|---|
 | C1 | Every decision from the native descriptor is reproduced exactly from the profile document | [tests/test_equivalence.py](tests/test_equivalence.py) | whole decision records equal across a generated request matrix covering PERMIT and all three refusal classes |
 | C2 | Strip the `cpol:` terms and a plain Croissant consumer still has a loadable dataset | [tests/test_degradation.py](tests/test_degradation.py) | no residue, no redefined term, the descriptive half survives in standard vocabulary |
-| C3 | The profile path's cost is disclosed, not assumed | [bench/profile_overhead.py](bench/profile_overhead.py) | **+0.0 us** warm, **+11.9 us** cold per decision |
+| C3 | The profile path's cost is disclosed, not assumed | [bench/profile_overhead.py](bench/profile_overhead.py) | **+0.0 us** warm, **+11.7 us** cold per decision |
 | C4 | Capability schemas are derived from the policy, so they cannot drift from it | [tests/test_capabilities.py](tests/test_capabilities.py) | moving a threshold in the document moves the advertised `minimum` and the gate's verdict in the same edit |
 | — | The emitted documents are valid Croissant | [tools/validate_mlcroissant.py](tools/validate_mlcroissant.py) | all three load under `mlcroissant` 1.1.0 with zero errors; `@context` identical to MLCommons' generated one |
 | P1 | Caller-side and data-side policy disagree in **both** directions | [tests/test_precedence.py](tests/test_precedence.py) | each refuses requests the other admits; neither permit set contains the other |
-| P2 | Only the conjunction admits nothing either authority refused | [bench/precedence.py](bench/precedence.py) | `caller-only` admits **23**, `data-only` admits **12**, `deny-overrides` admits **0** |
+| P2 | Only the conjunction admits nothing either authority refused | [bench/precedence.py](bench/precedence.py) | of the requests some authority refused, `caller-only` still admits **23** and `data-only` **12**, while `deny-overrides` admits **0** of them |
 
 ## Measured overhead
 
@@ -84,19 +85,27 @@ From `bench/profile_overhead.py`, 5000 iterations per case, in-process with
 | regime | native | profile | added |
 |---|---:|---:|---:|
 | **warm** -- document translated once, descriptor reused | 1.8 us | 1.8 us | **0.0 us** |
-| **cold** -- document read and translated per decision | 8.6 us | 20.4 us | **+11.9 us** |
+| **cold** -- document read and translated per decision | 8.5 us | 20.2 us | **+11.7 us** |
 
 Warm is zero because it is the same function on the same object; there is
 nothing left to differ. Cold is where the profile actually costs something, and
 most of that cost is not the profile: parsing the JSON accounts for ~9.7 us of
-the ~11.9, because a Croissant document with its context is 3.2 KB against the
+the ~11.7, because a Croissant document with its context is 3.1 KB against the
 native descriptor's 754 B. The profile-specific translation is ~2 us.
 
-Put against the published figure: the gate process that measured 122 us
-end-to-end would become ~134 us. That is a 10% increase in a number that is
-four orders of magnitude below the ~1 second tasks it gates, and it remains
-below the one-second resolution of Nextflow's own trace, so it is no more
-observable in pipeline timing than the original was.
+Put against the published figure: the gate process that measured 119 us
+end-to-end would become ~131 us, a 10% increase in a number four orders of
+magnitude below the ~1 second tasks it gates.
+
+What that increase is *not* is unobservable. The 30-replicate run measured a
+per-task duration delta of +25.7 ms on average, 95% CI [3.3, 48.2] ms, an
+interval that excludes zero -- so the gated arm is distinguishable from the
+baseline in pipeline timing. That cost is the delivery mechanism rather than
+the decision: the gate runs as a per-task subprocess with a ~30.2 ms median
+process time, of which ~9.6 ms is bare interpreter startup. Against 30 ms of
+delivery the profile's ~11.7 us is ~0.04%. An earlier version of this file
+claimed the gate stayed below the resolution of Nextflow's own trace; the
+replication retired that claim and it is not repeated here.
 
 The honest caveat is the same one the gate carries: this excludes interpreter
 startup, because it is measured inside the process. A per-task subprocess pays
@@ -105,11 +114,17 @@ tens of milliseconds for `python3` itself, and that dominates both paths.
 ## Namespace
 
 The profile IRI is `https://w3id.org/croissant-policy/0.1.0`, a
-[w3id.org](https://w3id.org) permanent identifier resolving to
-[the profile document](https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/),
-and to `context.jsonld` under content negotiation for `application/ld+json`. The
-document is served from `docs/ns/` in this repository; the w3id redirect rules
-are in `w3id/croissant-policy/.htaccess`.
+[w3id.org](https://w3id.org) permanent identifier.
+
+**It does not resolve yet.** The registration pull request to
+[perma-id/w3id.org](https://github.com/perma-id/w3id.org) has not been
+submitted, so the IRI currently returns 404. The redirect rules that will make
+it resolve are ready in `w3id/croissant-policy/.htaccess`, and their target is
+already live: the profile document is served from `docs/ns/` at
+[doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/](https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/),
+which also returns `context.jsonld` under content negotiation for
+`application/ld+json`. Until the registration lands, use that URL to retrieve
+the document and treat the w3id string as an identifier only.
 
 A w3id rather than a direct URL because every conforming document embeds this
 string. The identifier has to survive a change of hosting, so it is never
