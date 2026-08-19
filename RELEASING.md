@@ -20,13 +20,31 @@ neither can be removed from the v0.1.0 record.
       the paper and the specification proposal are separate publications and
       their filenames must not appear here
 - [ ] `python3 -c "import json;json.load(open('.zenodo.json'))"` — valid
-- [ ] `.zenodo.json` `publication_date` is today. It is **required** for
-      `upload_type: software`; without it the deposit does not complete
-- [ ] `.zenodo.json` `license` matches Zenodo's own vocabulary, which is
-      lowercase and is not SPDX casing:
-      `curl -s 'https://zenodo.org/api/vocabularies/licenses?q=apache' | python3 -m json.tool`
-      — `apache-2.0` is valid, `Apache-2.0` is not
 - [ ] `.zenodo.json` `version` matches the tag
+
+### `.zenodo.json` — what actually works
+
+Three deposits failed before this was settled, so the findings are recorded
+rather than the reasoning repeated.
+
+**`license` is an object with an SPDX id**, `{"id": "Apache-2.0"}`. Zenodo's own
+documentation example shows a bare lowercase string (`"license": "mit"`), and
+the legacy deposit API documents a lowercase controlled vocabulary that a live
+query confirms (`apache-2.0` resolves, `Apache-2.0` does not). **Both describe
+the legacy REST endpoint, not the GitHub integration path**, and following them
+produced a deposit that failed immediately. The shape that works is the one used
+by files that actually deposit — the Citation File Format project's own
+`.zenodo.json` is a good reference.
+
+**Do not add `publication_date`.** It is documented as required for
+`upload_type: software` on the legacy API. It is not used here, and working
+files omit it.
+
+**If a deposit fails again, delete `.zenodo.json`.** Zenodo falls back to
+`CITATION.cff`, then to `LICENSE`. `CITATION.cff` is a validated standard format
+and is well-formed here, so the fallback is not a downgrade — it loses only the
+Zenodo-specific fields (`communities`, `grants`, `related_identifiers`), none of
+which is in use. A deposit that happens beats richer metadata that does not.
 - [ ] Working tree clean, and everything pushed
 
 ## Tag and release
