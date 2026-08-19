@@ -46,7 +46,7 @@ ODRL/ODRE is the right tool and this profile does not compete with it.
 That is deliberate, and it is the load-bearing decision.
 
 A profile document is admitted or refused by translating it into the native
-descriptor model of [`dk-nfcore-admission-gate`](../dk-nfcore-admission-gate)
+descriptor model of [`ok-nfcore-admission-gate`](../ok-nfcore-admission-gate)
 and calling that repository's `gate.gate.authorize` -- the same function that
 produced its measured 122 microsecond figure on a real nf-core pipeline run.
 The gate is imported, never vendored, so a decision taken through Croissant is
@@ -272,7 +272,7 @@ own document for a separate authority's.
 
 ```bash
 # Emit conforming documents from native descriptors
-python3 -m croissant_policy.emit ../dk-nfcore-admission-gate/descriptors/*.json \
+python3 -m croissant_policy.emit ../ok-nfcore-admission-gate/descriptors/*.json \
     --outdir examples --url https://github.com/nf-core/test-datasets \
     --license https://spdx.org/licenses/MIT.html --decision-record decisions.jsonl
 
@@ -293,7 +293,7 @@ make mlcroissant
 ```
 
 `NFGATE_ROOT` points at the gate's checkout. It defaults to
-`../dk-nfcore-admission-gate`, and the import fails loudly rather than falling
+`../ok-nfcore-admission-gate`, and the import fails loudly rather than falling
 back to a local reimplementation, because a silent fallback is the one
 behaviour that would make the test suite lie.
 
@@ -317,7 +317,7 @@ behaviour that would make the test suite lie.
   authority, not as a profile term, because a rule about the caller does not
   belong in a document that travels with the data.
 - **The reference gate lives in a private repository.** The profile imports its
-  evaluator from `dk-nfcore-admission-gate` rather than vendoring it, which is
+  evaluator from `ok-nfcore-admission-gate` rather than vendoring it, which is
   the design decision that makes the equivalence claim mean anything — and it
   means a third party cannot currently run the test suite. `reference.py` fails
   with an explanation rather than silently falling back. Publishing that

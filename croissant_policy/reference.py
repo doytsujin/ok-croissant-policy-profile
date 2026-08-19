@@ -10,7 +10,7 @@ measurement it was copied from.
 Resolution order for the gate's location:
 
 1. `$NFGATE_ROOT`
-2. a sibling checkout, `../dk-nfcore-admission-gate`
+2. a sibling checkout, `../ok-nfcore-admission-gate`
 
 If neither exists the import fails loudly. Silently falling back to a local
 reimplementation is the one behaviour that would make the test suite lie.
@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
-_SIBLING = _REPO_ROOT.parent / "dk-nfcore-admission-gate"
+_SIBLING = _REPO_ROOT.parent / "ok-nfcore-admission-gate"
 
 
 class ReferenceUnavailable(RuntimeError):
@@ -38,7 +38,7 @@ def gate_root() -> Path:
         if (c / "gate" / "gate.py").is_file():
             return c.resolve()
     raise ReferenceUnavailable(
-        "cannot find dk-nfcore-admission-gate. Set NFGATE_ROOT to its checkout, "
+        "cannot find ok-nfcore-admission-gate. Set NFGATE_ROOT to its checkout, "
         f"or place it next to this repository at {_SIBLING}. "
         "The evaluator is imported, never copied -- see the module docstring."
     )

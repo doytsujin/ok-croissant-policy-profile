@@ -3,7 +3,7 @@
 This is the whole enforcement path. There is no evaluator in this package: a
 profile document is admitted or refused by translating it into the native
 descriptor form and handing that to `gate.gate.authorize`, the same function
-that produced the measured numbers in `dk-nfcore-admission-gate`.
+that produced the measured numbers in `ok-nfcore-admission-gate`.
 
 That choice is what makes fail-closed cheap to believe. The native evaluator
 already refuses on a condition whose operator it does not recognise -- its

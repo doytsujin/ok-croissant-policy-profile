@@ -1,6 +1,6 @@
 """Shared fixtures: the real descriptor corpus and a generated request matrix.
 
-The corpus is the three descriptors from `dk-nfcore-admission-gate`, not
+The corpus is the three descriptors from `ok-nfcore-admission-gate`, not
 hand-written fixtures. Testing the profile against invented descriptors would
 prove the profile is self-consistent; testing it against the descriptors that
 gated a real pipeline run is what the equivalence claim is about.

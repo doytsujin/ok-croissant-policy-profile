@@ -1,6 +1,6 @@
 {
   "iterationsPerCase": 5000,
-  "referenceGate": "/run/media/chelex/TOSHIBA2TB/g/dk-nfcore-admission-gate",
+  "referenceGate": "/run/media/chelex/TOSHIBA2TB/g/ok-nfcore-admission-gate",
   "publishedGateProcessMedianMicros": 122,
   "publishedPolicyEvalMedianMicros": 11,
   "cases": [

@@ -100,7 +100,7 @@
       "name": "decisions_gated.jsonl",
       "description": "Decision records emitted by the gate for this dataset.",
       "encodingFormat": "application/jsonl",
-      "contentUrl": "/run/media/chelex/TOSHIBA2TB/g/dk-nfcore-admission-gate/results/decisions_gated.jsonl",
+      "contentUrl": "/run/media/chelex/TOSHIBA2TB/g/ok-nfcore-admission-gate/results/decisions_gated.jsonl",
       "sha256": "e3d9d60e43b2742a43018e1ca45a8578d334fc2c7822fd53513dd55f6825e0dd"
     }
   ],

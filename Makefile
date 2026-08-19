@@ -1,7 +1,7 @@
 # Everything is stdlib. The only external dependency is the reference gate,
 # which is imported rather than installed -- see croissant_policy/reference.py.
 PY ?= python3
-NFGATE ?= ../dk-nfcore-admission-gate
+NFGATE ?= ../ok-nfcore-admission-gate
 DESCRIPTORS := $(wildcard $(NFGATE)/descriptors/*.json)
 
 .PHONY: all test bench precedence examples validate capabilities venv mlcroissant clean

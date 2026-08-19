@@ -1,6 +1,6 @@
 """Emit a conforming Croissant + policy document from a native descriptor.
 
-The input is the descriptor format used by `dk-nfcore-admission-gate`: a small
+The input is the descriptor format used by `ok-nfcore-admission-gate`: a small
 dependency-free JSON model with `permissibleActions`, each carrying
 `requiresState` and a dict of conditions. The output is a Croissant 1.0
 document with the `cpol:` layer attached.
