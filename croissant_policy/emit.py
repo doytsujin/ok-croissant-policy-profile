@@ -295,7 +295,7 @@ def _decision_record_node(decision_record: str | Path) -> dict:
             "name": path.name,
             "description": "Decision records emitted by the gate for this dataset.",
             "encodingFormat": "application/jsonl",
-            "includes": f"{path.as_posix()}/*.jsonl",
+            "includes": f"{path.name}/*.jsonl",
         }
     if path.is_file():
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -305,7 +305,10 @@ def _decision_record_node(decision_record: str | Path) -> dict:
             "name": path.name,
             "description": "Decision records emitted by the gate for this dataset.",
             "encodingFormat": "application/jsonl",
-            "contentUrl": path.as_posix(),
+            # The file's name and its digest identify it. Its absolute path
+            # identifies only the machine that happened to emit the document,
+            # and a document is meant to be handed out.
+            "contentUrl": path.name,
             "sha256": digest,
         }
     raise EmitError(

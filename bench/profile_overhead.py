@@ -145,7 +145,9 @@ def main(argv: list[str] | None = None) -> int:
 
     report = {
         "iterationsPerCase": args.iterations,
-        "referenceGate": str(gate_root()),
+        # The gate's identity is its directory name; its full path is this
+        # machine's business and this file is committed.
+        "referenceGate": gate_root().name,
         "publishedGateProcessMedianMicros": 122,
         "publishedPolicyEvalMedianMicros": 11,
         "cases": cases,

@@ -79,3 +79,44 @@ class GracefulDegradation(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NoHostPathsEscape(unittest.TestCase):
+    """A document is meant to be handed out, so it must not describe this host.
+
+    Written after an absolute path reached both the public repository's examples
+    and the copy staged for an external standards submission. The file's name and
+    its SHA-256 identify it; its location on one machine identifies nothing a
+    reader can use.
+    """
+
+    def test_a_decision_record_node_carries_a_name_not_a_path(self):
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as tmp:
+            record = Path(tmp) / "decisions.jsonl"
+            record.write_text('{"verdict": "PERMIT"}\n')
+            doc = emit.emit(corpus()["raw-reads"], decision_record=str(record))
+            node = [d for d in doc["distribution"] if d["@type"] == "cr:FileObject"][0]
+            self.assertEqual(node["contentUrl"], "decisions.jsonl")
+            self.assertEqual(node["@id"], "decisions.jsonl")
+            self.assertTrue(node["sha256"])
+            self.assertNotIn(tmp, json.dumps(doc))
+
+    def test_no_emitted_document_contains_an_absolute_path(self):
+        for name, native in corpus().items():
+            with self.subTest(dataset=name):
+                text = json.dumps(emit.emit(native))
+                for probe in ("/run/media", "/home/", "/tmp/", "/Users/"):
+                    self.assertNotIn(probe, text)
+
+    def test_the_committed_examples_are_clean(self):
+        # The examples are committed and were the thing that actually leaked.
+        from pathlib import Path
+
+        for path in sorted((Path(__file__).resolve().parent.parent / "examples").glob("*.json")):
+            with self.subTest(example=path.name):
+                text = path.read_text()
+                for probe in ("/run/media", "/home/", "/Users/"):
+                    self.assertNotIn(probe, text, f"{path.name} carries a host path")
