@@ -1,5 +1,8 @@
 # Zenodo deposit sheet — v0.1.5
 
+**Deposited 2026-08-18.** Concept DOI `10.5281/zenodo.22005283` (cite this one),
+version DOI for v0.1.5 `10.5281/zenodo.22005284`.
+
 Field values for Zenodo's upload form. The GitHub integration does not work for
 this repository, so the deposit is made by hand; see [RELEASING.md](RELEASING.md)
 for why and for the surrounding order.
@@ -42,6 +45,26 @@ governance, provenance, agent governance
 The first relation is the one Zenodo's own GitHub integration sets, so a manual
 deposit reads the same way as an automated one. Leave communities and grants
 empty — neither is in use.
+
+## What the form does when you do not look
+
+Every field below was on this sheet and four of them still came out wrong on
+the first deposit, because Zenodo's defaults apply to anything left untouched:
+
+| Field | What the form did | Why it matters |
+|---|---|---|
+| Licence | defaulted to **CC-BY-4.0** | the record then contradicts the Apache-2.0 `LICENSE` inside its own tarball |
+| Version | left empty | nothing on the record says which release it is |
+| Publication date | stamped **UTC today** | a late-evening deposit in Toronto dates a day ahead of the tag |
+| Related identifiers | not carried over | the record stands unlinked to the repository and the profile IRI |
+
+So the last step of a deposit is to re-read the published record against this
+table. Metadata stays editable after publication — only the files are frozen —
+so a field caught late is a form edit, not a new version.
+
+On the date: `CITATION.cff` carries the tag's local date and Zenodo thinks in
+UTC, so the two can legitimately differ by a day. Set the record to match the
+tag rather than letting the default stand, and they stay comparable.
 
 ## Keep this in step
 

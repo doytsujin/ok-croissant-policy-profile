@@ -11,6 +11,9 @@ that answers those questions from the descriptor alone.
 
 The specification is [SPEC.md](SPEC.md). Everything below is about the code.
 
+Archived at [doi:10.5281/zenodo.22005283](https://doi.org/10.5281/zenodo.22005283),
+which always resolves to the newest deposited version.
+
 ## Three independent publications
 
 This work is published three times, from three perspectives, in three separate
@@ -19,7 +22,7 @@ to be read, reviewed or believed.
 
 | Perspective | Artifact | Destination |
 |---|---|---|
-| **Does it run, and what does it cost?** | this repository | GitHub public + Zenodo DOI |
+| **Does it run, and what does it cost?** | this repository | GitHub public + [doi:10.5281/zenodo.22005283](https://doi.org/10.5281/zenodo.22005283) |
 | Is the argument sound, and what was measured? | the preprint | arXiv |
 | Should the vocabulary become a standard? | the specification proposal | github.com/mlcommons/croissant |
 

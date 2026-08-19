@@ -56,11 +56,23 @@ Zenodo's edit form.
 3. New upload at zenodo.org, attach the archive, and fill the form from
    [DEPOSIT.md](DEPOSIT.md).
 4. Publish. Zenodo mints the two DOIs.
-5. Put the **concept** DOI in `CITATION.cff` `identifiers`, in the README, and
+5. **Re-read the published record against `DEPOSIT.md`.** The form's defaults
+   win over every field left untouched, and on the first deposit four of them
+   did. Metadata is editable after publication; the files are not.
+6. Put the **concept** DOI in `CITATION.cff` `identifiers`, in the README, and
    in the paper's Availability section.
 
-Step 5 is part of the release, not follow-up work: a deposit nothing cites is
+Step 6 is part of the release, not follow-up work: a deposit nothing cites is
 an archive, not a publication.
+
+## The record
+
+Deposited by hand on 2026-08-18, which worked first time.
+
+| DOI | What it points at |
+|---|---|
+| `10.5281/zenodo.22005283` | concept — the newest version, whatever that is |
+| `10.5281/zenodo.22005284` | v0.1.5 specifically |
 
 ## Which DOI to cite
 
