@@ -11,6 +11,25 @@ that answers those questions from the descriptor alone.
 
 The specification is [SPEC.md](SPEC.md). Everything below is about the code.
 
+## Three independent publications
+
+This work is published three times, from three perspectives, in three separate
+repositories. Each establishes the result standing alone; none needs the others
+to be read, reviewed or believed.
+
+| Perspective | Artifact | Destination |
+|---|---|---|
+| **Does it run, and what does it cost?** | this repository | GitHub public + Zenodo DOI |
+| Is the argument sound, and what was measured? | the preprint | arXiv |
+| Should the vocabulary become a standard? | the specification proposal | github.com/mlcommons/croissant |
+
+The specification appears in this repository **and** in the proposal repository
+as a copy rather than a reference, because independence requires it: an
+implementation that cannot show what it implements is not self-contained, and
+neither is a proposal that points elsewhere for its own normative text. They are
+kept in step by hand, which is the cost of independence and is accepted
+deliberately.
+
 ## The design in one paragraph
 
 A `cpol:Policy` hangs off the Croissant `sc:Dataset` node, carrying the
