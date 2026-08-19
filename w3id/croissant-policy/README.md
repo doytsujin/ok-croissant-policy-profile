@@ -36,6 +36,9 @@ into a refusal for older consumers.
 Specification, reference implementation, conformance validator, and measured
 overhead: <https://github.com/doytsujin/ok-croissant-policy-profile>
 
+Archived at [doi:10.5281/zenodo.22018156](https://doi.org/10.5281/zenodo.22018156),
+which resolves to the newest released version.
+
 Emitted documents are checked against MLCommons' `mlcroissant` validator.
 
 Maintainer: Alexander Chernov (@doytsujin)
