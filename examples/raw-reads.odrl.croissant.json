@@ -1,0 +1,242 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "equivalentProperty": "cr:equivalentProperty",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileObject": "cr:fileObject",
+    "fileProperty": "cr:fileProperty",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "samplingRate": "cr:samplingRate",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "odrl": "http://www.w3.org/ns/odrl/2/",
+    "cpolodrl": "https://w3id.org/croissant-policy/0.1.0/odrl#",
+    "odrl:rightOperand": {
+      "@id": "odrl:rightOperand",
+      "@type": "@json"
+    }
+  },
+  "@type": "sc:Dataset",
+  "name": "raw-reads",
+  "description": "sequencing_reads described as a policy-bearing Croissant dataset. State: QC_PASSED. Source: nf-core/test-datasets (viralrecon illumina amplicon samplesheet).",
+  "conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "https://w3id.org/croissant-policy/0.1.0/odrl"
+  ],
+  "version": "1.2.0",
+  "url": "https://github.com/nf-core/test-datasets",
+  "license": "https://spdx.org/licenses/MIT.html",
+  "creator": {
+    "@type": "sc:Organization",
+    "name": "nf-core"
+  },
+  "additionalType": "sequencing_reads",
+  "rai:dataCollection": "nf-core/test-datasets (viralrecon illumina amplicon samplesheet)",
+  "variableMeasured": [
+    {
+      "@type": "sc:PropertyValue",
+      "name": "assay",
+      "value": "amplicon"
+    },
+    {
+      "@type": "sc:PropertyValue",
+      "name": "layout",
+      "value": "paired"
+    },
+    {
+      "@type": "sc:PropertyValue",
+      "name": "platform",
+      "value": "illumina"
+    }
+  ],
+  "distribution": [
+    {
+      "@type": "cr:FileSet",
+      "@id": "raw-reads-files",
+      "name": "raw-reads-files",
+      "description": "The sequencing_reads files of this dataset, in fastq.gz form. The native descriptor records the shape of the data and not its location, so this FileSet has no containedIn; the location is supplied by whoever mounts the dataset.",
+      "encodingFormat": "application/gzip",
+      "includes": "*.fastq.gz"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "decisions_gated.jsonl",
+      "name": "decisions_gated.jsonl",
+      "description": "Decision records emitted by the gate for this dataset.",
+      "encodingFormat": "application/jsonl",
+      "contentUrl": "decisions_gated.jsonl",
+      "sha256": "e3d9d60e43b2742a43018e1ca45a8578d334fc2c7822fd53513dd55f6825e0dd"
+    }
+  ],
+  "usageInfo": {
+    "@type": "odrl:Set",
+    "odrl:uid": "raw-reads#policy",
+    "odrl:profile": {
+      "@id": "https://w3id.org/croissant-policy/0.1.0/odrl"
+    },
+    "cpolodrl:datasetState": "QC_PASSED",
+    "cpolodrl:failClosed": true,
+    "cpolodrl:classification": "public-test-data",
+    "cpolodrl:custodian": "nf-core",
+    "cpolodrl:retentionDays": 730,
+    "cpolodrl:rationale": "Public nf-core test data. The conditions below are the shape of a regulated descriptor, applied to data that carries no restriction, so the artifact can be run and re-run by anyone.",
+    "odrl:permission": [
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/qc"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "RECEIVED",
+              "QC_PASSED"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/platform"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "illumina"
+            ]
+          }
+        ]
+      },
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/trim"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "QC_PASSED"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/minReadLength"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/gteq"
+            },
+            "odrl:rightOperand": 20
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/platform"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "illumina"
+            ]
+          }
+        ]
+      },
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/align"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "TRIMMED"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/minMapQ"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/gteq"
+            },
+            "odrl:rightOperand": 30
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/referenceBuild"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "GRCh38"
+            ]
+          }
+        ]
+      }
+    ],
+    "cpolodrl:decisionRecord": {
+      "@id": "decisions_gated.jsonl"
+    }
+  }
+}

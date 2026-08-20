@@ -1,0 +1,191 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "equivalentProperty": "cr:equivalentProperty",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileObject": "cr:fileObject",
+    "fileProperty": "cr:fileProperty",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "samplingRate": "cr:samplingRate",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "odrl": "http://www.w3.org/ns/odrl/2/",
+    "cpolodrl": "https://w3id.org/croissant-policy/0.1.0/odrl#",
+    "odrl:rightOperand": {
+      "@id": "odrl:rightOperand",
+      "@type": "@json"
+    }
+  },
+  "@type": "sc:Dataset",
+  "name": "qc-report",
+  "description": "quality_report described as a policy-bearing Croissant dataset. State: PENDING.",
+  "conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "https://w3id.org/croissant-policy/0.1.0/odrl"
+  ],
+  "version": "1.0.0",
+  "url": "https://github.com/nf-core/test-datasets",
+  "license": "https://spdx.org/licenses/MIT.html",
+  "creator": {
+    "@type": "sc:Organization",
+    "name": "nf-core"
+  },
+  "additionalType": "quality_report",
+  "isBasedOn": [
+    "raw-reads@1.2.0",
+    "trimmed-reads@1.1.0"
+  ],
+  "measurementTechnique": "MULTIQC",
+  "variableMeasured": [
+    {
+      "@type": "sc:PropertyValue",
+      "name": "producer",
+      "value": "multiqc"
+    }
+  ],
+  "distribution": [
+    {
+      "@type": "cr:FileSet",
+      "@id": "qc-report-files",
+      "name": "qc-report-files",
+      "description": "The quality_report files of this dataset, in html+zip form. The native descriptor records the shape of the data and not its location, so this FileSet has no containedIn; the location is supplied by whoever mounts the dataset.",
+      "encodingFormat": "application/octet-stream",
+      "includes": "*.html+zip"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "decisions_gated.jsonl",
+      "name": "decisions_gated.jsonl",
+      "description": "Decision records emitted by the gate for this dataset.",
+      "encodingFormat": "application/jsonl",
+      "contentUrl": "decisions_gated.jsonl",
+      "sha256": "e3d9d60e43b2742a43018e1ca45a8578d334fc2c7822fd53513dd55f6825e0dd"
+    }
+  ],
+  "usageInfo": {
+    "@type": "odrl:Set",
+    "odrl:uid": "qc-report#policy",
+    "odrl:profile": {
+      "@id": "https://w3id.org/croissant-policy/0.1.0/odrl"
+    },
+    "cpolodrl:datasetState": "PENDING",
+    "cpolodrl:failClosed": true,
+    "cpolodrl:classification": "public-test-data",
+    "cpolodrl:custodian": "nf-core",
+    "cpolodrl:retentionDays": 365,
+    "cpolodrl:rationale": "Aggregation is the stage where a reader first sees results, so it is the stage most worth gating on completeness of its inputs.",
+    "odrl:permission": [
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/aggregate"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "PENDING"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/minInputStages"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/gteq"
+            },
+            "odrl:rightOperand": 2
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/reportFormat"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "multiqc"
+            ]
+          }
+        ]
+      },
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/release"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "COMPLETE"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/approvedBy"
+            },
+            "odrl:operator": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#isPresent"
+            },
+            "odrl:rightOperand": true
+          }
+        ]
+      }
+    ],
+    "cpolodrl:decisionRecord": {
+      "@id": "decisions_gated.jsonl"
+    }
+  }
+}
