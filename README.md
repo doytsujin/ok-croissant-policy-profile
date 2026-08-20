@@ -4,10 +4,26 @@ A **policy profile for Croissant** dataset descriptors, with a reference
 implementation, a conformance validator, an MCP capability projection, and
 measured overhead.
 
-Croissant describes what a dataset *is*. It does not say what may be *done*
-with it, by whom, in which state, or what happens when a consumer asks for
-something the dataset does not permit. This profile adds one additive layer
-that answers those questions from the descriptor alone.
+Croissant 1.1 can now *write down* what may be done with a dataset — data use
+conditions in `sc:usageInfo`, with DUO recommended for simple restrictions and
+ODRL for fine-grained ones. What no version of Croissant specifies is how any of
+them is **evaluated**: there is no decision procedure, no bound on what a
+condition costs to check, no defined outcome for a condition an implementation
+cannot evaluate, no record of what was checked, and nothing about how a
+data-side condition composes with the authority governing the caller.
+
+This profile is that half. A dataset declares the operations it admits and the
+conditions under which it admits them, from a closed set of five operators, so a
+gate decides a request from the descriptor alone and leaves a record of what it
+checked.
+
+It ships in **two carriers**, and they decide identically. `cpol:` terms on the
+`sc:Dataset` node are normative because they are smaller; the same policy as an
+`odrl:Set` in `sc:usageInfo` is where Croissant 1.1 says use conditions go. Four
+of the five operators turn out to be ODRL core operators, so the question was
+never expressiveness — see [SPEC.md](SPEC.md) section 10 and
+`tests/test_carrier_equivalence.py`, which compares whole decision records
+across the two.
 
 The specification is [SPEC.md](SPEC.md). Everything below is about the code.
 
@@ -338,14 +354,28 @@ python3 -m croissant_policy.validate examples/*.json
 # Project onto an MCP tool list
 python3 -m croissant_policy.capabilities examples/*.json --out examples/capabilities.json
 
+# Emit both carriers
+make examples         # cpol: on sc:Dataset, and ODRL in sc:usageInfo
+
+# Regenerate the served namespace artifacts. They are generated, never edited:
+# the operator set and the resource list each have one definition, and
+# tests/test_ns.py fails if docs/ns/ drifts from it.
+make ns               # shapes.ttl + profile.jsonld
+
+# The specification-coverage corpus: documents generated from the closed
+# grammar. Coverage is the result, not the count -- see SPEC.md section 11.
+make conformance
+
 # Tests and benchmarks
 make test
 make bench            # C3, the profile path's overhead
 make precedence       # experiment 2
 
-# Croissant validity (needs the venv)
+# Croissant validity and SHACL conformance (need the venv)
 make venv
 make mlcroissant
+make shacl            # --negative is not optional: shapes that accept
+                      # everything pass silently and prove nothing
 ```
 
 `NFGATE_ROOT` points at the gate's checkout. It defaults to

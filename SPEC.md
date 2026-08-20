@@ -29,18 +29,41 @@ checked is indistinguishable from a bug.
 | Standard | Answers | Does not answer |
 |---|---|---|
 | Croissant 1.0 | what the dataset is, how to load it | what may be done with it |
+| Croissant 1.1 | *and* how to write down conditions of use | how any of them is evaluated |
 | RO-Crate / WRROC | what happened, retrospectively | whether it should have |
 | DCAT / schema.org | how to find and cite it | conditions of use, mechanically |
 | ODRL | how to *express* a permission | how to evaluate one (no enforcement spec) |
 | ODRE | how to enforce ODRL policies | dataset structure, ML loading, drift |
 | Agent control planes | whether the *caller* is in scope | whether the *data* admits the operation |
 
-This profile is deliberately narrower than ODRL. ODRL is an expressive rights
-vocabulary; this is a closed set of five operators chosen so that every policy
-in the profile is decidable in constant time and explainable in one line. An
-open expression language is more expressive and much harder to defend to an
-auditor. Where richer rights modelling is needed, ODRL/ODRE is the right tool
-and this profile does not compete with it.
+**Croissant 1.1 changed the baseline and did not close the gap.** Published
+2026-01-29, it adds a responsible-AI and governance section carrying data use
+conditions in `sc:usageInfo`, recommends DUO for simple conditions and ODRL for
+fine-grained ones, and says machine-readable restrictions can support automated
+compliance checking. On *representation* the question is now answered by the
+standard. What it does not supply is an evaluation procedure, a bound on what a
+condition may cost to check, an outcome for a condition an implementation
+cannot evaluate, a record of what was checked, or any account of how a
+data-side condition composes with the authority governing the caller. Those
+five are what this profile is.
+
+**This profile is narrower than ODRL, and not because ODRL cannot express it.**
+ODRL's profile mechanism (Information Model section 3.3) permits new actions,
+left and right operands, operators and conflict strategies, so the conditions
+here are expressible in ODRL and we make no claim otherwise. What an ODRL
+profile does not inherit is an evaluation semantics, because the standard
+deliberately leaves the evaluator to the implementer -- which is why De Vos et
+al. compile ODRL to Answer Set Programming and ODRE attaches executable
+functions, and why the two do not agree. A closed set of five operators is
+chosen so that the work a document implies is enumerable from the document and
+every refusal is explainable in one line, and so that each operator has an
+image in JSON Schema for the capability projection of section 7. Where richer
+rights modelling is needed, ODRL/ODRE is the right tool and this profile does
+not compete with it.
+
+Section 10 defines an ODRL carrier for this profile and shows the two decide
+identically, so the choice of carrier is not the contribution and does not have
+to be argued for.
 
 The last row is the one that motivates the capability projection in section 7.
 Agent control planes bind policy to a caller identity and enforce it inline
@@ -299,6 +322,36 @@ rather than asserting clause 1 was satisfied:
    checksum. A path that does not exist is refused rather than described with an
    invented digest.
 
+**A fourth defect was found later, by the profile's own SHACL shapes, and it is
+not ours to fix.** Croissant's context defines `conformsTo` as `dct:conformsTo`
+without `"@type": "@id"`, and sets `"@language": "en"` globally. The values of
+the one property whose purpose is to identify a profile therefore expand to
+language-tagged string literals rather than to IRIs: a document says it conforms
+to *the text* `"https://w3id.org/croissant-policy/0.1.0"`, not to the profile
+that IRI names, and RDF-level profile discovery from a descriptor does not work.
+
+Three fixes exist and two are closed to us. Writing `{"@id": ...}` produces
+correct RDF and is rejected by `mlcroissant`, which string-compares `conformsTo`
+to determine the Croissant version and then fails the document on every
+expectation that depended on the version it could not determine -- we tried it
+and reverted it. Adding `"conformsTo": {"@id": "dct:conformsTo", "@type": "@id"}`
+to the profile's context would redefine a Croissant core term, which clause 1
+forbids. So conforming documents carry the bare strings, the profile's shapes
+match either form, its readers accept either form, and the defect is recorded
+here as Croissant's rather than papered over. If the reference implementation
+accepts node references, the emitter changes and nothing else does.
+
+**Checked with SHACL.** `docs/ns/0.1.0/shapes.ttl` expresses conformance
+clauses 2 through 5 as shapes over the expanded graph, which is the check the
+structural validator cannot perform. All three `examples/` documents conform,
+and eight deliberately broken documents -- one per clause plus four structural
+defects -- are each reported as violations, because shapes that accept
+everything pass silently and prove nothing. Run `make shacl`. Clause 1 is
+absent from the shapes by design: it is a statement about the document that
+remains after a deletion, and SHACL constrains the graph it is handed rather
+than one derived from it, so clause 1 stays with `tests/test_degradation.py`,
+which performs the strip.
+
 Two warnings remain on the examples, both for *recommended* properties:
 `citeAs` and `datePublished`. Both are supported as emitter overrides and
 neither is invented for datasets whose citation and publication date are not
@@ -313,3 +366,136 @@ and the profile itself remains standard library only.
 
 Everything in sections 5 through 7 is exercised by the test suite against the
 reference evaluator.
+
+## 10. The ODRL carrier
+
+Croissant 1.1 names `sc:usageInfo` as the place a dataset's use conditions go,
+and ODRL as the vocabulary for the fine-grained ones. This section defines that
+form of a `cpol:` policy, so that the question "why not just use ODRL?" has an
+answer that can be run rather than argued.
+
+A conforming ODRL-carrier document is an ordinary Croissant document whose
+`sc:usageInfo` carries one `odrl:Set`. It claims
+`https://w3id.org/croissant-policy/0.1.0/odrl` in `conformsTo` -- a **different
+identifier** from the `cpol:` profile, because ODRL requires a processing system
+that does not recognise a profile identifier to stop processing the policy, and
+that requirement is worth nothing if the two forms share an identifier.
+
+`odrl:Set` rather than `Agreement` or `Offer`, because a Set is ODRL's policy
+without parties and this profile has no identity model (section 8). Naming an
+assigner would invent an actor the descriptor does not know about.
+
+### 10.1 Operators
+
+| `cpol:` | ODRL | Source |
+|---|---|---|
+| `cpol:min` | `odrl:gteq` | ODRL core |
+| `cpol:max` | `odrl:lteq` | ODRL core |
+| `cpol:in` | `odrl:isAnyOf` | ODRL core |
+| `cpol:equals` | `odrl:eq` | ODRL core |
+| `cpol:present` | `cpolodrl:isPresent` | minted; ODRL defines no existence operator |
+
+Four of the five are ODRL core operators. That is the shortest available
+statement of why the disagreement with ODRL was never about expressiveness.
+
+Left operands and actions are minted, which section 3.3 of the Information
+Model permits: the dataset's lifecycle state becomes `cpolodrl:datasetState`,
+each request-context key becomes `cpolodrl:ctx/<name>`, and each action becomes
+`cpolodrl:action/<name>`. ODRL's core actions name what may be done with a work
+-- use, distribute, reproduce -- and not what a pipeline stage does to a
+dataset, so reusing `odrl:use` for `qc`, `trim` and `align` alike would erase
+the distinction the policy is about.
+
+### 10.2 What the carrier does not carry
+
+`cpolodrl:failClosed` is minted and mandatory, because ODRL has no equivalent.
+Section 3.2 of the Information Model gives fail-closed against an unrecognised
+*profile*; it says nothing about an operator an evaluator does not implement
+inside a profile it does recognise, and nothing about what a surrounding system
+concludes from a halted evaluation. Those are the two questions a gate must
+answer and the two `cpol:failClosed` is about.
+
+### 10.3 Equivalence
+
+`tests/test_carrier_equivalence.py` emits both carriers from the same native
+descriptor, decides the generated request matrix through both, and requires the
+**whole decision records** to match -- verdict, refusal class, reasons, and every
+condition checked with its observed value. It additionally requires that the two
+documents differ *only* in the policy node, so the comparison isolates the
+carrier rather than comparing two independently written documents.
+
+The consequence is the one worth stating plainly: **the carrier decides
+nothing.** The evaluation semantics does, and it is the same in both. The
+`cpol:` form is normative because it is smaller and because a Croissant consumer
+meets it without a second vocabulary stack, not because anything rests on it.
+
+## 11. The conformance corpus
+
+Two corpora, answering two questions, and the specification is explicit about
+which is evidence for which.
+
+The **deployment corpus** is three descriptors in `ok-nfcore-admission-gate`.
+They gated a real run of `nf-core/demo` and were not written for this profile.
+They are the evidence that the mechanism works in front of real execution, and
+they are where every performance figure comes from.
+
+The **conformance corpus** is generated from the grammar this specification
+defines, by `croissant_policy/conformance.py`. It is the evidence that the
+profile behaves correctly across the space of documents section 3 permits. It
+makes no claim about which policies anyone writes, and it carries no timing.
+
+Generating rather than hand-authoring follows from the same property the rest of
+the specification rests on. The operator set is closed at five, the refusal
+classes are three, and `failClosed` is boolean and mandatory, so the document
+space is enumerable in the same sense a policy's evaluation cost is. Section 6.1
+already generates the request matrix from a descriptor; this generates the
+descriptors.
+
+### 11.1 What it covers
+
+Coverage is the result. The document count is not, and reporting it as one would
+be the wrong claim: a corpus of forty documents exercising three operators is
+weaker than one of eight exercising five, and only the size is visible from the
+size.
+
+| Dimension | Covered |
+|---|---|
+| Operators | all five: `min`, `max`, `in`, `equals`, `present` |
+| Verdicts | `PERMIT` and all three refusal classes |
+| Clauses | 1 through 5, positively and negatively |
+| Carriers | `cpol:` and the ODRL carrier of section 10 |
+| Shapes | single- and multi-condition actions, multi-action policies, lifecycle-state preconditions, wrong-typed operands, strip cases |
+| Defects | unknown operator, absent and false `failClosed`, missing operand, missing condition name, duplicated condition name, more than one policy, a condition that is not a node, an unclaimed profile |
+
+The coverage claim is checked twice. The tags declare it; then
+`tests/test_conformance_corpus.py` collects the verdicts and operators the
+corpus actually reaches when run, and fails if a declared outcome is one no
+request produced. A tag no execution corroborates is a claim the corpus does not
+support.
+
+### 11.2 What it establishes
+
+Every valid case is expressed three ways -- as a native descriptor, as `cpol:`
+terms, and as an ODRL policy in `sc:usageInfo` -- and all three must produce
+identical complete decision records over the generated request matrix. Every
+defect case must refuse every request in both carriers. Every valid document
+must load in `mlcroissant`, satisfy the SHACL shapes, and leave a valid
+Croissant document when stripped.
+
+### 11.3 Two defects it found
+
+Both were invisible to the deployment corpus, because three well-formed
+descriptors do not reach them.
+
+1. **The ODRL carrier raised where it should have refused.** A condition that is
+   not a node -- legal JSON, forbidden by the profile -- was poisoned correctly
+   by the `cpol:` parser and crashed the ODRL emitter. A malformed document must
+   produce a refusal and never an exception, or the two carriers stop being
+   equivalent exactly where equivalence matters.
+2. **Clause 2 was validated and not enforced.** A document could carry the
+   policy terms, omit the profile IRI from `conformsTo`, and still be decided.
+   That made the claim decorative and left the carriers inconsistent, since the
+   ODRL carrier already refuses an unrecognised `odrl:profile` because the
+   Information Model requires it. A profile identifier that costs nothing to
+   omit is not an identifier. The `cpol:` carrier now refuses a document that
+   does not claim the profile, and the two carriers agree.
