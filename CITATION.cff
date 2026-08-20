@@ -24,7 +24,11 @@ abstract: >-
   descriptor alone and leave a record of what was checked. Includes a reference
   implementation, a conformance validator, an MCP capability projection, a
   measured overhead study, a caller-side/data-side precedence experiment, and a
-  tool for re-deciding a stored decision archive against a later policy.
+  tool for re-deciding a stored decision archive against a later policy. The
+  policy is expressible in two decision-equivalent carriers -- the profile's own
+  terms, and an ODRL policy in the sc:usageInfo slot Croissant 1.1 provides --
+  and the profile publishes SHACL shapes for each, a PROF description of its own
+  resources, and a conformance corpus generated from its closed grammar.
 keywords:
   - croissant
   - dataset descriptors
@@ -32,6 +36,9 @@ keywords:
   - data governance
   - provenance
   - agent governance
+  - odrl
+  - shacl
+  - json-ld
 license: Apache-2.0
-version: 0.1.6
-date-released: 2026-08-19
+version: 0.2.0
+date-released: 2026-08-20
