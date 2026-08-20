@@ -28,7 +28,8 @@ across the two.
 The specification is [SPEC.md](SPEC.md). Everything below is about the code.
 
 Archived at [doi:10.5281/zenodo.22018156](https://doi.org/10.5281/zenodo.22018156),
-which always resolves to the newest deposited version.
+which always resolves to the newest deposited version — currently v0.2.0,
+[doi:10.5281/zenodo.22032756](https://doi.org/10.5281/zenodo.22032756).
 
 The records deposited before it were deleted on 2026-08-19 rather than
 superseded: they published a 122 us gate-process figure taken from a 7-decision

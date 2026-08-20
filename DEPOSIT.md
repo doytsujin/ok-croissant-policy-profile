@@ -1,5 +1,10 @@
 # Zenodo deposit sheet — v0.2.0
 
+**Deposited 2026-08-20.** Record `22032756`, version DOI
+`10.5281/zenodo.22032756`, under concept `10.5281/zenodo.22018156` — the same
+concept as v0.1.6, which is the point. Read back through the API afterwards:
+two records, one concept, no second concept minted.
+
 **A new version of an existing record**, not a new record. The concept is
 `10.5281/zenodo.22018156`, created by the v0.1.6 deposit on 2026-08-19, and it
 is the only concept this software will ever have. Deposit through
