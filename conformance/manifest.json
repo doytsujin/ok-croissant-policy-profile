@@ -177,6 +177,36 @@
       ]
     },
     {
+      "id": "equality-boolean",
+      "kind": "valid",
+      "tags": [
+        "operator:equals",
+        "refusal:condition",
+        "shape:json-equality",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "equality-number",
+      "kind": "valid",
+      "tags": [
+        "operator:equals",
+        "refusal:condition",
+        "shape:json-equality",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "membership-number",
+      "kind": "valid",
+      "tags": [
+        "operator:in",
+        "refusal:condition",
+        "shape:json-equality",
+        "verdict:permit"
+      ]
+    },
+    {
       "id": "additivity-rich",
       "kind": "valid",
       "tags": [
@@ -335,8 +365,8 @@
   ],
   "counts": {
     "defect": 13,
-    "documents": 51,
-    "valid": 19
+    "documents": 57,
+    "valid": 22
   },
   "coverage": {
     "carrier": [
@@ -364,6 +394,7 @@
     ],
     "shape": [
       "defect",
+      "json-equality",
       "malformed-operand",
       "multi-action",
       "multi-condition",

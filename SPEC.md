@@ -193,11 +193,18 @@ comparison is attempted:
 | `min`, `max` | a number, and not a boolean |
 | `in` | a list; a scalar is not a one-element set |
 | `present` | a boolean |
-| `equals` | any JSON value, including arrays and objects; numeric equality follows JSON, so `1` and `1.0` are equal |
+| `equals` | any JSON value, including arrays and objects |
 
-This was implicit until the conformance corpus made it explicit, and two of the
-four rows above were wrong in the implementation before it did — see section
-11.3.
+**Equality.** `equals` and `in` share one comparison relation, and it is JSON's
+rather than any implementation language's. Numbers compare by value, so `1` and
+`1.0` are equal — JSON has a single number type and an int/float split is an
+artifact of the parser. A boolean is equal only to a boolean: `true` is not `1`.
+Arrays and objects compare structurally under the same relation, and duplicates
+in an `in` array do not change membership. Values of different JSON types are
+unequal.
+
+Both of these were implicit until the conformance corpus made them explicit, and
+the implementation had them wrong — see section 11.3.
 
 ## 6. Evaluation
 
@@ -530,7 +537,8 @@ The operand cases in the table above are there because asking what the operator
 table actually promises turned up two more defects, both reachable from a
 document that looks conforming.
 
-`cpol:in` with a **numeric** operand raised `TypeError` rather than refusing:
+**Malformed operands.** `cpol:in` with a **numeric** operand raised `TypeError`
+rather than refusing:
 the evaluator crashed on a malformed document instead of refusing it. Worse,
 `cpol:in` with a **string** operand fell through to substring matching, so a
 policy written `{"in": "illumina"}` -- forgetting the array, which is the
@@ -544,6 +552,16 @@ of the wrong type is an ordinary condition violation: `min: 20` against
 wrong type is not a request problem at all; it is a defect in the policy, and it
 now refuses at translation, before reaching a comparison that was never defined
 for it. Section 5.3 states the operand type each operator requires.
+
+**Equality.** A third defect, of the same kind and found the same way. The
+evaluator compared with the implementation language's equality, and in Python
+`bool` is a subclass of `int`, so `True == 1`. A policy written
+`{"equals": true}` was therefore satisfied by an observed `1`, and
+`{"in": [1, 2]}` admitted `true`. Both admit a request the policy did not
+describe. The comparison is now JSON's, defined in section 5.3, and replaying
+the deployment corpus under it altered none of its 46 decisions — the three real
+descriptors carry no boolean conditions, so nothing published depends on the
+change.
 
 ### 11.4 Two defects the corpus found first
 

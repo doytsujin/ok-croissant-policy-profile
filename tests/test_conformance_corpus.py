@@ -154,6 +154,44 @@ class DefectsRefuseRatherThanDecide(unittest.TestCase):
                     f"{case.id} should be reported: {case.defect}")
 
 
+class EqualityIsJsonEquality(unittest.TestCase):
+    """The comparison relation the profile specifies, checked directly.
+
+    Table 1 of the paper prints this, so it has to be true of the evaluator the
+    profile defers to. Python's `==` is not it: bool is a subclass of int, so
+    `True == 1`, and a policy written `equals: true` was satisfied by an
+    observed 1 -- a request admitted against what its author wrote.
+    """
+
+    def _decide(self, spec, observed):
+        native = {
+            "datasetId": "eq", "version": "1", "dataType": "t", "state": "S",
+            "schema": {}, "provenance": {}, "policy": {},
+            "permissibleActions": [
+                {"name": "run", "requiresState": ["S"], "conditions": {"probe": spec}}
+            ],
+        }
+        desc = parse.to_descriptor(emit.emit(native))
+        return gate_mod.authorize(desc, "run", {"probe": observed}).permitted
+
+    def test_numbers_compare_by_value(self):
+        self.assertTrue(self._decide({"equals": 1}, 1.0))
+        self.assertTrue(self._decide({"in": [1, 2]}, 2.0))
+
+    def test_a_boolean_is_equal_only_to_a_boolean(self):
+        self.assertFalse(self._decide({"equals": True}, 1))
+        self.assertFalse(self._decide({"equals": False}, 0))
+        self.assertTrue(self._decide({"equals": True}, True))
+
+    def test_membership_uses_the_same_relation(self):
+        self.assertFalse(self._decide({"in": [1, 2]}, True))
+        self.assertTrue(self._decide({"in": ["a", "b"]}, "b"))
+
+    def test_values_of_different_types_are_unequal(self):
+        self.assertFalse(self._decide({"equals": "1"}, 1))
+        self.assertFalse(self._decide({"equals": 1}, "1"))
+
+
 class CoverageIsWhatIsReported(unittest.TestCase):
     def test_coverage_is_declared(self):
         cov = conformance.coverage()

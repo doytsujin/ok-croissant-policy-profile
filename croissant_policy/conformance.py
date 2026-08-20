@@ -225,6 +225,45 @@ def _state_cases() -> list[Case]:
     return out
 
 
+def _json_equality_cases() -> list[Case]:
+    """Equality is JSON's, not the implementation language's.
+
+    Three things the profile has to get right and one implementation got wrong:
+    numbers compare by value so 1 and 1.0 are equal; a boolean is equal only to
+    a boolean, so `equals: true` is not satisfied by 1; and membership uses the
+    same relation, so `in: [1, 2]` does not admit `true`.
+    """
+    return [
+        Case(
+            id="equality-boolean",
+            native=_descriptor(
+                "equality-boolean", "QC_PASSED",
+                [_action("run", ["QC_PASSED"], {"probe": {"equals": True}})],
+            ),
+            tags={"operator:equals", "shape:json-equality", "verdict:permit",
+                  "refusal:condition"},
+        ),
+        Case(
+            id="equality-number",
+            native=_descriptor(
+                "equality-number", "QC_PASSED",
+                [_action("run", ["QC_PASSED"], {"probe": {"equals": 1}})],
+            ),
+            tags={"operator:equals", "shape:json-equality", "verdict:permit",
+                  "refusal:condition"},
+        ),
+        Case(
+            id="membership-number",
+            native=_descriptor(
+                "membership-number", "QC_PASSED",
+                [_action("run", ["QC_PASSED"], {"probe": {"in": [1, 2]}})],
+            ),
+            tags={"operator:in", "shape:json-equality", "verdict:permit",
+                  "refusal:condition"},
+        ),
+    ]
+
+
 def _additivity_cases() -> list[Case]:
     """Documents whose descriptive half is worth something after the strip.
 
@@ -335,6 +374,21 @@ def _min_non_numeric_operand(doc: dict) -> dict:
     """`cpol:min` against a threshold that is not a number."""
     doc["cpol:policy"]["cpol:permissibleAction"][0]["cpol:condition"][0][
         "cpol:expected"] = "twenty"
+    return doc
+
+
+def _equals_boolean_vs_number(doc: dict) -> dict:
+    """`equals: true` must not be satisfied by an observed 1.
+
+    Not a malformed document -- this one is perfectly conforming -- so it is a
+    *valid* case whose request matrix has to reach the right verdict. It lives
+    among the defect helpers only because it was found alongside them: Python's
+    bool is a subclass of int, so `True == 1`, and a gate using Python equality
+    admitted a request whose policy said something else.
+    """
+    condition = doc["cpol:policy"]["cpol:permissibleAction"][0]["cpol:condition"][0]
+    condition["cpol:operator"] = "cpol:equals"
+    condition["cpol:expected"] = True
     return doc
 
 
@@ -469,6 +523,7 @@ def valid_cases() -> list[Case]:
         + _multi_action_cases()
         + _state_cases()
         + _wrong_datatype_cases()
+        + _json_equality_cases()
         + _additivity_cases()
     )
 

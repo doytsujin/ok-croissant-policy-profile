@@ -7,10 +7,10 @@
       "defect-no-profile-claim": "translation writes the conformance claim, so the omission cannot survive it",
       "defect-two-policies": "to_odrl is defined for exactly one policy node"
     },
-    "documentsStored": 51,
-    "requestsPerRepresentation": 166,
-    "threeWayComparisons": 498,
-    "validCases": 19
+    "documentsStored": 57,
+    "requestsPerRepresentation": 184,
+    "threeWayComparisons": 552,
+    "validCases": 22
   },
   "coverage": {
     "carrier": [
@@ -38,6 +38,7 @@
     ],
     "shape": [
       "defect",
+      "json-equality",
       "malformed-operand",
       "multi-action",
       "multi-condition",
@@ -64,10 +65,10 @@
     "note": "Every valid case in both carriers. Errors: none. The two recommended-property warnings that remain on the deployment examples remain here, plus schema:license, which these fixtures do not carry because they are not distributed datasets."
   },
   "outcomeMix": {
-    "CONDITION_VIOLATED": 74,
-    "PERMIT": 17,
+    "CONDITION_VIOLATED": 83,
+    "PERMIT": 20,
     "STATE_PRECONDITION": 37,
-    "UNDECLARED_ACTION": 38
+    "UNDECLARED_ACTION": 44
   },
   "purpose": "Specification coverage for the Croissant policy profile. Generated from the closed grammar, not observed. Makes no claim about which policies are written in practice, and carries no timing figures: those come from the deployment corpus of real nf-core descriptors.",
   "shacl": {
