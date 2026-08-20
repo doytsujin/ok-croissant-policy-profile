@@ -1,0 +1,181 @@
+{
+  "@context": {
+    "prof": "http://www.w3.org/ns/dx/prof/",
+    "dct": "http://purl.org/dc/terms/",
+    "role": "http://www.w3.org/ns/dx/prof/role/",
+    "sh": "http://www.w3.org/ns/shacl#",
+    "odrl": "http://www.w3.org/ns/odrl/2/"
+  },
+  "@graph": [
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0",
+      "@type": "prof:Profile",
+      "dct:title": "Croissant Policy Profile",
+      "dct:description": "An additive policy layer for Croissant dataset descriptors. A dataset declares the operations it admits and the conditions under which it admits them, from a closed set of five operators, so that a gate can decide a request from the descriptor alone and leave a record of what it checked.",
+      "dct:hasVersion": "0.1.0",
+      "dct:publisher": "Alexander Chernov",
+      "dct:license": {
+        "@id": "https://spdx.org/licenses/Apache-2.0.html"
+      },
+      "prof:isProfileOf": {
+        "@id": "http://mlcommons.org/croissant/1.0"
+      },
+      "prof:hasToken": "cpol",
+      "prof:hasResource": [
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#specification"
+        },
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#profile-document"
+        },
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#context"
+        },
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#shapes"
+        },
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#validator"
+        },
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#examples"
+        },
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#odrl-carrier"
+        },
+        {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#capabilities"
+        }
+      ]
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0/odrl",
+      "@type": "prof:Profile",
+      "dct:title": "Croissant Policy Profile \u2014 ODRL carrier",
+      "dct:description": "The same policy expressed as an ODRL Set in sc:usageInfo, the carrier Croissant 1.1 recommends for fine-grained use conditions. Four of the five operators are ODRL core operators; only the presence test is minted, because ODRL defines no existence operator. Decisions are identical to the cpol: carrier, record for record.",
+      "dct:hasVersion": "0.1.0",
+      "prof:isProfileOf": [
+        {
+          "@id": "http://mlcommons.org/croissant/1.0"
+        },
+        {
+          "@id": "http://www.w3.org/ns/odrl/2/"
+        }
+      ],
+      "prof:isTransitiveProfileOf": {
+        "@id": "https://w3id.org/croissant-policy/0.1.0"
+      },
+      "prof:hasToken": "cpolodrl"
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#specification",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "specification",
+      "dct:description": "The normative specification: conformance clauses, vocabulary, evaluation and capability projection.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/specification"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://github.com/doytsujin/ok-croissant-policy-profile/blob/main/SPEC.md"
+      },
+      "dct:format": "text/markdown"
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#profile-document",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "profile-document",
+      "dct:description": "Human-readable profile document served at the namespace IRI.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/guidance"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/"
+      },
+      "dct:format": "text/html"
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#context",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "context",
+      "dct:description": "The JSON-LD context: Croissant's own context plus the two entries this profile adds.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/vocabulary"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/context.jsonld"
+      },
+      "dct:format": "application/ld+json"
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#shapes",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "shapes",
+      "dct:description": "SHACL shapes for the static conformance clauses of section 3. These validate a document; they do not decide a request.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/validation"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/shapes.ttl"
+      },
+      "dct:format": "text/turtle",
+      "dct:conformsTo": {
+        "@id": "http://www.w3.org/ns/shacl#"
+      }
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#validator",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "validator",
+      "dct:description": "The structural conformance validator, which checks the clauses SHACL cannot reach without expanding the document.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/validation"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://github.com/doytsujin/ok-croissant-policy-profile/blob/main/croissant_policy/validate.py"
+      },
+      "dct:format": "text/x-python"
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#examples",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "examples",
+      "dct:description": "Conforming documents in both carriers, emitted from the descriptors of a real nf-core pipeline run.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/example"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://github.com/doytsujin/ok-croissant-policy-profile/blob/main/examples"
+      },
+      "dct:format": "application/ld+json"
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#odrl-carrier",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "odrl-carrier",
+      "dct:description": "The mapping onto an ODRL policy carried in sc:usageInfo, which Croissant 1.1 names as the place for fine-grained use conditions. Decision-equivalent to the cpol: carrier; see tests/test_carrier_equivalence.py.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/mapping"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://github.com/doytsujin/ok-croissant-policy-profile/blob/main/croissant_policy/odrl.py"
+      },
+      "dct:format": "text/x-python",
+      "dct:conformsTo": {
+        "@id": "http://www.w3.org/ns/odrl/2/"
+      }
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#capabilities",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "capabilities",
+      "dct:description": "The deterministic projection from a policy onto Model Context Protocol tool schemas.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/mapping"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://github.com/doytsujin/ok-croissant-policy-profile/blob/main/croissant_policy/capabilities.py"
+      },
+      "dct:format": "text/x-python"
+    }
+  ]
+}

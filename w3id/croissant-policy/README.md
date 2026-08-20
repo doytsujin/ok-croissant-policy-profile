@@ -21,6 +21,9 @@ product and carries no endorsement from the Croissant project.**
 | `https://w3id.org/croissant-policy/` | the version index |
 | `https://w3id.org/croissant-policy/0.1.0` | the human-readable profile document |
 | `https://w3id.org/croissant-policy/0.1.0` with `Accept: application/ld+json` | `context.jsonld`, the term definitions |
+| `https://w3id.org/croissant-policy/0.1.0/profile.jsonld` | the PROF description: which artifact plays which role |
+| `https://w3id.org/croissant-policy/0.1.0/shapes.ttl` | SHACL shapes for the static conformance clauses |
+| `https://w3id.org/croissant-policy/0.1.0/odrl` | the ODRL carrier profile, described in the same document |
 | `https://w3id.org/croissant-policy/0.1.0/<term>` | the profile document defining that term |
 
 All redirects are `303 See Other` to

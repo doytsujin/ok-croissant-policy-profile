@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Croissant Policy Profile 0.1.0</title>
 <link rel="alternate" type="application/ld+json" href="context.jsonld">
+<link rel="alternate" type="application/ld+json" href="profile.jsonld" title="PROF description">
+<link rel="alternate" type="text/turtle" href="shapes.ttl" title="SHACL shapes">
 <style>
   :root { --fg:#1a1a1a; --bg:#fff; --mut:#5a5a5a; --line:#e2e2e2; --code:#f6f6f6; }
   @media (prefers-color-scheme: dark) {
@@ -121,6 +123,16 @@ refusal at evaluation time, not a skipped check. The full text is in
 }</code></pre>
 
 <h2>Machine-readable</h2>
+<p><a href="profile.jsonld">profile.jsonld</a> — the profile described with the W3C
+<a href="https://www.w3.org/TR/dx-prof/">Profiles Vocabulary</a>: which artifact is the
+specification, which is the context, which validates, which maps this profile onto ODRL.
+A consumer holding a document that claims this profile can discover the rest from here
+rather than from a paper.</p>
+
+<p><a href="shapes.ttl">shapes.ttl</a> — SHACL shapes for conformance clauses 2 through 5.
+They validate a policy <em>document</em>; they never decide a <em>request</em>, because the
+object of a decision is a request context supplied at call time and present in no graph.</p>
+
 <p><a href="context.jsonld">context.jsonld</a> — the term definitions this profile adds
 to Croissant's own context.</p>
 

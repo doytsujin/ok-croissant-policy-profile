@@ -132,5 +132,59 @@ def profile_iri() -> str:
     return PROFILE_IRI
 
 
+def conformance_claim(profile: str = PROFILE_IRI) -> list[str]:
+    """The value of `conformsTo`: bare strings, and not by preference.
+
+    The obviously correct RDF is a node reference, `{"@id": "..."}`, so that
+    the value expands to an IRI. Written as bare strings the values expand to
+    *language-tagged literals*, because Croissant's own context defines
+    `conformsTo` as `dct:conformsTo` without `"@type": "@id"` and sets
+    `"@language": "en"` globally. A document written the obvious way therefore
+    claims conformance to the *text* "https://w3id.org/croissant-policy/0.1.0"
+    rather than to the profile that IRI identifies, and RDF-level profile
+    discovery from a descriptor does not work.
+
+    We tried the node form and reverted it. MLCommons' `mlcroissant` rejects
+    it: the reference implementation string-compares `conformsTo` to determine
+    which Croissant version a document claims, so a node reference is not
+    recognised as a version at all, and the document then fails validation on
+    every downstream expectation that depends on the version it could not
+    determine. Croissant validity is conformance clause 1 and is not
+    negotiable, so the bare form stays.
+
+    The third option -- adding `"conformsTo": {"@id": "dct:conformsTo",
+    "@type": "@id"}` to the profile's `@context` -- is closed by clause 1 too,
+    which forbids redefining a Croissant core term.
+
+    So this is a defect in Croissant rather than a choice of this profile, and
+    it is recorded as one: SPEC section 9, and the note in
+    `croissant_policy/shapes.py` where the profile's own SHACL shapes have to
+    match a literal instead of an IRI. It was found by running those shapes
+    against these examples. Readers here accept both forms (`claimed_iris`), so
+    the day the reference implementation accepts node references, the emitter
+    changes and nothing else does.
+    """
+    return [CROISSANT_IRI, profile]
+
+
+def claimed_iris(value) -> list[str]:
+    """The IRIs a `conformsTo` value names, in either notation.
+
+    Documents emitted before this correction carry bare strings, and they are
+    not thereby non-conforming JSON -- they are simply weaker. Readers accept
+    both; the emitter writes only the node form.
+    """
+    if value is None:
+        return []
+    values = value if isinstance(value, list) else [value]
+    out: list[str] = []
+    for item in values:
+        if isinstance(item, str):
+            out.append(item)
+        elif isinstance(item, dict) and isinstance(item.get("@id"), str):
+            out.append(item["@id"])
+    return out
+
+
 def is_known_operator(term: str) -> bool:
     return term in OPERATORS

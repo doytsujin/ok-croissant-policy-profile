@@ -14,7 +14,8 @@ from support import corpus
 
 from croissant_policy import emit
 from croissant_policy.validate import strip, validate
-from croissant_policy.vocab import CROISSANT_CONTEXT, CROISSANT_IRI, PROFILE_IRI
+from croissant_policy.vocab import (CROISSANT_CONTEXT, CROISSANT_IRI, PROFILE_IRI,
+                                    claimed_iris)
 
 
 class GracefulDegradation(unittest.TestCase):
@@ -42,8 +43,8 @@ class GracefulDegradation(unittest.TestCase):
                 self.assertTrue(bare["distribution"])
                 # Croissant's claim survives; the profile's goes with the
                 # terms, so nothing advertises a policy that is no longer there.
-                self.assertEqual(bare["conformsTo"], CROISSANT_IRI)
-                self.assertNotIn(PROFILE_IRI, bare["conformsTo"])
+                self.assertEqual(claimed_iris(bare["conformsTo"]), [CROISSANT_IRI])
+                self.assertNotIn(PROFILE_IRI, claimed_iris(bare["conformsTo"]))
 
     def test_the_descriptive_half_survives_the_strip(self):
         # Everything except the policy itself is carried in standard terms, so

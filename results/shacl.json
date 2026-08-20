@@ -1,0 +1,70 @@
+{
+  "corpus": {
+    "conformed": 19,
+    "violated": 7
+  },
+  "documents": [
+    {
+      "conforms": true,
+      "path": "examples/qc-report.croissant.json",
+      "report": null
+    },
+    {
+      "path": "examples/qc-report.odrl.croissant.json",
+      "skipped": true
+    },
+    {
+      "conforms": true,
+      "path": "examples/raw-reads.croissant.json",
+      "report": null
+    },
+    {
+      "path": "examples/raw-reads.odrl.croissant.json",
+      "skipped": true
+    },
+    {
+      "conforms": true,
+      "path": "examples/trimmed-reads.croissant.json",
+      "report": null
+    },
+    {
+      "path": "examples/trimmed-reads.odrl.croissant.json",
+      "skipped": true
+    }
+  ],
+  "negative": [
+    {
+      "caught": true,
+      "mutation": "clause 2: profile IRI dropped from conformsTo"
+    },
+    {
+      "caught": true,
+      "mutation": "clause 3: two policies"
+    },
+    {
+      "caught": true,
+      "mutation": "clause 4: failClosed absent"
+    },
+    {
+      "caught": true,
+      "mutation": "clause 4: failClosed false"
+    },
+    {
+      "caught": true,
+      "mutation": "clause 5: operator outside the closed set"
+    },
+    {
+      "caught": true,
+      "mutation": "condition with nothing to compare against"
+    },
+    {
+      "caught": true,
+      "mutation": "policy with no lifecycle state"
+    },
+    {
+      "caught": true,
+      "mutation": "policy declaring no action: silence, not refusal"
+    }
+  ],
+  "shapes": "docs/ns/0.1.0/shapes.ttl"
+}

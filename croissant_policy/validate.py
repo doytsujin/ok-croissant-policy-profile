@@ -23,7 +23,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from .parse import _as_list
-from .vocab import CPOL_NS, CROISSANT_CONTEXT, CROISSANT_IRI, OPERATORS, PROFILE_IRI
+from .vocab import (CPOL_NS, CROISSANT_CONTEXT, CROISSANT_IRI, OPERATORS,
+                    PROFILE_IRI, claimed_iris)
 
 _MLCROISSANT_WARNING = (
     "this validator checks the profile's conformance clauses structurally and does not "
@@ -75,7 +76,13 @@ def strip(doc: dict) -> dict:
     if isinstance(doc, dict):
         out = {k: strip(v) for k, v in doc.items() if not _is_cpol(k)}
         if "conformsTo" in out:
-            claimed = [c for c in _as_list(out["conformsTo"]) if c != PROFILE_IRI]
+            # Accepts either notation, and preserves the one it was given: a
+            # stripped document should differ from the original only by what
+            # was removed.
+            claimed = [
+                c for c in _as_list(out["conformsTo"])
+                if (c.get("@id") if isinstance(c, dict) else c) != PROFILE_IRI
+            ]
             out["conformsTo"] = claimed if len(claimed) != 1 else claimed[0]
         return out
     if isinstance(doc, list):
@@ -111,14 +118,14 @@ def _check_additive(doc: dict, report: Report) -> None:
     for required in ("name", "description", "distribution"):
         if not bare.get(required):
             report.error(f"clause 1: stripped document has no {required!r}")
-    if CROISSANT_IRI not in _as_list(bare.get("conformsTo")):
+    if CROISSANT_IRI not in claimed_iris(bare.get("conformsTo")):
         report.error("clause 1: stripped document no longer conformsTo Croissant 1.0")
     if "cpol" in json.dumps(bare):
         report.error("clause 1: policy terms survive the strip; the layer is not separable")
 
 
 def _check_conforms_to(doc: dict, report: Report) -> None:
-    claimed = _as_list(doc.get("conformsTo"))
+    claimed = claimed_iris(doc.get("conformsTo"))
     if CROISSANT_IRI not in claimed:
         report.error(f"clause 2: conformsTo does not name {CROISSANT_IRI}")
     if PROFILE_IRI not in claimed:

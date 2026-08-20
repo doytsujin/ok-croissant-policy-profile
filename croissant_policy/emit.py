@@ -28,7 +28,8 @@ import json
 import sys
 from pathlib import Path
 
-from .vocab import CROISSANT_IRI, PROFILE_IRI, RAI_DATA_COLLECTION, context
+from .vocab import (CROISSANT_IRI, PROFILE_IRI, RAI_DATA_COLLECTION,
+                    conformance_claim, context)
 
 # Native condition keys in the precedence order gate/policy.py checks them.
 _NATIVE_OPERATOR_ORDER = ("min", "max", "in", "equals", "present")
@@ -229,7 +230,7 @@ def emit(
         "@type": "sc:Dataset",
         "name": native["datasetId"],
         "description": description,
-        "conformsTo": [CROISSANT_IRI, PROFILE_IRI],
+        "conformsTo": conformance_claim(),
         "version": native["version"],
     }
     if url:

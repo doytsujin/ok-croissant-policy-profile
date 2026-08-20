@@ -16,7 +16,7 @@ import unittest
 from support import corpus
 
 from croissant_policy import emit, parse
-from croissant_policy.vocab import CROISSANT_IRI, PROFILE_IRI
+from croissant_policy.vocab import CROISSANT_IRI, PROFILE_IRI, claimed_iris
 
 
 class RoundTrip(unittest.TestCase):
@@ -80,7 +80,13 @@ class DocumentShape(unittest.TestCase):
         self.doc = emit.emit(corpus()["raw-reads"])
 
     def test_it_claims_both_conformance_targets(self):
+        # Bare strings, not node references, and croissant_policy/vocab.py
+        # explains at length why that is the reference implementation's
+        # requirement rather than this profile's preference.
         self.assertEqual(self.doc["conformsTo"], [CROISSANT_IRI, PROFILE_IRI])
+        self.assertEqual(
+            claimed_iris(self.doc["conformsTo"]), [CROISSANT_IRI, PROFILE_IRI]
+        )
         self.assertTrue(parse.conforms_to_profile(self.doc))
 
     def test_the_operand_term_is_typed_json(self):
