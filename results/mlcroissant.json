@@ -18,8 +18,8 @@
       "name": "qc-report",
       "path": "examples/qc-report.croissant.json",
       "warnings": [
-        "[Metadata(qc-report)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
-        "[Metadata(qc-report)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+        "[Metadata(qc-report)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(qc-report)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
       ]
     },
     {
@@ -32,8 +32,8 @@
       "name": "qc-report",
       "path": "examples/qc-report.odrl.croissant.json",
       "warnings": [
-        "[Metadata(qc-report)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
-        "[Metadata(qc-report)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+        "[Metadata(qc-report)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(qc-report)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
       ]
     },
     {
@@ -46,8 +46,8 @@
       "name": "raw-reads",
       "path": "examples/raw-reads.croissant.json",
       "warnings": [
-        "[Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
-        "[Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+        "[Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
       ]
     },
     {
@@ -60,8 +60,8 @@
       "name": "raw-reads",
       "path": "examples/raw-reads.odrl.croissant.json",
       "warnings": [
-        "[Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
-        "[Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+        "[Metadata(raw-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(raw-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
       ]
     },
     {
@@ -74,8 +74,8 @@
       "name": "trimmed-reads",
       "path": "examples/trimmed-reads.croissant.json",
       "warnings": [
-        "[Metadata(trimmed-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
-        "[Metadata(trimmed-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+        "[Metadata(trimmed-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(trimmed-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
       ]
     },
     {
@@ -88,8 +88,8 @@
       "name": "trimmed-reads",
       "path": "examples/trimmed-reads.odrl.croissant.json",
       "warnings": [
-        "[Metadata(trimmed-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist.",
-        "[Metadata(trimmed-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist."
+        "[Metadata(trimmed-reads)] Property \"https://schema.org/datePublished\" is recommended, but does not exist.",
+        "[Metadata(trimmed-reads)] Property \"http://mlcommons.org/croissant/citeAs\" is recommended, but does not exist."
       ]
     }
   ],
