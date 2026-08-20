@@ -24,7 +24,7 @@ from pathlib import Path
 
 from .parse import _as_list
 from .vocab import (CPOL_NS, CROISSANT_CONTEXT, CROISSANT_IRI, OPERATORS,
-                    PROFILE_IRI, claimed_iris)
+                    PROFILE_IRI, claimed_iris, operand_defect)
 
 _MLCROISSANT_WARNING = (
     "this validator checks the profile's conformance clauses structurally and does not "
@@ -154,6 +154,16 @@ def _check_conditions(action: dict, where: str, report: Report) -> None:
             )
         if "cpol:expected" not in node:
             report.error(f"clause 5: {where} condition {name!r} has no cpol:expected")
+            continue
+        # The operand has to be a value the operator can actually use. Checked
+        # here as well as at translation, because a validator that passes a
+        # document the evaluator will refuse tells its user the opposite of the
+        # truth -- and the operand cases are the ones where the two most easily
+        # drift, since neither is visible to the SHACL shapes: cpol:expected is
+        # an rdf:JSON literal and they cannot see inside it.
+        defect = operand_defect(operator, node["cpol:expected"])
+        if defect is not None:
+            report.error(f"clause 5: {where} condition {name!r}: {defect}")
 
 
 def _check_policy(doc: dict, report: Report) -> None:

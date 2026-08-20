@@ -40,7 +40,7 @@ from __future__ import annotations
 
 from .emit import emit as emit_cpol
 from .vocab import (CROISSANT_IRI, OPERATORS, PROFILE_IRI, UNSUPPORTED_KEY,
-                    conformance_claim, context)
+                    conformance_claim, context, operand_defect)
 
 ODRL_NS = "http://www.w3.org/ns/odrl/2/"
 
@@ -280,6 +280,13 @@ def _native_condition(constraint) -> tuple[str, dict]:
 
     if "odrl:rightOperand" not in constraint:
         return (name, _poison(f"constraint {name!r} has no odrl:rightOperand"))
+
+    # Same rule as the cpol: carrier, from the same table. A carrier that
+    # accepted an operand the other refuses would break equivalence exactly
+    # where it matters.
+    defect = operand_defect(cpol_operator, constraint["odrl:rightOperand"])
+    if defect is not None:
+        return (name, _poison(defect))
 
     return (name, {OPERATORS[cpol_operator]: constraint["odrl:rightOperand"]})
 

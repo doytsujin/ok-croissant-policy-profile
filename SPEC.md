@@ -182,6 +182,23 @@ extension: an evaluator MUST refuse an operator it does not implement, so a
 sixth operator silently added to a document turns PERMIT into REFUSE rather
 than into an unchecked pass.
 
+**Operand types.** The operand is the value written in the document. It is not
+the observation, and the two fail differently. An observation of the wrong type
+is an ordinary condition violation, reported as such. An operand of the wrong
+type is a defect in the policy and is refused at translation, before any
+comparison is attempted:
+
+| operator | operand must be |
+|---|---|
+| `min`, `max` | a number, and not a boolean |
+| `in` | a list; a scalar is not a one-element set |
+| `present` | a boolean |
+| `equals` | any JSON value, including arrays and objects; numeric equality follows JSON, so `1` and `1.0` are equal |
+
+This was implicit until the conformance corpus made it explicit, and two of the
+four rows above were wrong in the implementation before it did — see section
+11.3.
+
 ## 6. Evaluation
 
 ### 6.1 The admission question
@@ -415,7 +432,23 @@ inside a profile it does recognise, and nothing about what a surrounding system
 concludes from a halted evaluation. Those are the two questions a gate must
 answer and the two `cpol:failClosed` is about.
 
-### 10.3 Equivalence
+### 10.3 Conformance
+
+The carrier has its own SHACL shapes, `shapes-odrl.ttl`, in a separate graph
+from the `cpol:` ones. That separation is the point rather than an
+inconvenience: a document is validated against the shapes of the profile it
+*claims*, and running the `cpol:` shapes over an ODRL document would report the
+absence of `cpol:` terms in a document that never claimed to have any.
+
+One notational difference between the two graphs is worth recording. In
+`shapes.ttl` the operator is a string literal under Croissant's global
+`"@language"`, so the closed set has to be checked with `sh:pattern` -- `sh:in`
+compares RDF terms, and `"cpol:min"@en` is not the term `"cpol:min"`. In
+`shapes-odrl.ttl` the operator is written as a node reference and expands to an
+IRI, so `sh:in` works directly. The ODRL carrier is the better RDF of the two,
+which is worth saying plainly given that the `cpol:` form is the normative one.
+
+### 10.4 Equivalence
 
 `tests/test_carrier_equivalence.py` emits both carriers from the same native
 descriptor, decides the generated request matrix through both, and requires the
@@ -472,7 +505,7 @@ size.
 | Clauses | 1 through 5, positively and negatively |
 | Carriers | `cpol:` and the ODRL carrier of section 10 |
 | Shapes | single- and multi-condition actions, multi-action policies, lifecycle-state preconditions, wrong-typed operands, strip cases |
-| Defects | unknown operator, absent and false `failClosed`, missing operand, missing condition name, duplicated condition name, more than one policy, a condition that is not a node, an unclaimed profile |
+| Defects | unknown operator, absent and false `failClosed`, missing operand, missing condition name, duplicated condition name, more than one policy, a condition that is not a node, an unclaimed profile, and four malformed **operands** |
 
 The coverage claim is checked twice. The tags declare it; then
 `tests/test_conformance_corpus.py` collects the verdicts and operators the
@@ -484,12 +517,35 @@ support.
 
 Every valid case is expressed three ways -- as a native descriptor, as `cpol:`
 terms, and as an ODRL policy in `sc:usageInfo` -- and all three must produce
-identical complete decision records over the generated request matrix. Every
-defect case must refuse every request in both carriers. Every valid document
-must load in `mlcroissant`, satisfy the SHACL shapes, and leave a valid
+identical complete decision records over the generated request matrix: 166
+requests per representation, 498 records, all matching. Every defect case must
+refuse every request in the `cpol:` carrier, and every defect that has an ODRL
+form must refuse every request there too. Every valid document must load in
+`mlcroissant`, satisfy the shapes of the profile it claims, and leave a valid
 Croissant document when stripped.
 
-### 11.3 Two defects it found
+### 11.3 What it found
+
+The operand cases in the table above are there because asking what the operator
+table actually promises turned up two more defects, both reachable from a
+document that looks conforming.
+
+`cpol:in` with a **numeric** operand raised `TypeError` rather than refusing:
+the evaluator crashed on a malformed document instead of refusing it. Worse,
+`cpol:in` with a **string** operand fell through to substring matching, so a
+policy written `{"in": "illumina"}` -- forgetting the array, which is the
+obvious authoring slip -- silently **permitted** `"illu"`. A rule that admits
+more than its author wrote is the failure this profile exists to prevent, and it
+was reachable without any defect a validator reported.
+
+The fix is a distinction the specification had left implicit. An *observation*
+of the wrong type is an ordinary condition violation: `min: 20` against
+`"not-a-number"` is a request that fails a well-formed rule. An *operand* of the
+wrong type is not a request problem at all; it is a defect in the policy, and it
+now refuses at translation, before reaching a comparison that was never defined
+for it. Section 5.3 states the operand type each operator requires.
+
+### 11.4 Two defects the corpus found first
 
 Both were invisible to the deployment corpus, because three well-formed
 descriptors do not reach them.

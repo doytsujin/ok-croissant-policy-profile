@@ -226,7 +226,8 @@
       "tags": [
         "clause:5",
         "operator:min",
-        "shape:defect"
+        "shape:defect",
+        "shape:malformed-operand"
       ]
     },
     {
@@ -283,11 +284,58 @@
         "operator:min",
         "shape:defect"
       ]
+    },
+    {
+      "defect": "cpol:in with a string operand, which used to match substrings",
+      "id": "defect-in-scalar-operand",
+      "kind": "defect",
+      "shaclDetects": false,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect",
+        "shape:malformed-operand"
+      ]
+    },
+    {
+      "defect": "cpol:in with a numeric operand, which used to raise",
+      "id": "defect-in-numeric-operand",
+      "kind": "defect",
+      "shaclDetects": false,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect",
+        "shape:malformed-operand"
+      ]
+    },
+    {
+      "defect": "cpol:present with a non-boolean operand",
+      "id": "defect-present-non-boolean",
+      "kind": "defect",
+      "shaclDetects": false,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "cpol:min with a non-numeric operand",
+      "id": "defect-min-non-numeric-operand",
+      "kind": "defect",
+      "shaclDetects": false,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect",
+        "shape:malformed-operand"
+      ]
     }
   ],
   "counts": {
-    "defect": 9,
-    "documents": 47,
+    "defect": 13,
+    "documents": 51,
     "valid": 19
   },
   "coverage": {
@@ -316,6 +364,7 @@
     ],
     "shape": [
       "defect",
+      "malformed-operand",
       "multi-action",
       "multi-condition",
       "single-condition",

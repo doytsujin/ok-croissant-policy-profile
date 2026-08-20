@@ -119,18 +119,31 @@ class DefectsRefuseRatherThanDecide(unittest.TestCase):
                         f"{case.id} permitted {action!r} despite: {case.defect}")
 
     def test_the_defect_survives_into_the_odrl_carrier(self):
-        """A carrier that launders a defect would be worse than no carrier."""
+        """A carrier that launders a defect would be worse than no carrier.
+
+        Over the full request matrix, including the satisfying context. An
+        earlier version of this test passed the empty context only, which
+        refuses for the wrong reason on almost any policy and hid a case where
+        the ODRL document was not defective at all.
+        """
         for case in DEFECTS:
-            doc = case.mutate(emit.emit(case.native))
-            if "cpol:policy" not in doc or not isinstance(doc["cpol:policy"], dict):
-                # to_odrl is defined for exactly one policy node; the
-                # two-policy case is refused before a carrier is chosen.
+            if case.no_odrl_form:
                 continue
+            doc = case.mutate(emit.emit(case.native))
             with self.subTest(case=case.id, defect=case.defect):
                 odrl_desc = odrl.to_descriptor(odrl.to_odrl(doc))
-                for action, _ in request_matrix(case.native):
+                for action, context in request_matrix(case.native):
                     self.assertFalse(
-                        gate_mod.authorize(odrl_desc, action, {}).permitted)
+                        gate_mod.authorize(odrl_desc, action, context).permitted,
+                        f"{case.id} permitted through the ODRL carrier: {case.defect}")
+
+    def test_the_two_defects_without_an_odrl_form_say_why(self):
+        """Skipping a case is only honest if the corpus records the reason."""
+        without = {c.id: c.no_odrl_form for c in DEFECTS if c.no_odrl_form}
+        self.assertEqual(
+            sorted(without), ["defect-no-profile-claim", "defect-two-policies"])
+        for case_id, reason in without.items():
+            self.assertTrue(reason and len(reason) > 20, case_id)
 
     def test_every_defect_is_reported_by_the_conformance_validator(self):
         for case in DEFECTS:

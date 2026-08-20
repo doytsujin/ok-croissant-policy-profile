@@ -188,3 +188,48 @@ def claimed_iris(value) -> list[str]:
 
 def is_known_operator(term: str) -> bool:
     return term in OPERATORS
+
+
+# What each operator requires of its *operand* -- the value written in the
+# document, not the value observed at request time. The two are different and
+# conflating them is how the defects below survived as long as they did.
+#
+# An observation of the wrong type is a normal refusal: `min: 20` against
+# "not-a-number" is a request that fails a well-formed rule, and the evaluator
+# reports it as a condition violation. An *operand* of the wrong type is not a
+# request problem at all -- it is a defect in the policy, and it has to be
+# refused before evaluation rather than handed to a comparison that was never
+# defined for it.
+#
+# Found by asking what Table 1 of the paper actually promises. Two answers were
+# wrong. `in` with a scalar number raised TypeError, so a malformed document
+# crashed the evaluator instead of being refused by it. Worse, `in` with a
+# string operand fell through to Python substring matching, so a policy written
+# `{"in": "illumina"}` -- forgetting the array, which is the obvious authoring
+# slip -- silently PERMITTED "illu". A rule that admits more than its author
+# wrote is the failure this profile exists to prevent, and it was reachable
+# from a document that looks conforming.
+def operand_defect(operator: str, expected) -> str | None:
+    """Why this operand cannot be evaluated by this operator, or None.
+
+    Returns a reason rather than a boolean, because the reason travels into the
+    decision record and a refusal that cannot say what was wrong with the
+    policy is as unhelpful as one that cannot say what was wrong with the
+    request.
+    """
+    if operator in ("cpol:min", "cpol:max"):
+        # bool is a subclass of int in Python and is not a threshold.
+        if isinstance(expected, bool) or not isinstance(expected, (int, float)):
+            return (f"operator {operator} needs a numeric operand, got "
+                    f"{type(expected).__name__}")
+    elif operator == "cpol:in":
+        if not isinstance(expected, list):
+            return (f"operator cpol:in needs a list operand, got "
+                    f"{type(expected).__name__}; a scalar is not a one-element set")
+    elif operator == "cpol:present":
+        if not isinstance(expected, bool):
+            return (f"operator cpol:present needs a boolean operand, got "
+                    f"{type(expected).__name__}")
+    # cpol:equals compares for equality and accepts any JSON value, including
+    # arrays and objects. Numeric equality follows JSON: 1 and 1.0 are equal.
+    return None

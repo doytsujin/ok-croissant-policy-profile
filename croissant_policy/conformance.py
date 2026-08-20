@@ -85,6 +85,12 @@ class Case:
     # them, so each case declares which and tools/validate_shacl.py checks the
     # declaration rather than trusting it.
     shacl_detects: bool = False
+    # Why this defect has no meaningful ODRL-carrier form, or None if it has
+    # one. Two of them do not, and for different reasons -- see `_defect_cases`.
+    # Recorded rather than inferred from the document shape, because the ODRL
+    # test used to sniff the shape and silently skipped a case it should have
+    # been reasoning about.
+    no_odrl_form: str | None = None
 
 
 def _descriptor(dataset_id: str, state: str, actions: list[dict], **extra) -> dict:
@@ -295,6 +301,43 @@ def _condition_not_a_node(doc: dict) -> dict:
     return doc
 
 
+def _in_scalar_operand(doc: dict) -> dict:
+    """`cpol:in` with a string operand: the authoring slip that used to permit.
+
+    Forgetting the array is the obvious mistake, and before the operand check
+    existed this fell through to Python substring matching, so the policy
+    admitted every substring of the operand. A rule that admits more than its
+    author wrote is worse than one that crashes.
+    """
+    condition = doc["cpol:policy"]["cpol:permissibleAction"][0]["cpol:condition"][0]
+    condition["cpol:operator"] = "cpol:in"
+    condition["cpol:expected"] = "illumina"
+    return doc
+
+
+def _in_numeric_operand(doc: dict) -> dict:
+    """`cpol:in` with a number: this used to raise TypeError, not refuse."""
+    condition = doc["cpol:policy"]["cpol:permissibleAction"][0]["cpol:condition"][0]
+    condition["cpol:operator"] = "cpol:in"
+    condition["cpol:expected"] = 5
+    return doc
+
+
+def _present_non_boolean_operand(doc: dict) -> dict:
+    """`cpol:present` with a string: used to be coerced with bool()."""
+    condition = doc["cpol:policy"]["cpol:permissibleAction"][0]["cpol:condition"][0]
+    condition["cpol:operator"] = "cpol:present"
+    condition["cpol:expected"] = "yes"
+    return doc
+
+
+def _min_non_numeric_operand(doc: dict) -> dict:
+    """`cpol:min` against a threshold that is not a number."""
+    doc["cpol:policy"]["cpol:permissibleAction"][0]["cpol:condition"][0][
+        "cpol:expected"] = "twenty"
+    return doc
+
+
 def _drop_profile_claim(doc: dict) -> dict:
     doc["conformsTo"] = [c for c in doc["conformsTo"] if "croissant-policy" not in c]
     return doc
@@ -343,7 +386,41 @@ def _defect_cases() -> list[Case]:
          "a condition that is not a node", True, "clause:5"),
         ("defect-no-profile-claim", _drop_profile_claim,
          "conformsTo does not name the profile (clause 2)", True, "clause:2"),
+        # Malformed *operands*, as distinct from malformed observations. An
+        # observation of the wrong type is an ordinary condition violation; an
+        # operand of the wrong type is a defect in the policy, and these four
+        # are the ways the closed set can be given one. None is visible to
+        # SHACL: cpol:expected is an rdf:JSON literal, so the shapes cannot see
+        # inside it, which is the same boundary as the duplicated name above.
+        ("defect-in-scalar-operand", _in_scalar_operand,
+         "cpol:in with a string operand, which used to match substrings",
+         False, "clause:5"),
+        ("defect-in-numeric-operand", _in_numeric_operand,
+         "cpol:in with a numeric operand, which used to raise", False, "clause:5"),
+        ("defect-present-non-boolean", _present_non_boolean_operand,
+         "cpol:present with a non-boolean operand", False, "clause:5"),
+        ("defect-min-non-numeric-operand", _min_non_numeric_operand,
+         "cpol:min with a non-numeric operand", False, "clause:5"),
     ]
+    # Two defects cannot be expressed through the ODRL carrier, and neither is
+    # a gap in the carrier.
+    #
+    # `defect-two-policies` has no form because `to_odrl` is defined for exactly
+    # one policy node; a document with two is refused before a carrier is
+    # chosen.
+    #
+    # `defect-no-profile-claim` has no form because translation *writes* the
+    # conformance claim: converting a document that omits its cpol: claim
+    # produces one that carries a correct ODRL claim, so the defect does not
+    # survive the conversion. That is a property of generating a document rather
+    # than a laundering of the defect -- the ODRL carrier enforces its own
+    # profile identifier, which `OdrlProfileFailsClosed` tests directly.
+    no_odrl = {
+        "defect-two-policies":
+            "to_odrl is defined for exactly one policy node",
+        "defect-no-profile-claim":
+            "translation writes the conformance claim, so the omission cannot survive it",
+    }
     return [
         Case(
             id=case_id,
@@ -351,7 +428,10 @@ def _defect_cases() -> list[Case]:
             mutate=mutator,
             defect=defect,
             shacl_detects=shacl,
-            tags={"shape:defect", clause, "operator:min"},
+            no_odrl_form=no_odrl.get(case_id),
+            tags={"shape:defect", clause, "operator:min",
+                  "shape:malformed-operand"} if "operand" in case_id
+            else {"shape:defect", clause, "operator:min"},
         )
         for case_id, mutator, defect, shacl, clause in specs
     ]

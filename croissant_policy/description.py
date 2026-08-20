@@ -100,6 +100,13 @@ def resources() -> list[dict]:
             conforms_to="http://www.w3.org/ns/shacl#",
         ),
         _resource(
+            "shapes-odrl", "validation", f"{SERVED}/shapes-odrl.ttl", "text/turtle",
+            "SHACL shapes for the ODRL carrier. A separate graph because the "
+            "carrier is a separate profile: a document is validated against the "
+            "shapes of the profile it claims.",
+            conforms_to="http://www.w3.org/ns/shacl#",
+        ),
+        _resource(
             "validator", "validation", f"{REPO_RAW}/croissant_policy/validate.py",
             "text/x-python",
             "The structural conformance validator, which checks the clauses "

@@ -35,6 +35,9 @@
           "@id": "https://w3id.org/croissant-policy/0.1.0#shapes"
         },
         {
+          "@id": "https://w3id.org/croissant-policy/0.1.0#shapes-odrl"
+        },
+        {
           "@id": "https://w3id.org/croissant-policy/0.1.0#validator"
         },
         {
@@ -116,6 +119,22 @@
       },
       "prof:hasArtifact": {
         "@id": "https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/shapes.ttl"
+      },
+      "dct:format": "text/turtle",
+      "dct:conformsTo": {
+        "@id": "http://www.w3.org/ns/shacl#"
+      }
+    },
+    {
+      "@id": "https://w3id.org/croissant-policy/0.1.0#shapes-odrl",
+      "@type": "prof:ResourceDescriptor",
+      "dct:title": "shapes-odrl",
+      "dct:description": "SHACL shapes for the ODRL carrier. A separate graph because the carrier is a separate profile: a document is validated against the shapes of the profile it claims.",
+      "prof:hasRole": {
+        "@id": "http://www.w3.org/ns/dx/prof/role/validation"
+      },
+      "prof:hasArtifact": {
+        "@id": "https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/shapes-odrl.ttl"
       },
       "dct:format": "text/turtle",
       "dct:conformsTo": {

@@ -44,7 +44,8 @@ except ImportError:  # pragma: no cover - environment failure
 _REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_REPO))
 
-from croissant_policy.shapes import served_path  # noqa: E402
+from croissant_policy.odrl import ODRL_PROFILE_IRI  # noqa: E402
+from croissant_policy.shapes import odrl_served_path, served_path  # noqa: E402
 from croissant_policy.vocab import PROFILE_IRI, claimed_iris  # noqa: E402
 
 
@@ -123,9 +124,22 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, default=_REPO / "results" / "shacl.json")
     args = ap.parse_args(argv)
 
-    shapes_path = args.shapes or served_path()
+    # One shapes graph per profile. A document is validated against the shapes
+    # of the profile it claims, which is the only reading of "conformance" that
+    # makes sense once there are two profiles.
     shapes = Graph()
-    shapes.parse(str(shapes_path), format="turtle")
+    shapes.parse(str(args.shapes or served_path()), format="turtle")
+    odrl_shapes = Graph()
+    odrl_shapes.parse(str(odrl_served_path()), format="turtle")
+    shapes_path = args.shapes or served_path()
+
+    def _for(doc):
+        claimed = claimed_iris(doc.get("conformsTo"))
+        if PROFILE_IRI in claimed:
+            return shapes, "cpol"
+        if ODRL_PROFILE_IRI in claimed:
+            return odrl_shapes, "odrl"
+        return None, None
 
     report: dict = {"shapes": str(shapes_path.relative_to(_REPO)), "documents": [],
                     "negative": []}
@@ -137,17 +151,18 @@ def main(argv: list[str] | None = None) -> int:
         # ODRL-carrier document claims a different one and expresses its policy
         # in odrl: terms; running these shapes over it would report the absence
         # of cpol: terms as a defect, which it is not.
-        if PROFILE_IRI not in claimed_iris(doc.get("conformsTo")):
-            print(f"{'SKIPPED':9s} {path}  (does not claim {PROFILE_IRI})")
+        graph, which = _for(doc)
+        if graph is None:
+            print(f"{'SKIPPED':9s} {path}  (claims neither profile)")
             report["documents"].append({"path": str(path), "skipped": True})
             continue
-        conforms, text = _check(doc, shapes)
-        print(f"{'CONFORMS' if conforms else 'VIOLATES':9s} {path}")
+        conforms, text = _check(doc, graph)
+        print(f"{'CONFORMS' if conforms else 'VIOLATES':9s} [{which}] {path}")
         if not conforms:
             failed = True
             print("\n".join("    " + line for line in text.splitlines()[:20]))
         report["documents"].append(
-            {"path": str(path), "conforms": conforms,
+            {"path": str(path), "profile": which, "conforms": conforms,
              "report": None if conforms else text}
         )
 
@@ -172,9 +187,21 @@ def main(argv: list[str] | None = None) -> int:
         expected = {c["id"]: c for c in manifest["cases"]}
         conformed = violated = 0
         print(f"\nconformance corpus, {len(expected)} cases:")
+        # Valid cases exist in both carriers and both are checked, each against
+        # the shapes of the profile it claims.
         for case_id, case in sorted(expected.items()):
+            if case["kind"] == "valid":
+                odoc_path = args.corpus / f"{case_id}.odrl.croissant.json"
+                if odoc_path.exists():
+                    odoc = json.loads(odoc_path.read_text())
+                    graph, _w = _for(odoc)
+                    ok, _ = _check(odoc, graph if graph is not None else odrl_shapes)
+                    if not ok:
+                        failed = True
+                        print(f"  WRONG  {case_id} (ODRL carrier): expected to conform")
             doc = json.loads((args.corpus / f"{case_id}.croissant.json").read_text())
-            conforms, _ = _check(doc, shapes)
+            graph, _which = _for(doc)
+            conforms, _ = _check(doc, graph if graph is not None else shapes)
             if case["kind"] == "valid":
                 want, ok = "conform", conforms
                 conformed += 1
@@ -191,9 +218,10 @@ def main(argv: list[str] | None = None) -> int:
             if not ok:
                 failed = True
                 print(f"  WRONG  {case_id}: expected to {want}")
-        print(f"  {conformed} valid documents conform, "
+        print(f"  {conformed} valid cases conform in both carriers, "
               f"{violated} SHACL-visible defects reported")
-        report["corpus"] = {"conformed": conformed, "violated": violated}
+        report["corpus"] = {"validCasesBothCarriers": conformed,
+                            "shaclVisibleDefects": violated}
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")

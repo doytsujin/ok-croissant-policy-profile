@@ -1,35 +1,44 @@
 {
   "corpus": {
-    "conformed": 19,
-    "violated": 8
+    "shaclVisibleDefects": 8,
+    "validCasesBothCarriers": 19
   },
   "documents": [
     {
       "conforms": true,
       "path": "examples/qc-report.croissant.json",
+      "profile": "cpol",
       "report": null
     },
     {
+      "conforms": true,
       "path": "examples/qc-report.odrl.croissant.json",
-      "skipped": true
+      "profile": "odrl",
+      "report": null
     },
     {
       "conforms": true,
       "path": "examples/raw-reads.croissant.json",
+      "profile": "cpol",
       "report": null
     },
     {
+      "conforms": true,
       "path": "examples/raw-reads.odrl.croissant.json",
-      "skipped": true
+      "profile": "odrl",
+      "report": null
     },
     {
       "conforms": true,
       "path": "examples/trimmed-reads.croissant.json",
+      "profile": "cpol",
       "report": null
     },
     {
+      "conforms": true,
       "path": "examples/trimmed-reads.odrl.croissant.json",
-      "skipped": true
+      "profile": "odrl",
+      "report": null
     }
   ],
   "negative": [

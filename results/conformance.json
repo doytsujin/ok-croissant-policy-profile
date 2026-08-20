@@ -1,8 +1,13 @@
 {
   "counts": {
-    "defectCases": 9,
-    "defectRequestsRefused": 63,
-    "documents": 47,
+    "defectCases": 13,
+    "defectRequestsRefusedCpol": 91,
+    "defectRequestsRefusedOdrl": 77,
+    "defectsWithoutOdrlForm": {
+      "defect-no-profile-claim": "translation writes the conformance claim, so the omission cannot survive it",
+      "defect-two-policies": "to_odrl is defined for exactly one policy node"
+    },
+    "documentsStored": 51,
     "requestsPerRepresentation": 166,
     "threeWayComparisons": 498,
     "validCases": 19
@@ -33,6 +38,7 @@
     ],
     "shape": [
       "defect",
+      "malformed-operand",
       "multi-action",
       "multi-condition",
       "single-condition",
@@ -65,7 +71,14 @@
   },
   "purpose": "Specification coverage for the Croissant policy profile. Generated from the closed grammar, not observed. Makes no claim about which policies are written in practice, and carries no timing figures: those come from the deployment corpus of real nf-core descriptors.",
   "shacl": {
-    "note": "One defect is invisible to the shapes: two conditions declared under one name survive as separate nodes, each individually valid, and the violated rule is a relationship between siblings. Expressing it needs a SHACL-SPARQL constraint, the unbounded fragment this profile declines, so the evaluator refuses it instead.",
+    "note": "Invisible defects are of two kinds and both are boundaries rather than gaps. A duplicated condition name violates a relationship between sibling nodes, which only SHACL-SPARQL could express -- the unbounded fragment this profile declines. A malformed operand lives inside cpol:expected, which is an rdf:JSON literal the shapes cannot see into. Both are refused by the evaluator and reported by the structural validator.",
+    "shaclInvisibleDefects": [
+      "defect-duplicate-condition",
+      "defect-in-scalar-operand",
+      "defect-in-numeric-operand",
+      "defect-present-non-boolean",
+      "defect-min-non-numeric-operand"
+    ],
     "shaclVisibleDefectsReported": 8,
     "validDocumentsConform": 19
   }

@@ -35,6 +35,13 @@ class ServedArtifactsDoNotDrift(unittest.TestCase):
             "docs/ns/<version>/shapes.ttl is stale; run `make shapes`",
         )
 
+    def test_the_served_odrl_shapes_match_the_generator(self):
+        self.assertEqual(
+            shapes.odrl_served_path().read_text(),
+            shapes.odrl_shapes(),
+            "docs/ns/<version>/shapes-odrl.ttl is stale; run `make shapes`",
+        )
+
     def test_the_served_description_matches_the_generator(self):
         self.assertEqual(
             json.loads(description.served_path().read_text()),
@@ -105,6 +112,12 @@ class ProfileDescriptionIsUsable(unittest.TestCase):
             role = resource["prof:hasRole"]["@id"]
             self.assertTrue(role.startswith(description.ROLE_NS), role)
             self.assertIn(role[len(description.ROLE_NS):], known, role)
+
+    def test_both_carriers_have_shapes(self):
+        """Contribution 3 presents two carriers; both should be checkable."""
+        artifacts = [r["prof:hasArtifact"]["@id"] for r in description.resources()]
+        self.assertTrue(any(a.endswith("shapes.ttl") for a in artifacts))
+        self.assertTrue(any(a.endswith("shapes-odrl.ttl") for a in artifacts))
 
     def test_the_shapes_and_the_specification_are_both_reachable(self):
         roles = {r["prof:hasRole"]["@id"].rsplit("/", 1)[1] for r in description.resources()}

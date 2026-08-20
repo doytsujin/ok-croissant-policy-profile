@@ -26,7 +26,7 @@ from pathlib import Path
 
 from .reference import load_gate
 from .vocab import (CROISSANT_IRI, OPERATORS, PROFILE_IRI, UNSUPPORTED_KEY,
-                    claimed_iris)
+                    claimed_iris, operand_defect)
 
 
 class ProfileError(ValueError):
@@ -70,6 +70,14 @@ def _condition(node) -> tuple[str, dict]:
 
     if "cpol:expected" not in node:
         return (name, _poison(f"condition {name!r} has no cpol:expected"))
+
+    # The operand is part of the policy, not part of the request, so an operand
+    # the operator cannot use is a defect in the document and refuses here
+    # rather than reaching a comparison that was never defined for it. See
+    # vocab.operand_defect for the two ways this used to go wrong.
+    defect = operand_defect(operator, node["cpol:expected"])
+    if defect is not None:
+        return (name, _poison(defect))
 
     return (name, {native_op: node["cpol:expected"]})
 
