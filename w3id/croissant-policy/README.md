@@ -1,5 +1,10 @@
 ## Croissant Policy Profile
 
+**Submitted 2026-08-20 as
+[perma-id/w3id.org#6581](https://github.com/perma-id/w3id.org/pull/6581).**
+This directory is the copy that was sent; the pull request is the live one.
+
+
 An additive policy layer for [Croissant](https://mlcommons.org/working-groups/data/croissant/)
 dataset descriptors.
 

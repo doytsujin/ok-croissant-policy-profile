@@ -108,7 +108,9 @@ The namespace is a [w3id.org](https://w3id.org) permanent identifier. Once
 registered it dereferences to a human-readable profile document, and to the
 JSON-LD context under content negotiation for `application/ld+json`.
 
-**Registration is pending and the identifier currently returns 404.** The
+**Registration is pending and the identifier currently returns 404.** It was
+submitted on 2026-08-20 as
+[perma-id/w3id.org#6581](https://github.com/perma-id/w3id.org/pull/6581). The
 document and context it will resolve to are already served at
 `https://doytsujin.github.io/ok-croissant-policy-profile/ns/0.1.0/`. Conforming
 documents are unaffected — `conformsTo` carries the identifier, and an
