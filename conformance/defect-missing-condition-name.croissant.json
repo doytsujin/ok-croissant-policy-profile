@@ -1,0 +1,101 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "equivalentProperty": "cr:equivalentProperty",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileObject": "cr:fileObject",
+    "fileProperty": "cr:fileProperty",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "samplingRate": "cr:samplingRate",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "cpol": "https://w3id.org/croissant-policy/0.1.0/",
+    "cpol:expected": {
+      "@id": "cpol:expected",
+      "@type": "@json"
+    }
+  },
+  "@type": "sc:Dataset",
+  "name": "defect-missing-condition-name",
+  "description": "conformance_fixture described as a policy-bearing Croissant dataset. State: QC_PASSED.",
+  "conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "https://w3id.org/croissant-policy/0.1.0"
+  ],
+  "version": "1.0.0",
+  "creator": {
+    "@type": "sc:Organization",
+    "name": "conformance-corpus"
+  },
+  "additionalType": "conformance_fixture",
+  "distribution": [
+    {
+      "@type": "cr:FileSet",
+      "@id": "defect-missing-condition-name-files",
+      "name": "defect-missing-condition-name-files",
+      "description": "The conformance_fixture files of this dataset, in json form. The native descriptor records the shape of the data and not its location, so this FileSet has no containedIn; the location is supplied by whoever mounts the dataset.",
+      "encodingFormat": "application/json",
+      "includes": "*.json"
+    }
+  ],
+  "cpol:policy": {
+    "@type": "cpol:Policy",
+    "cpol:state": "QC_PASSED",
+    "cpol:failClosed": true,
+    "cpol:classification": "synthetic",
+    "cpol:custodian": "conformance-corpus",
+    "cpol:rationale": "Generated from the profile grammar to exercise a specification case. Not a real dataset and not evidence about real policies.",
+    "cpol:permissibleAction": [
+      {
+        "@type": "cpol:Action",
+        "cpol:actionName": "run",
+        "cpol:requiresState": [
+          "QC_PASSED"
+        ],
+        "cpol:condition": [
+          {
+            "@type": "cpol:Condition",
+            "cpol:operator": "cpol:min",
+            "cpol:expected": 10
+          }
+        ]
+      }
+    ]
+  }
+}

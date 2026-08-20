@@ -1,0 +1,185 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "cr": "http://mlcommons.org/croissant/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "equivalentProperty": "cr:equivalentProperty",
+    "examples": {
+      "@id": "cr:examples",
+      "@type": "@json"
+    },
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileObject": "cr:fileObject",
+    "fileProperty": "cr:fileProperty",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "samplingRate": "cr:samplingRate",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform",
+    "odrl": "http://www.w3.org/ns/odrl/2/",
+    "cpolodrl": "https://w3id.org/croissant-policy/0.1.0/odrl#",
+    "odrl:rightOperand": {
+      "@id": "odrl:rightOperand",
+      "@type": "@json"
+    }
+  },
+  "@type": "sc:Dataset",
+  "name": "multi-action-3",
+  "description": "conformance_fixture described as a policy-bearing Croissant dataset. State: RECEIVED.",
+  "conformsTo": [
+    "http://mlcommons.org/croissant/1.0",
+    "https://w3id.org/croissant-policy/0.1.0/odrl"
+  ],
+  "version": "1.0.0",
+  "creator": {
+    "@type": "sc:Organization",
+    "name": "conformance-corpus"
+  },
+  "additionalType": "conformance_fixture",
+  "distribution": [
+    {
+      "@type": "cr:FileSet",
+      "@id": "multi-action-3-files",
+      "name": "multi-action-3-files",
+      "description": "The conformance_fixture files of this dataset, in json form. The native descriptor records the shape of the data and not its location, so this FileSet has no containedIn; the location is supplied by whoever mounts the dataset.",
+      "encodingFormat": "application/json",
+      "includes": "*.json"
+    }
+  ],
+  "usageInfo": {
+    "@type": "odrl:Set",
+    "odrl:uid": "multi-action-3#policy",
+    "odrl:profile": {
+      "@id": "https://w3id.org/croissant-policy/0.1.0/odrl"
+    },
+    "cpolodrl:datasetState": "RECEIVED",
+    "cpolodrl:failClosed": true,
+    "cpolodrl:classification": "synthetic",
+    "cpolodrl:custodian": "conformance-corpus",
+    "cpolodrl:rationale": "Generated from the profile grammar to exercise a specification case. Not a real dataset and not evidence about real policies.",
+    "odrl:permission": [
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/act0"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "RECEIVED"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/probe"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/gteq"
+            },
+            "odrl:rightOperand": 20
+          }
+        ]
+      },
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/act1"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "QC_PASSED"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/probe"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/lteq"
+            },
+            "odrl:rightOperand": 100
+          }
+        ]
+      },
+      {
+        "@type": "odrl:Permission",
+        "odrl:action": {
+          "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#action/act2"
+        },
+        "odrl:constraint": [
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#datasetState"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "TRIMMED"
+            ]
+          },
+          {
+            "@type": "odrl:Constraint",
+            "odrl:leftOperand": {
+              "@id": "https://w3id.org/croissant-policy/0.1.0/odrl#ctx/probe"
+            },
+            "odrl:operator": {
+              "@id": "http://www.w3.org/ns/odrl/2/isAnyOf"
+            },
+            "odrl:rightOperand": [
+              "illumina",
+              "nanopore"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

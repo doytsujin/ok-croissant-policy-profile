@@ -25,7 +25,8 @@ import json
 from pathlib import Path
 
 from .reference import load_gate
-from .vocab import CROISSANT_IRI, OPERATORS, PROFILE_IRI, UNSUPPORTED_KEY
+from .vocab import (CROISSANT_IRI, OPERATORS, PROFILE_IRI, UNSUPPORTED_KEY,
+                    claimed_iris)
 
 
 class ProfileError(ValueError):
@@ -143,6 +144,26 @@ def _provenance(doc: dict, policy: dict) -> dict:
     return provenance
 
 
+def _refuse_everything(doc: dict, reason: str) -> dict:
+    """A descriptor that declares no admissible action.
+
+    Returning this rather than raising is what turns "stop processing" into a
+    refusal the gate reports in its own vocabulary, with its own record, rather
+    than an exception a caller might catch and continue past. `odrl.py` uses the
+    same shape for the same reason.
+    """
+    return {
+        "datasetId": doc.get("name", ""),
+        "version": str(doc.get("version", "")),
+        "dataType": doc.get("additionalType", ""),
+        "state": "",
+        "schema": _schema(doc),
+        "provenance": {},
+        "policy": {"rationale": reason},
+        "permissibleActions": [],
+    }
+
+
 def to_native_json(doc: dict) -> dict:
     """Profile document -> native descriptor JSON.
 
@@ -156,6 +177,19 @@ def to_native_json(doc: dict) -> dict:
     name = doc.get("name")
     if not isinstance(name, str) or not name:
         raise ProfileError("document has no `name`; nothing identifies the dataset")
+
+    # Conformance clause 2, enforced and not merely validated. Until the
+    # conformance corpus generated this case the claim was checked by
+    # `validate.py` and ignored by the evaluator, so a document could carry the
+    # policy terms, drop the claim, and still be decided -- which made the claim
+    # decorative and left the two carriers inconsistent, since the ODRL carrier
+    # already refuses an unrecognised `odrl:profile` because the Information
+    # Model requires it. A profile identifier that costs nothing to omit is not
+    # an identifier. Refusing here makes the two carriers agree.
+    if PROFILE_IRI not in claimed_iris(doc.get("conformsTo")):
+        return _refuse_everything(
+            doc, f"document does not claim conformance to {PROFILE_IRI} (SPEC 3.2)"
+        )
 
     policies = _as_list(doc.get("cpol:policy"))
     if not policies:
@@ -246,5 +280,5 @@ def authorize(doc: dict, action: str, context: dict):
 
 def conforms_to_profile(doc: dict) -> bool:
     """Cheap check that a document claims both IRIs (SPEC 3.2)."""
-    claimed = _as_list(doc.get("conformsTo"))
+    claimed = claimed_iris(doc.get("conformsTo"))
     return CROISSANT_IRI in claimed and PROFILE_IRI in claimed

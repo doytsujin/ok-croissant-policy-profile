@@ -1,0 +1,64 @@
+{
+  "counts": {
+    "defectCases": 9,
+    "defectRequestsRefused": 63,
+    "documents": 47,
+    "requestsPerRepresentation": 166,
+    "threeWayComparisons": 498,
+    "validCases": 19
+  },
+  "coverage": {
+    "carrier": [
+      "cpol",
+      "odrl"
+    ],
+    "clause": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "operator": [
+      "equals",
+      "in",
+      "max",
+      "min",
+      "present"
+    ],
+    "refusal": [
+      "condition",
+      "state",
+      "undeclared"
+    ],
+    "shape": [
+      "defect",
+      "multi-action",
+      "multi-condition",
+      "single-condition",
+      "state-precondition",
+      "strip",
+      "wrong-datatype"
+    ],
+    "verdict": [
+      "permit"
+    ]
+  },
+  "mlcroissant": {
+    "allLoaded": true,
+    "documentsChecked": 38,
+    "note": "Every valid case in both carriers. Errors: none. The two recommended-property warnings that remain on the deployment examples remain here, plus schema:license, which these fixtures do not carry because they are not distributed datasets."
+  },
+  "outcomeMix": {
+    "CONDITION_VIOLATED": 74,
+    "PERMIT": 17,
+    "STATE_PRECONDITION": 37,
+    "UNDECLARED_ACTION": 38
+  },
+  "purpose": "Specification coverage for the Croissant policy profile. Generated from the closed grammar, not observed. Makes no claim about which policies are written in practice, and carries no timing figures: those come from the deployment corpus of real nf-core descriptors.",
+  "shacl": {
+    "note": "Two defects are invisible to SHACL and refused by the evaluator instead: a duplicated condition name collapses in JSON before the graph is built, and a condition that is not a node has no cpol:Condition type to target.",
+    "shaclVisibleDefectsReported": 7,
+    "validDocumentsConform": 19
+  }
+}

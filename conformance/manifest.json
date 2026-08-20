@@ -1,0 +1,331 @@
+{
+  "cases": [
+    {
+      "id": "operator-min",
+      "kind": "valid",
+      "tags": [
+        "operator:min",
+        "refusal:condition",
+        "shape:single-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "operator-max",
+      "kind": "valid",
+      "tags": [
+        "operator:max",
+        "refusal:condition",
+        "shape:single-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "operator-in",
+      "kind": "valid",
+      "tags": [
+        "operator:in",
+        "refusal:condition",
+        "shape:single-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "operator-equals",
+      "kind": "valid",
+      "tags": [
+        "operator:equals",
+        "refusal:condition",
+        "shape:single-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "operator-present",
+      "kind": "valid",
+      "tags": [
+        "operator:present",
+        "refusal:condition",
+        "shape:single-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "multi-condition-2",
+      "kind": "valid",
+      "tags": [
+        "operator:max",
+        "operator:min",
+        "refusal:condition",
+        "shape:multi-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "multi-condition-3",
+      "kind": "valid",
+      "tags": [
+        "operator:in",
+        "operator:max",
+        "operator:min",
+        "refusal:condition",
+        "shape:multi-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "multi-condition-5",
+      "kind": "valid",
+      "tags": [
+        "operator:equals",
+        "operator:in",
+        "operator:max",
+        "operator:min",
+        "operator:present",
+        "refusal:condition",
+        "shape:multi-condition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "multi-action-2",
+      "kind": "valid",
+      "tags": [
+        "refusal:state",
+        "refusal:undeclared",
+        "shape:multi-action"
+      ]
+    },
+    {
+      "id": "multi-action-3",
+      "kind": "valid",
+      "tags": [
+        "refusal:state",
+        "refusal:undeclared",
+        "shape:multi-action"
+      ]
+    },
+    {
+      "id": "multi-action-4",
+      "kind": "valid",
+      "tags": [
+        "refusal:state",
+        "refusal:undeclared",
+        "shape:multi-action"
+      ]
+    },
+    {
+      "id": "state-received",
+      "kind": "valid",
+      "tags": [
+        "operator:min",
+        "shape:state-precondition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "state-qc_passed",
+      "kind": "valid",
+      "tags": [
+        "operator:min",
+        "shape:state-precondition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "state-trimmed",
+      "kind": "valid",
+      "tags": [
+        "operator:min",
+        "shape:state-precondition",
+        "verdict:permit"
+      ]
+    },
+    {
+      "id": "state-retracted",
+      "kind": "valid",
+      "tags": [
+        "operator:min",
+        "refusal:state",
+        "shape:state-precondition"
+      ]
+    },
+    {
+      "id": "state-unreachable",
+      "kind": "valid",
+      "tags": [
+        "refusal:state",
+        "shape:state-precondition"
+      ]
+    },
+    {
+      "id": "datatype-min",
+      "kind": "valid",
+      "tags": [
+        "operator:min",
+        "refusal:condition",
+        "shape:wrong-datatype"
+      ]
+    },
+    {
+      "id": "datatype-max",
+      "kind": "valid",
+      "tags": [
+        "operator:max",
+        "refusal:condition",
+        "shape:wrong-datatype"
+      ]
+    },
+    {
+      "id": "additivity-rich",
+      "kind": "valid",
+      "tags": [
+        "clause:1",
+        "operator:equals",
+        "shape:strip"
+      ]
+    },
+    {
+      "defect": "policy does not declare cpol:failClosed (clause 4)",
+      "id": "defect-no-failclosed",
+      "kind": "defect",
+      "shaclDetects": true,
+      "tags": [
+        "clause:4",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "policy declares cpol:failClosed = false (clause 4)",
+      "id": "defect-failclosed-false",
+      "kind": "defect",
+      "shaclDetects": true,
+      "tags": [
+        "clause:4",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "operator outside the closed set (clause 5)",
+      "id": "defect-unknown-operator",
+      "kind": "defect",
+      "shaclDetects": true,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "condition carries no cpol:expected",
+      "id": "defect-missing-operand",
+      "kind": "defect",
+      "shaclDetects": true,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "condition carries no cpol:conditionName",
+      "id": "defect-missing-condition-name",
+      "kind": "defect",
+      "shaclDetects": true,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "two conditions declared under one name",
+      "id": "defect-duplicate-condition",
+      "kind": "defect",
+      "shaclDetects": false,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "more than one cpol:policy (clause 3)",
+      "id": "defect-two-policies",
+      "kind": "defect",
+      "shaclDetects": true,
+      "tags": [
+        "clause:3",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "a condition that is not a node",
+      "id": "defect-condition-not-a-node",
+      "kind": "defect",
+      "shaclDetects": false,
+      "tags": [
+        "clause:5",
+        "operator:min",
+        "shape:defect"
+      ]
+    },
+    {
+      "defect": "conformsTo does not name the profile (clause 2)",
+      "id": "defect-no-profile-claim",
+      "kind": "defect",
+      "shaclDetects": true,
+      "tags": [
+        "clause:2",
+        "operator:min",
+        "shape:defect"
+      ]
+    }
+  ],
+  "counts": {
+    "defect": 9,
+    "documents": 47,
+    "valid": 19
+  },
+  "coverage": {
+    "carrier": [
+      "cpol",
+      "odrl"
+    ],
+    "clause": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ],
+    "operator": [
+      "equals",
+      "in",
+      "max",
+      "min",
+      "present"
+    ],
+    "refusal": [
+      "condition",
+      "state",
+      "undeclared"
+    ],
+    "shape": [
+      "defect",
+      "multi-action",
+      "multi-condition",
+      "single-condition",
+      "state-precondition",
+      "strip",
+      "wrong-datatype"
+    ],
+    "verdict": [
+      "permit"
+    ]
+  },
+  "purpose": "Specification coverage for the Croissant policy profile. Generated from the closed grammar, not observed. Makes no claim about which policies are written in practice, and carries no timing figures: those come from the deployment corpus of real nf-core descriptors."
+}
