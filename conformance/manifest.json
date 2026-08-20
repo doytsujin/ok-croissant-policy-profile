@@ -266,7 +266,7 @@
       "defect": "a condition that is not a node",
       "id": "defect-condition-not-a-node",
       "kind": "defect",
-      "shaclDetects": false,
+      "shaclDetects": true,
       "tags": [
         "clause:5",
         "operator:min",

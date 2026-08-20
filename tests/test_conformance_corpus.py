@@ -4,14 +4,15 @@ C1 establishes that a policy expressed as Croissant decides what the native
 descriptor decides, and C5 that the ODRL carrier decides the same. Both are
 established on the deployment corpus -- three descriptors that gated a real
 nf-core run -- which is the right evidence that this works in front of real
-execution and thin evidence about the space of documents the specification
-permits.
+execution and thin evidence about the features the specification defines.
 
 This module runs the same comparison over a corpus generated from the profile's
-own grammar. The point is not that there are more documents. The point is that
-the corpus can say what it covers: every operator in the closed set, every
-refusal class, every conformance clause, both carriers, and each structural
-shape the specification allows -- multi-condition actions, multi-action
+own grammar. The point is not that there are more documents, and it is not that
+the space of conforming documents has been exhausted -- it has not, and with
+arbitrary operands and cardinalities it could not be. The point is that the
+corpus can say which *named features* it covers: every operator in the closed
+set, every refusal class, every conformance clause, both carriers, and each
+structural shape the specification allows -- multi-condition actions, multi-action
 policies, lifecycle-state preconditions, wrong-typed operands, and the nine ways
 the specification says a document can be wrong.
 

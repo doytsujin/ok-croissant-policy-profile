@@ -4,18 +4,19 @@ The corpus in `ok-nfcore-admission-gate/descriptors/` is three documents that
 gated a real pipeline run. It is the right evidence for one question -- does this
 mechanism work in front of real execution, and what does it cost -- and it is
 weak evidence for a different one: does the profile behave correctly across the
-space of documents its specification permits. Those are different questions and
-this module answers the second, without diluting the first. Nothing generated
-here is claimed to be real, and nothing here carries a performance number.
+features its specification defines. Those are different questions and this module
+answers the second, without diluting the first. Nothing generated here is claimed
+to be real, and nothing here carries a performance number.
 
-The generator rather than a directory of hand-written JSON, because the
-specification already says the thing that makes generation possible. The
-operator set is closed at five. The refusal classes are three. `failClosed` is
-boolean and mandatory. A closed grammar has an enumerable space of documents, and
-the profile's whole argument is that the work a document implies is enumerable
-from the document -- so enumerating the documents themselves is the same idea
-applied one level up. `requests.py` already generates the request matrix from a
-descriptor; this generates the descriptors.
+**What this covers is features, not documents.** The space of conforming
+documents is not exhausted here and could not be: operands are arbitrary numbers
+and strings, an `in` set has any cardinality, an action carries any number of
+conditions, a policy declares any number of actions. What is finite and small is
+the set of things the specification *names* -- five operators, three refusal
+classes, five conformance clauses, two carriers, and a handful of structural
+forms. That set is enumerable, so the documents exercising it can be derived
+rather than remembered, which is what this module does. `requests.py` already
+generates the request matrix from a descriptor; this generates the descriptors.
 
 What the corpus is for, in order of how much it buys:
 
@@ -77,9 +78,12 @@ class Case:
     mutate: object = None
     # What the defect is, in the specification's own words.
     defect: str | None = None
-    # Whether the profile's SHACL shapes should report it. Not every defect is
-    # visible to SHACL -- a duplicated condition name collapses in JSON before
-    # the graph is built -- and claiming otherwise would overstate the shapes.
+    # Whether the profile's SHACL shapes report it. One defect in the corpus is
+    # invisible to them and it is invisible for a principled reason, not an
+    # oversight: see `_defect_cases`. Claiming the shapes catch everything would
+    # overstate them, and claiming they catch less than they do would understate
+    # them, so each case declares which and tools/validate_shacl.py checks the
+    # declaration rather than trusting it.
     shacl_detects: bool = False
 
 
@@ -319,12 +323,24 @@ def _defect_cases() -> list[Case]:
          "condition carries no cpol:expected", True, "clause:5"),
         ("defect-missing-condition-name", _missing_condition_name,
          "condition carries no cpol:conditionName", True, "clause:5"),
+        # The one defect the shapes cannot see, and the reason is the same one
+        # that keeps SHACL out of the evaluation path. Both conditions survive
+        # into the graph as separate nodes, each individually satisfying
+        # ConditionShape; what is wrong is a relationship *between* siblings --
+        # no two conditions of one action may share a name. Expressing that
+        # needs a SHACL-SPARQL constraint, and SHACL-SPARQL is as expressive as
+        # the query language, which is precisely the unbounded fragment this
+        # profile declines. So it is left to the evaluator, which collapses the
+        # two into one poisoned condition and refuses.
         ("defect-duplicate-condition", _duplicate_condition_name,
          "two conditions declared under one name", False, "clause:5"),
         ("defect-two-policies", _two_policies,
          "more than one cpol:policy (clause 3)", True, "clause:3"),
+        # Visible after all: `sh:class cpol:Condition` rejects a literal where
+        # a node is required. This was declared invisible until the corpus was
+        # checked against the shapes rather than against an assumption.
         ("defect-condition-not-a-node", _condition_not_a_node,
-         "a condition that is not a node", False, "clause:5"),
+         "a condition that is not a node", True, "clause:5"),
         ("defect-no-profile-claim", _drop_profile_claim,
          "conformsTo does not name the profile (clause 2)", True, "clause:2"),
     ]

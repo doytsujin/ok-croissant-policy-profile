@@ -44,6 +44,14 @@
       "permit"
     ]
   },
+  "documentAccounting": {
+    "defectCases": 9,
+    "defectDocumentsStored": 9,
+    "note": "Valid cases are stored in both carriers, 19 x 2 = 38. Defect fixtures are stored in the cpol: form only, 9. Eight of the nine are additionally exercised through the ODRL carrier at test time; the ninth declares two policies, which has no ODRL-carrier form because the mapping is defined for exactly one policy node.",
+    "totalStored": 47,
+    "validCases": 19,
+    "validDocumentsStored": 38
+  },
   "mlcroissant": {
     "allLoaded": true,
     "documentsChecked": 38,
@@ -57,8 +65,8 @@
   },
   "purpose": "Specification coverage for the Croissant policy profile. Generated from the closed grammar, not observed. Makes no claim about which policies are written in practice, and carries no timing figures: those come from the deployment corpus of real nf-core descriptors.",
   "shacl": {
-    "note": "Two defects are invisible to SHACL and refused by the evaluator instead: a duplicated condition name collapses in JSON before the graph is built, and a condition that is not a node has no cpol:Condition type to target.",
-    "shaclVisibleDefectsReported": 7,
+    "note": "One defect is invisible to the shapes: two conditions declared under one name survive as separate nodes, each individually valid, and the violated rule is a relationship between siblings. Expressing it needs a SHACL-SPARQL constraint, the unbounded fragment this profile declines, so the evaluator refuses it instead.",
+    "shaclVisibleDefectsReported": 8,
     "validDocumentsConform": 19
   }
 }

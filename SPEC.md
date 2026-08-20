@@ -441,15 +441,22 @@ they are where every performance figure comes from.
 
 The **conformance corpus** is generated from the grammar this specification
 defines, by `croissant_policy/conformance.py`. It is the evidence that the
-profile behaves correctly across the space of documents section 3 permits. It
-makes no claim about which policies anyone writes, and it carries no timing.
+profile exercises every normative feature of section 3 -- every operator, every
+refusal class, every conformance clause, both carriers, and each structural
+form the vocabulary allows. It makes no claim about which policies anyone
+writes, and it carries no timing.
 
-Generating rather than hand-authoring follows from the same property the rest of
-the specification rests on. The operator set is closed at five, the refusal
-classes are three, and `failClosed` is boolean and mandatory, so the document
-space is enumerable in the same sense a policy's evaluation cost is. Section 6.1
-already generates the request matrix from a descriptor; this generates the
-descriptors.
+**It does not exhaust the space of conforming documents, and does not claim to.**
+That space is infinite in the uninteresting directions: numeric operands, string
+values, the cardinality of an `in` set, how many conditions an action carries,
+how many actions a policy declares. A closed operator set makes the *feature*
+space small and enumerable; it does nothing to the value space. What the corpus
+covers is the first, and the coverage table below is the claim.
+
+Generating rather than hand-authoring follows from that. The features are
+enumerable, so the documents exercising them can be derived rather than
+remembered. Section 6.1 already generates the request matrix from a descriptor;
+this generates the descriptors.
 
 ### 11.1 What it covers
 
