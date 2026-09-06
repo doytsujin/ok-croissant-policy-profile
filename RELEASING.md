@@ -111,7 +111,7 @@ them may be cited:
 | `10.5281/zenodo.22005283` | concept of the manual deposit | deleted |
 | `10.5281/zenodo.22005284` | v0.1.5 | deleted |
 | `10.5281/zenodo.22005346` | concept minted by the integration | deleted |
-| `10.5281/zenodo.22005347` | v0.1.4, integration | deletion requested |
+| `10.5281/zenodo.22005347` | v0.1.4, integration | deleted |
 | `10.5281/zenodo.22005386` | v0.1.2, integration | deleted |
 
 The next deposit is a **new record** from v0.1.6, and it should be the only one
