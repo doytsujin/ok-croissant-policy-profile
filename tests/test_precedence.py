@@ -134,6 +134,22 @@ class Precedence(unittest.TestCase):
         self.assertEqual(a.as_record(), b.as_record())
 
 
+class DatasetName(unittest.TestCase):
+    def test_a_request_cannot_name_the_dataset_its_caller_is_scoped_on(self):
+        # analyst-agent may aggregate qc-report only. A request acting on
+        # trimmed-reads that says "dataset": "qc-report" must still be decided
+        # against trimmed-reads on the caller's side.
+        scope = load_all(CALLERS)["analyst-agent"]
+        doc = emit.emit(corpus()["trimmed-reads"])
+        joint = conjunction.decide(
+            scope, doc, "aggregate", {"reportFormat": "multiqc", "dataset": "qc-report"}
+        )
+        observed = {c.name: c.observed for c in joint.caller.conditions}
+        self.assertEqual(observed["dataset"], "trimmed-reads")
+        self.assertEqual(joint.caller.verdict, gate_mod.REFUSE)
+        self.assertEqual(joint.effective(conjunction.DENY_OVERRIDES), gate_mod.REFUSE)
+
+
 class JointReceipt(unittest.TestCase):
     def setUp(self):
         self.scope = load_all(CALLERS)["analyst-agent"]

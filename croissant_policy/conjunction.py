@@ -138,8 +138,11 @@ def decide(
         caller_descriptor = scope.to_descriptor()
     dataset_id = data_descriptor.dataset_id
 
+    # The name comes from the descriptor being decided, never from the request.
+    # A request that could supply it could name a dataset its caller is scoped
+    # on while acting on another one.
     caller_context = dict(context)
-    caller_context.setdefault(DATASET_KEY, dataset_id)
+    caller_context[DATASET_KEY] = dataset_id
 
     caller_decision = gate_mod.authorize(caller_descriptor, action, caller_context)
     data_decision = gate_mod.authorize(data_descriptor, action, context)
